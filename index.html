@@ -585,46 +585,58 @@
     border: 1px solid var(--line); border-radius: 999px; font-size: var(--fs-xs); color: var(--ink-soft); }
   .cao-dirs .cd b { font-size: var(--fs-2xs); letter-spacing: .02em; color: var(--ink); }
   .cao-dirs .cd em { font-style: normal; color: var(--rasp); font-weight: 700; }
-  /* ---------- Цветок роста ----------
-     Не украшение: каждый из четырёх лепестков привязан к своему показателю
-     и раскрывается, только когда показатель действительно хорош. Закрытый
-     бутон — такой же честный сигнал, как раскрытый цветок. */
-  .bloom { display: flex; align-items: center; gap: 20px; margin-bottom: 14px;
-    padding: 14px 18px; background: var(--card); border: 1px solid var(--line);
-    border-radius: var(--radius); box-shadow: var(--shadow); }
-  .bloom-flower { width: 104px; height: 128px; flex: none; overflow: visible; }
-  .bloom-flower .stem { fill: none; stroke: var(--green); stroke-width: 3.5; stroke-linecap: round; opacity: .55; }
-  .bloom-flower .leaf { fill: var(--green); opacity: .4; }
-  .bloom-flower .petal { fill: var(--line); transform: scale(var(--open, .32));
-    transform-box: fill-box; transform-origin: 50% 100%;
-    transition: transform .8s var(--ease), fill .6s var(--ease); }
+  /* ---------- Грядка долголетия ---------- */
+  .garden-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    box-shadow: var(--shadow); overflow: hidden; }
+  .garden-scene { display: block; width: 100%; height: auto; }
+  .garden-scene .g-sky { fill: url(#gardenSky); }
+  .garden-scene .g-soil { fill: url(#gardenSoil); }
+  .garden-scene .g-cloud { fill: #fff; opacity: .72; }
+  .garden-scene .g-sun { fill: #f6c74b; opacity: .85;
+    filter: drop-shadow(0 0 14px rgba(246,199,75,.55)); transition: opacity .6s var(--ease); }
+  .garden-scene .g-stem { fill: none; stroke: #3f8f55; stroke-width: 2.9; stroke-linecap: round; }
+  .garden-scene .g-leaf { fill: #4da368; }
+  .garden-scene .g-bud { fill: #6fb585; }
+  .garden-scene .g-petal { fill: #f08fa8; }
+  .garden-scene .g-core { fill: #f6c74b; }
+  .garden-scene .g-plant.bloom .g-petal { fill: #ec5f86; }
+  .garden-scene .g-empty { fill: #cdbdae; font: 600 13px var(--font); }
 
-  .bloom-flower .petal.k0.on { fill: var(--rasp); }
-  .bloom-flower .petal.k1.on { fill: var(--teal); }
-  .bloom-flower .petal.k2.on { fill: var(--amber); }
-  .bloom-flower .petal.k3.on { fill: var(--green); }
-  .bloom-flower .core { fill: var(--bar-muted); transition: fill .6s var(--ease), r .6s var(--ease); }
-  .bloom.s1 .core { fill: #e8d7a8; } .bloom.s2 .core { fill: #f0c96a; }
-  .bloom.s3 .core { fill: #f2b739; } .bloom.s4 .core { fill: var(--amber); }
-  .bloom.s4 .bloom-flower { filter: drop-shadow(0 4px 14px rgba(224,138,30,.35)); }
-  .bloom-text { min-width: 0; }
-  .bloom-head { font-size: var(--fs-lg); font-weight: 800; letter-spacing: -.01em; }
-  .bloom-sub { font-size: var(--fs-xs); color: var(--ink-soft); margin: 3px 0 9px; line-height: 1.4; }
-  .bloom-list { display: flex; flex-wrap: wrap; gap: 7px; }
-  .bloom-item { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px;
-    border: 1px solid var(--line); border-radius: 999px; font-size: var(--fs-xs); color: var(--ink-mute); }
-  .bloom-item i { width: 8px; height: 8px; border-radius: 50%; background: var(--bar-muted); flex: none; }
-  .bloom-item.on { color: var(--ink); border-color: var(--line-soft); }
-  .bloom-item.on b { font-weight: 700; }
-  .bloom-item.on.k0 i { background: var(--rasp); } .bloom-item.on.k1 i { background: var(--teal); }
-  .bloom-item.on.k2 i { background: var(--amber); } .bloom-item.on.k3 i { background: var(--green); }
-  .bloom-item em { font-style: normal; color: var(--ink-mute); }
+  /* всходы появляются снизу по очереди — грядка «прорастает» при открытии */
+  .garden-scene .g-plant { transform-box: fill-box; transform-origin: 50% 100%;
+    animation: sprout .75s var(--ease) both; animation-delay: var(--d, 0ms); }
+  @keyframes sprout { from { transform: scaleY(.05); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  /* грядка ждёт: цвет уходит, солнце тускнеет — но ростки не исчезают,
+     сделанная работа не должна пропадать с экрана */
+  .garden-card.waiting .garden-scene { filter: saturate(.35); }
+  .garden-card.waiting .g-sun { opacity: .3; }
+
+  .garden-body { padding: 16px 18px 18px; }
+  .garden-head { font-size: var(--fs-lg); font-weight: 800; letter-spacing: -.01em; }
+  .garden-sub { font-size: var(--fs-xs); color: var(--ink-soft); margin: 4px 0 12px; line-height: 1.45; }
+  .garden-bar { height: 10px; border-radius: 999px; background: var(--bg-2); overflow: hidden; margin-bottom: 6px; }
+  .garden-bar i { display: block; height: 100%; border-radius: 999px;
+    background: linear-gradient(90deg, #4da368, #7cc091); transition: width .9s var(--ease); }
+  .garden-bar-lbl { font-size: var(--fs-xs); color: var(--ink-mute); font-weight: 700; margin-bottom: 14px; }
+
+  .garden-staff { display: grid; gap: 7px; margin-top: 6px; }
+  .g-row { display: grid; grid-template-columns: 132px 1fr 36px 44px; align-items: center; gap: 10px;
+    font-size: var(--fs-sm); }
+  .g-row .g-name { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .g-row.top .g-name { color: var(--rasp); }
+  .g-track { height: 12px; border-radius: 999px; background: var(--bg-2); overflow: hidden; }
+  .g-track i { display: block; height: 100%; border-radius: 999px; background: #7cc091; transition: width .7s var(--ease); }
+  .g-row.top .g-track i { background: var(--rasp); }
+  .g-num { font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
+  .g-ret { font-size: var(--fs-xs); color: var(--ink-soft); white-space: nowrap; }
+
   @media (max-width: 560px) {
-    .bloom { flex-direction: column; align-items: flex-start; gap: 12px; }
-    .bloom-flower { width: 84px; height: 104px; align-self: center; }
+    .g-row { grid-template-columns: 96px 1fr 30px 38px; gap: 7px; font-size: var(--fs-xs); }
   }
   @media (prefers-reduced-motion: reduce) {
-    .bloom-flower .petal, .bloom-flower .core { transition: none; }
+    .garden-scene .g-plant { animation: none; }
+    .garden-bar i, .g-track i { transition: none; }
   }
 
   /* ---------- Задачи: панель поиска/фильтров, приоритеты ---------- */
@@ -868,26 +880,6 @@
           <svg id="capSpark" viewBox="0 0 200 26" class="cap-spark" role="img" aria-label="Загрузка мощности по дням"></svg>
         </div>
       </div>
-      <div class="bloom" id="bloomCard">
-        <svg class="bloom-flower" viewBox="-62 -72 124 152" role="img" aria-labelledby="bloomSvgTitle">
-          <title id="bloomSvgTitle">Цветок центра: раскрывается по мере роста показателей</title>
-          <path class="stem" d="M0 14 C 0 40, 0 54, 0 74" />
-          <path class="leaf" d="M0 54 C -17 45, -28 53, -26 64 C -15 70, -2 63, 0 54Z" />
-          <path class="leaf" d="M0 40 C 17 31, 28 39, 26 50 C 15 56, 2 49, 0 40Z" />
-          <g class="petals">
-            <g transform="rotate(-45)"><ellipse class="petal" data-k="0" cx="0" cy="-27" rx="14" ry="25" /></g>
-            <g transform="rotate(45)"><ellipse class="petal" data-k="1" cx="0" cy="-27" rx="14" ry="25" /></g>
-            <g transform="rotate(135)"><ellipse class="petal" data-k="2" cx="0" cy="-27" rx="14" ry="25" /></g>
-            <g transform="rotate(-135)"><ellipse class="petal" data-k="3" cx="0" cy="-27" rx="14" ry="25" /></g>
-          </g>
-          <circle class="core" cx="0" cy="0" r="10" />
-        </svg>
-        <div class="bloom-text">
-          <div class="bloom-head" id="bloomHead">Считаю показатели…</div>
-          <div class="bloom-sub" id="bloomSub">Цветок раскрывается по мере роста показателей центра.</div>
-          <div class="bloom-list" id="bloomList"></div>
-        </div>
-      </div>
       <div class="dash-cards">
         <div class="chart-card">
           <h3>Посещаемость по дням <span class="badge" id="dayBadge"></span></h3>
@@ -956,6 +948,29 @@
     </div>
   </section>
 
+  <section class="cat alt reveal" id="gardenSec">
+    <div class="cat-head">
+      <h2>Грядка долголетия</h2>
+      <span class="dash-tools">
+        <button id="gardenRefresh" title="Обновить грядку">⟳</button>
+        <a href="https://docs.google.com/spreadsheets/d/1nUn-HFGA9-dwysu9wsVHA4BDI-Uv_yTLqWh1b_D1MEs/edit?gid=1963113636#gid=1963113636" target="_blank" rel="noopener">таблица подбора ↗</a>
+      </span>
+    </div>
+    <div class="garden-card" id="gardenCard">
+      <svg class="garden-scene" id="gardenScene" viewBox="0 0 860 196" preserveAspectRatio="xMidYMax meet" role="img"
+           aria-label="Грядка долголетия: ростки — отработанные дела, цветы — участники, вернувшиеся в проект">
+      </svg>
+      <div class="garden-body">
+        <div class="garden-head" id="gardenHead">Загружаю грядку…</div>
+        <div class="garden-sub" id="gardenSub"></div>
+        <div class="garden-bar"><i id="gardenBar" style="width:0"></i></div>
+        <div class="garden-bar-lbl" id="gardenBarLbl"></div>
+        <div class="pstats" id="gardenStats"></div>
+        <div class="side-head" style="margin-top:16px">🏅 Кто отрабатывает список</div>
+        <div class="garden-staff" id="gardenStaff"></div>
+      </div>
+    </div>
+  </section>
   <section class="cat alt reveal" id="tasksSec">
     <div class="cat-head">
       <h2>Календарь задач</h2>
@@ -1813,7 +1828,6 @@ function renderDashboard(centers, live, monthName) {
   document.getElementById('statCapacity').innerHTML = pct1(capPct) + '<small> %</small>';
   renderCapacitySpark(me);
   renderCapacityChart(me);
-  setBloomAttendance(me);
 
   /* KPI в шапке */
   const lastDay = [...me.days].reverse().find(d => d.v > 0);
@@ -2356,99 +2370,252 @@ function renderLinks(live) {
 /* стартовое наполнение — из файла «Быстрый доступ.xlsx» от Данилы (13.09.2026), без выдуманных строк;
    используется ТОЛЬКО пока лист «Быстрый доступ» в таблице пуст — после импорта источник данных всегда таблица */
 /* ============================================================
-   ЦВЕТОК РОСТА
-   Четыре лепестка — четыре показателя центра. Раскрытие общее и пропорционально
-   числу сработавших показателей: так силуэт остаётся цветком даже при одном
-   из четырёх. Цвет лепестка говорит, какой именно показатель сработал.
-   Закрытый бутон — такой же честный сигнал, как полный цвет; пороги простые
-   и названы в подсказках, чтобы цветку можно было верить, а не гадать.
+   ГРЯДКА ДОЛГОЛЕТИЯ
+   Участники со статусом «Подбор направления» ждут, пока им подберут
+   занятие. Каждое отработанное дело — росток, каждый вернувшийся
+   в проект — цветок.
+
+   Отказ тоже растит росток: человека набрали и поговорили, работа
+   сделана. Наказывать за отказы нельзя — иначе их перестанут
+   записывать, и мы потеряем данные вместо того, чтобы их получить.
+   Цветок распускается только за возврат в проект.
+
+   Грядка показывает отработанные дела, а не долю от общего списка:
+   доля в два процента выглядела бы мёртвой месяцами, сколько ни
+   работай. Длинный путь показывает отдельная полоса прогресса.
    ============================================================ */
-let bloomAtt = null;   /* заполняется из дашборда: тренды и загрузка */
+const GARDEN_SHEET_ID = '1nUn-HFGA9-dwysu9wsVHA4BDI-Uv_yTLqWh1b_D1MEs';
+const GARDEN_GID = '1963113636';
+const GARDEN_RETURNED = /зачислен|придет очно|придёт очно/i;
 
-/* Сравниваем две равные половины хвоста ряда. Окно сжимается под объём данных:
-   в начале месяца рабочих дней мало, и требовать две пятидневки значило бы
-   показывать закрытый бутон каждое первое число — не по вине команды. */
-function trendUp(series, nMax) {
-  const v = series.filter(x => x != null);
-  const n = Math.min(nMax, Math.floor(v.length / 2));
-  if (n < 2) return null;
-  const last = v.slice(-n).reduce((a, b) => a + b, 0);
-  const prev = v.slice(-n * 2, -n).reduce((a, b) => a + b, 0);
-  return { up: last >= prev, last: last / n, prev: prev / n, n: n };
+let garden = null;
+
+async function loadGarden() {
+  const wrap = document.getElementById('gardenSec');
+  if (!wrap) return;
+  try {
+    const url = 'https://docs.google.com/spreadsheets/d/' + GARDEN_SHEET_ID +
+      '/gviz/tq?tqx=out:csv&gid=' + GARDEN_GID + '&_=' + Date.now();
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const rows = parseCSV(await res.text()).slice(1).filter(r => (r[0] || '').trim());
+
+    const людей = rows.length;
+    const dealt = rows.filter(r => (r[3] || '').trim());
+    const returned = dealt.filter(r => GARDEN_RETURNED.test(r[3]));
+    const taken = rows.filter(r => (r[4] || '').trim());
+
+    const byEmp = {};
+    taken.forEach(r => {
+      const name = (r[4] || '').trim();
+      const out = (r[3] || '').trim();
+      byEmp[name] = byEmp[name] || { name, taken: 0, dealt: 0, returned: 0 };
+      byEmp[name].taken++;
+      if (out) byEmp[name].dealt++;
+      if (out && GARDEN_RETURNED.test(out)) byEmp[name].returned++;
+    });
+
+    garden = {
+      total: людей,
+      dealt: dealt.length,
+      returned: returned.length,
+      waiting: людей - dealt.length,
+      inWork: taken.filter(r => !(r[3] || '').trim()).length,
+      staff: Object.values(byEmp).sort((a, b) =>
+        b.returned - a.returned || b.dealt - a.dealt || b.taken - a.taken),
+    };
+    rememberGarden(garden);
+  } catch (e) {
+    garden = null;
+  }
+  renderGarden();
 }
 
-function setBloomAttendance(me) {
-  const work = me.days.filter(d => d.v > 0);
-  const vis = trendUp(work.map(d => d.v), 5);
-  /* анкеты берём за те же рабочие дни, что и посещаемость */
-  const ank = trendUp(work.map(d => (d.a == null ? 0 : d.a)), 5);
-  bloomAtt = {
-    win: vis ? vis.n : null,
-    visUp: vis ? vis.up : null,
-    visDelta: vis ? Math.round(100 * (vis.last - vis.prev) / (vis.prev || 1)) : null,
-    ankUp: ank ? ank.up : null,
-    ankLast: ank ? Math.round(ank.last * 5) : null,
-    ankPrev: ank ? Math.round(ank.prev * 5) : null,
-    capPct: me.avg ? 100 * me.avg / CAPACITY : null,
+/* История на устройстве: в исходной таблице нет дат, поэтому динамику
+   «оживает или ждёт» приходится считать по снимкам при открытии портала.
+   Это честно работает для тех, кто заходит регулярно. */
+function rememberGarden(g) {
+  const key = 'presnya-garden-log';
+  const today = new Date().toISOString().slice(0, 10);
+  const log = load(key, []).filter(x => x && x.d && x.d !== today);
+  log.push({ d: today, w: g.dealt, r: g.returned });
+  store(key, log.slice(-60));
+}
+function gardenMomentum() {
+  const log = load('presnya-garden-log', []);
+  if (log.length < 2) return null;
+  const now = log[log.length - 1];
+  const weekAgo = new Date(Date.now() - 14 * 864e5).toISOString().slice(0, 10);
+  const past = log.filter(x => x.d <= weekAgo).pop() || log[0];
+  return { dealt: now.w - past.w, returned: now.r - past.r, since: past.d };
+}
+
+/* Детерминированный «случай»: грядка не должна перетасовываться при каждой
+   перерисовке, иначе она выглядит дёргано. */
+function seeded(i) { const x = Math.sin(i * 12.9898) * 43758.5453; return x - Math.floor(x); }
+
+function plantSVG(i, x, baseY, bloom) {
+  const r1 = seeded(i), r2 = seeded(i + 7), r3 = seeded(i + 13), r4 = seeded(i + 23);
+  const h = (bloom ? 44 : 34) + r1 * 20;
+  const lean = (r2 - 0.5) * 16;
+  const top = baseY - h;
+  const tone = 0.78 + r3 * 0.22;          /* разные оттенки зелени */
+  const s = [];
+
+  s.push('<path class="g-stem" style="opacity:' + tone.toFixed(2) + '" d="M' + x + ' ' + baseY +
+    ' C' + (x + lean * 0.2) + ' ' + (baseY - h * 0.45) +
+    ' ' + (x + lean * 0.9) + ' ' + (baseY - h * 0.7) +
+    ' ' + (x + lean) + ' ' + top + '"/>');
+
+  /* два листа на разной высоте и в разные стороны — силуэт перестаёт быть палкой */
+  const leaf = (frac, dir, size) => {
+    const ly = baseY - h * frac;
+    const lx = x + lean * frac * 0.8;
+    return '<path class="g-leaf" style="opacity:' + (tone * 0.95).toFixed(2) + '" d="M' + lx.toFixed(1) + ' ' + ly.toFixed(1) +
+      ' q' + (size * 0.6 * dir).toFixed(1) + ' ' + (-size * 0.75).toFixed(1) +
+      ' ' + (size * dir).toFixed(1) + ' ' + (-size * 0.1).toFixed(1) +
+      ' q' + (-size * 0.55 * dir).toFixed(1) + ' ' + (size * 0.7).toFixed(1) +
+      ' ' + (-size * dir).toFixed(1) + ' ' + (size * 0.1).toFixed(1) + ' Z"/>';
   };
-  renderBloom();
+  const side = r4 > 0.5 ? 1 : -1;
+  s.push(leaf(0.34, side, 11 + r1 * 4));
+  s.push(leaf(0.58, -side, 9 + r2 * 4));
+
+  const cx = x + lean, cy = top;
+  if (bloom) {
+    const r = 6 + r3 * 2;
+    const petals = 6;
+    for (let p = 0; p < petals; p++) {
+      const a = (p / petals) * Math.PI * 2 + r2 * 1.5;
+      const px = cx + Math.cos(a) * r * 1.08, py = cy + Math.sin(a) * r * 1.08;
+      s.push('<ellipse class="g-petal" cx="' + px.toFixed(1) + '" cy="' + py.toFixed(1) +
+        '" rx="' + r.toFixed(1) + '" ry="' + (r * 0.64).toFixed(1) +
+        '" transform="rotate(' + ((a * 180 / Math.PI) + 90).toFixed(0) + ' ' +
+        px.toFixed(1) + ' ' + py.toFixed(1) + ')"/>');
+    }
+    s.push('<circle class="g-core" cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) +
+      '" r="' + (r * 0.5).toFixed(1) + '"/>');
+  } else {
+    /* нераспустившийся бутон: капля, а не точка */
+    s.push('<path class="g-bud" style="opacity:' + tone.toFixed(2) + '" d="M' + cx.toFixed(1) + ' ' + (cy - 6).toFixed(1) +
+      ' q4.2 3.4 0 8.4 q-4.2-5 0-8.4 Z"/>');
+  }
+  return '<g class="g-plant' + (bloom ? ' bloom' : '') + '" style="--d:' + (i * 42) + 'ms">' + s.join('') + '</g>';
 }
 
-function renderBloom() {
-  const card = document.getElementById('bloomCard');
-  if (!card) return;
-  const a = bloomAtt;
-  const openClubs = clubs.length ? clubs.filter(c => clubState(c.status) === 'open').length : null;
-  const clubPct = clubs.length ? 100 * openClubs / clubs.length : null;
+function renderGarden() {
+  const scene = document.getElementById('gardenScene');
+  if (!scene) return;
+  if (!garden) {
+    scene.innerHTML = '';
+    document.getElementById('gardenHead').textContent = 'Таблица подбора сейчас недоступна';
+    document.getElementById('gardenSub').textContent = 'Портал покажет грядку, как только таблица ответит.';
+    document.getElementById('gardenStats').innerHTML = '';
+    document.getElementById('gardenStaff').innerHTML = '';
+    return;
+  }
 
-  /* Пороги: для динамики — рост к предыдущей пятидневке, для уровня — половина.
-     Половина вместимости и половина клубов с открытым набором. */
-  const items = [
-    { k: 0, name: 'Посещаемость', on: a ? a.visUp : null,
-      note: a && a.visDelta != null ? (a.visDelta >= 0 ? '+' + a.visDelta + '%' : a.visDelta + '%') : '—',
-      hint: 'вторая половина рабочих дней против первой, до 5 дней в каждой' },
-    { k: 1, name: 'Новые участники', on: a ? a.ankUp : null,
-      note: a && a.ankLast != null ? a.ankLast + ' анкет' : '—',
-      hint: 'анкеты за те же дни, тем же сравнением' },
-    { k: 2, name: 'Мощность', on: a && a.capPct != null ? a.capPct >= 50 : null,
-      note: a && a.capPct != null ? Math.round(a.capPct) + '%' : '—',
-      hint: 'средняя загрузка не ниже половины от 401 чел./день' },
-    { k: 3, name: 'Клубы', on: clubPct != null ? clubPct >= 50 : null,
-      note: clubPct != null ? openClubs + ' из ' + clubs.length : '—',
-      hint: 'не меньше половины клубов с открытым набором' },
-  ];
+  const g = garden;
+  const mom = gardenMomentum();
+  /* На телефоне кадр уже и ростков меньше: при полной ширине они сжимаются
+     до четырнадцати пикселей и грядка превращается в траву. */
+  const narrow = window.innerWidth < 560;
+  const W = narrow ? 420 : 860, GROUND = 150;
 
-  const known = items.filter(i => i.on !== null);
-  const score = known.filter(i => i.on).length;
+  /* Один росток на дело. Когда дел станет много, один росток берёт на себя
+     нескольких — иначе грядка превратится в кашу. */
+  const MAXP = narrow ? 16 : 46;
+  const per = Math.max(1, Math.ceil(g.dealt / MAXP));
+  const plants = Math.min(MAXP, Math.ceil(g.dealt / per));
+  const blooms = Math.min(plants, Math.round(g.returned / per) || (g.returned ? 1 : 0));
 
-  items.forEach(i => {
-    const petal = card.querySelector('.petal[data-k="' + i.k + '"]');
-    if (!petal) return;
-    petal.classList.toggle('on', i.on === true);
-    petal.classList.add('k' + i.k);
-    const t = i.name + ': ' + (i.on === true ? 'растёт' : i.on === false ? 'не растёт' : 'нет данных');
-    petal.innerHTML = '<title>' + esc(t + ' — ' + i.hint) + '</title>';
-  });
+  const alive = mom ? mom.dealt > 0 : g.dealt > 0;
+  scene.parentElement.classList.toggle('waiting', !alive);
 
-  /* Раскрытие общее для всех лепестков: так силуэт остаётся цветком даже при
-     одном сработавшем показателе. Какой именно работает — показывает цвет. */
-  card.className = 'bloom s' + score;
-  card.style.setProperty('--open', (0.32 + 0.68 * score / items.length).toFixed(3));
-  card.querySelector('.core').setAttribute('r', 9 + score);
+  /* Цветы раскидываем по всей грядке, а не выстраиваем в начале: куча цветов
+     слева и голые ростки справа выглядят как брак, а не как сад. */
+  const bloomAt = new Set();
+  for (let n = 0; n < blooms; n++) bloomAt.add(Math.round((n + 0.5) * plants / blooms));
 
-  const head = ['Цветок ещё не раскрылся', 'Раскрывается: один показатель из четырёх',
-    'Половина показателей растёт', 'Почти полный цвет: три из четырёх',
-    'Полный цвет — растут все четыре показателя'][score];
-  document.getElementById('bloomHead').textContent =
-    known.length < items.length && score === 0 ? 'Считаю показатели…' : head;
-  document.getElementById('bloomSub').textContent = score === 4
-    ? 'Так держать: посещаемость и новые участники растут, центр загружен, клубы открыты.'
-    : 'Цветок раскрывается по мере роста показателей, цвет лепестка — какой из них сработал. Наведите на лепесток или на плашку, чтобы увидеть правило.';
+  let body = '';
+  for (let i = 0; i < plants; i++) {
+    const step = plants === 1 ? 0 : (W - 90) / (plants - 1);
+    const jitter = (seeded(i + 31) - 0.5) * Math.min(14, step * 0.5);
+    const x = plants === 1 ? W / 2 : 45 + step * i + jitter;
+    body += plantSVG(i, +x.toFixed(1), GROUND, bloomAt.has(i));
+  }
+  scene.setAttribute('viewBox', '0 0 ' + W + ' 196');
+  /* край земли слегка волнистый — ровная прямая читается как таблица, а не грядка */
+  const soil = 'M0 ' + (GROUND + 4) +
+    ' C' + (W * 0.18) + ' ' + (GROUND - 4) + ' ' + (W * 0.34) + ' ' + (GROUND + 5) + ' ' + (W * 0.5) + ' ' + (GROUND + 1) +
+    ' C' + (W * 0.68) + ' ' + (GROUND - 4) + ' ' + (W * 0.84) + ' ' + (GROUND + 5) + ' ' + W + ' ' + (GROUND + 1) +
+    ' L' + W + ' ' + (GROUND + 40) + ' L0 ' + (GROUND + 40) + ' Z';
 
-  document.getElementById('bloomList').innerHTML = items.map(i =>
+  scene.innerHTML =
+    /* defs рисуем здесь же: innerHTML затирает содержимое svg целиком,
+       и градиенты из статической разметки не доживали до второй отрисовки */
+    '<defs>' +
+      '<linearGradient id="gardenSky" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0" stop-color="#dceeff"/>' +
+        '<stop offset=".55" stop-color="#f3f7ec"/>' +
+        '<stop offset="1" stop-color="#fcf3df"/>' +
+      '</linearGradient>' +
+      '<linearGradient id="gardenSoil" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0" stop-color="#8a6243"/>' +
+        '<stop offset="1" stop-color="#5d3f2b"/>' +
+      '</linearGradient>' +
+    '</defs>' +
+    '<rect class="g-sky" x="0" y="0" width="' + W + '" height="' + (GROUND + 40) + '"/>' +
+    '<circle class="g-sun" cx="' + (W - 72) + '" cy="36" r="21"/>' +
+    '<circle class="g-cloud" cx="' + (W * 0.22) + '" cy="34" r="15"/>' +
+    '<circle class="g-cloud" cx="' + (W * 0.22 + 18) + '" cy="38" r="11"/>' +
+    '<circle class="g-cloud" cx="' + (W * 0.22 - 16) + '" cy="39" r="10"/>' +
+    '<path class="g-soil" d="' + soil + '"/>' +
+    body +
+    (plants ? '' : '<text class="g-empty" x="' + (W / 2) + '" y="' + (GROUND - 28) +
+      '" text-anchor="middle">грядка пока пуста — первое отработанное дело даст первый росток</text>');
+
+  const pct = g.total ? (100 * g.dealt / g.total) : 0;
+  document.getElementById('gardenBar').style.width = Math.max(0.6, pct).toFixed(2) + '%';
+  document.getElementById('gardenBarLbl').textContent =
+    g.dealt + ' из ' + g.total + ' · ' + pct.toFixed(1) + '%';
+
+  document.getElementById('gardenHead').textContent = !g.dealt
+    ? 'Грядка ещё не засеяна'
+    : g.returned
+      ? 'На грядке ' + plural(g.returned, 'распустился', 'распустились', 'распустилось') + ' ' +
+        g.returned + ' ' + plural(g.returned, 'цветок', 'цветка', 'цветков')
+      : 'Всходы есть, цветов пока нет';
+  document.getElementById('gardenSub').textContent = alive
+    ? 'Росток — отработанное дело, цветок — участник, вернувшийся в проект. Отказ тоже растит росток: работа сделана.'
+    : (mom ? 'За две недели ни одного нового дела — грядка ждёт садовников.'
+           : 'Росток — отработанное дело, цветок — вернувшийся участник.');
+
+  const tile = (ico, val, lbl, cls) =>
+    '<div class="tile"><span class="ico">' + ico + '</span><div class="val' + (cls ? ' ' + cls : '') +
+    '">' + val + '</div><div class="lbl">' + lbl + '</div></div>';
+  document.getElementById('gardenStats').innerHTML =
+    tile('🌱', g.dealt, 'отработано дел', 'c-green') +
+    tile('🌼', g.returned, 'вернулись в проект', 'c-amber') +
+    tile('⏳', g.inWork, 'взято, но без результата', 'c-mute') +
+    tile('🪴', g.waiting, 'ждут своей очереди', '') +
+    (mom ? tile('📆', (mom.dealt > 0 ? '+' : '') + mom.dealt, 'за две недели', mom.dealt > 0 ? 'c-green' : 'c-mute') : '');
+
+  const staff = g.staff.filter(s => s.taken > 0);
+  const best = staff.length ? Math.max(...staff.map(s => s.dealt)) : 0;
+  document.getElementById('gardenStaff').innerHTML = !staff.length
+    ? '<div class="task-empty">В таблице пока не отмечено, кто взял дела в работу.</div>'
+    : staff.map((s, i) =>
+      '<div class="g-row' + (i === 0 && s.dealt === best && best > 0 ? ' top' : '') + '">' +
+      '<span class="g-name">' + (i === 0 && best > 0 ? '🏅 ' : '') + esc(s.name) + '</span>' +
+      '<div class="g-track"><i style="width:' + (best ? Math.max(5, 100 * s.dealt / best) : 0) + '%"></i></div>' +
+      '<span class="g-num" title="отработано дел">' + s.dealt + '</span>' +
+      '<span class="g-ret" title="из них вернулись в проект">' +
+        (s.returned ? '🌼 ' + s.returned : '') + '</span></div>').join('');
+}
+
+/* ============================================================
     '<span class="bloom-item k' + i.k + (i.on ? ' on' : '') + '" title="' + esc(i.hint) + '">' +
-    '<i></i><b>' + esc(i.name) + '</b> <em>' + esc(i.note) + '</em></span>').join('');
-}
 
 /* ============================================================
    КЛУБЫ ЦЕНТРА
@@ -2604,8 +2771,6 @@ function renderClubs() {
 
   document.getElementById('clubsShown').textContent =
     list.length === clubs.length ? '' : 'показано ' + list.length + ' из ' + clubs.length;
-
-  renderBloom();
 }
 
 document.getElementById('clubsDirs').addEventListener('click', e => {
@@ -2621,6 +2786,13 @@ document.getElementById('clubsStats').addEventListener('click', e => {
   renderClubs();
 });
 document.getElementById('clubsRefresh').addEventListener('click', loadClubs);
+document.getElementById('gardenRefresh').addEventListener('click', loadGarden);
+/* кадр грядки зависит от ширины экрана — пересобираем при повороте телефона */
+let gardenResizeTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(gardenResizeTimer);
+  gardenResizeTimer = setTimeout(renderGarden, 250);
+});
 
 /* ---------- Клубы всего округа ----------
    Двенадцать листов реестра — по листу на центр. Грузим только когда
@@ -3447,6 +3619,7 @@ async function refreshAll(manual) {
   ]);
   loadLinks();
   loadClubs();
+  loadGarden();
   const failed = res.filter(r => r.status === 'rejected' || r.value === false).length;
   setSync(failed ? 'err' : 'ok', failed ? 'частично: ' + nowHM() : 'обновлено в ' + nowHM());
   btn.innerHTML = '⟳';
