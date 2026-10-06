@@ -32,7 +32,7 @@
     --amber-soft: #fbeed2;
     --ink: #2b2b2e;          /* графитовый текст */
     --ink-soft: #6b6769;
-    --ink-mute: #9a9597;
+    --ink-mute: #757071;     /* было #9a9597 — контраст 2.95 при норме 4.5 */
     --line: #e8e4e1;
     --line-soft: #f0edea;
     --bg: #f5f4f2;
@@ -75,6 +75,14 @@
   button, input, select, textarea { font-family: var(--font); }
   a { color: var(--rasp); }
   ::selection { background: var(--rasp-soft); color: var(--rasp-dark); }
+
+  /* Фокус с клавиатуры. Раньше его не было видно почти нигде: тот, кто
+     заполняет форму табуляцией, не понимал, где находится. :focus-visible
+     показывается только при навигации с клавиатуры и не мешает мыши. */
+  :focus-visible { outline: 2.5px solid var(--rasp); outline-offset: 2px; border-radius: 5px; }
+  .topbar :focus-visible, .hero :focus-visible, .gate :focus-visible,
+  .tile.accent :focus-visible { outline-color: #fff; }
+  .btn-green:focus-visible, .btn-primary:focus-visible { outline-color: var(--ink); }
 
   /* ---------- Кнопки (единая система) ---------- */
   .btn {
@@ -585,6 +593,25 @@
     border: 1px solid var(--line); border-radius: 999px; font-size: var(--fs-xs); color: var(--ink-soft); }
   .cao-dirs .cd b { font-size: var(--fs-2xs); letter-spacing: .02em; color: var(--ink); }
   .cao-dirs .cd em { font-style: normal; color: var(--rasp); font-weight: 700; }
+  /* ---------- Вкладки главной ----------
+     Шесть секций подряд превращали главную в бесконечную ленту. Теперь
+     на экране один блок, между ними переключаются здесь. Выбор помнится
+     между визитами: сотрудник возвращается туда, где работал. */
+  .tabbar { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none;
+    max-width: var(--maxw); margin: 18px auto 0; padding: 0 20px; }
+  .tabbar::-webkit-scrollbar { display: none; }
+  .tabbar button { flex: none; border: 1px solid var(--line); background: var(--card);
+    color: var(--ink-soft); font: 700 var(--fs-sm) var(--font); padding: 9px 16px;
+    border-radius: 999px; cursor: pointer; white-space: nowrap;
+    transition: color .15s, border-color .15s, background .15s, transform .15s var(--ease); }
+  .tabbar button:hover { color: var(--rasp); border-color: var(--rasp); transform: translateY(-1px); }
+  .tabbar button.on { background: var(--rasp); border-color: var(--rasp); color: #fff;
+    box-shadow: 0 4px 12px rgba(168,29,55,.20); }
+  body.view-partners .tabbar { display: none; }
+  [data-pane] { display: none; }
+  [data-pane].on { display: block; }
+  @media (max-width: 760px) { .tabbar { padding: 0 14px; } }
+
   /* ---------- Грядка долголетия ---------- */
   .garden-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
     box-shadow: var(--shadow); overflow: hidden; }
@@ -796,8 +823,8 @@
     <div class="gate-field">
       <input type="password" id="gatePass" placeholder="Пароль" autocomplete="current-password" required>
       <button type="button" class="gate-eye" id="gateEye" title="Показать пароль" aria-label="Показать или скрыть пароль">
-        <svg id="eyeOpen" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
-        <svg id="eyeClosed" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M17.9 17.9A10.6 10.6 0 0 1 12 19c-6.5 0-10-7-10-7a18.5 18.5 0 0 1 5.1-5.9M9.9 4.2A10 10 0 0 1 12 4c6.5 0 10 7 10 7a18.5 18.5 0 0 1-2.2 3.2"/><path d="M14.1 14.1a3 3 0 1 1-4.2-4.2"/><path d="m2 2 20 20"/></svg>
+        <svg aria-hidden="true" id="eyeOpen" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+        <svg aria-hidden="true" id="eyeClosed" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M17.9 17.9A10.6 10.6 0 0 1 12 19c-6.5 0-10-7-10-7a18.5 18.5 0 0 1 5.1-5.9M9.9 4.2A10 10 0 0 1 12 4c6.5 0 10 7 10 7a18.5 18.5 0 0 1-2.2 3.2"/><path d="M14.1 14.1a3 3 0 1 1-4.2-4.2"/><path d="m2 2 20 20"/></svg>
       </button>
     </div>
     <div class="gate-error" id="gateError" hidden>Неверный логин или пароль</div>
@@ -856,9 +883,17 @@
   </div>
 </div>
 
-<div class="search-wrap">
+<nav class="tabbar" id="mainTabs" aria-label="Разделы портала">
+  <button type="button" data-tab="tasks" class="on" aria-selected="true">📅 Задачи</button>
+  <button type="button" data-tab="att" aria-selected="false">📊 Посещаемость</button>
+  <button type="button" data-tab="garden" aria-selected="false">🌱 Грядка</button>
+  <button type="button" data-tab="clubs" aria-selected="false">🎭 Клубы</button>
+  <button type="button" data-tab="sections" aria-selected="false">🗂 Все разделы</button>
+</nav>
+
+<div class="search-wrap" data-pane="sections">
   <div class="search-box">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
     <input id="search" type="text" placeholder="Найти раздел: график, поставщики, почта…" autocomplete="off">
     <kbd>/</kbd>
   </div>
@@ -869,9 +904,69 @@
 
 <main>
 <div id="mainView">
+  <section class="cat alt reveal" id="tasksSec" data-pane="tasks">
+    <div class="cat-head">
+      <h2>Календарь задач</h2>
+      <span class="count" id="taskCount" style="display:none"></span>
+      <span class="dash-tools">
+        <span id="taskMeta"></span>
+        <button id="taskAdd" class="add" title="Добавить задачу">+ задача</button>
+        <button id="notifyBtn" title="Включить уведомления о задачах на день">🔔</button>
+        <a id="tasksLink" href="#" target="_blank" rel="noopener" style="display:none">таблица ↗</a>
+      </span>
+    </div>
+    <div class="task-wrap">
+      <div>
+        <div class="task-state" id="taskState"></div>
+        <div class="task-tools">
+          <div class="pf-search"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="tkSearch" type="text" placeholder="Поиск по задачам…" autocomplete="off"></div>
+          <select id="tkFilter"><option value="active">Активные</option><option value="today">На сегодня</option><option value="done">Выполненные</option><option value="all">Все</option></select>
+          <select id="tkWho"><option value="">Все ответственные</option></select>
+          <select id="tkSort"><option value="due">По сроку</option><option value="priority">По приоритету</option><option value="text">По названию</option></select>
+        </div>
+        <form id="taskForm" class="task-form" hidden>
+          <span class="form-title" id="taskFormTitle">Новая задача</span>
+          <input type="date" id="tfDate" required>
+          <input type="text" id="tfText" class="grow" placeholder="Что нужно сделать?" required maxlength="140">
+          <input type="text" id="tfWho" placeholder="Ответственный" maxlength="40" list="tfWhoList"><datalist id="tfWhoList"></datalist>
+          <select id="tfPriority">
+            <option value="Обычный">Обычный приоритет</option>
+            <option value="Высокий">Высокий приоритет</option>
+            <option value="Низкий">Низкий приоритет</option>
+          </select>
+          <input type="text" id="tfCategory" placeholder="Категория (необязательно)" maxlength="40" list="tfCatList"><datalist id="tfCatList"></datalist>
+          <select id="tfRepeat">
+            <option value="">Без повторения</option>
+            <option value="неделя">Каждую неделю</option>
+            <option value="месяц">Каждый месяц</option>
+          </select>
+          <button type="submit" id="tfSubmit">Сохранить</button>
+          <button type="button" class="cancel" id="tfCancel">Отмена</button>
+        </form>
+        <div class="task-card" id="taskRows"><div class="task-empty">Загружаю задачи…</div></div>
+      </div>
+      <div class="task-side">
+        <div class="task-card bday-card">
+          <div class="side-head">🎂 Ближайшие дни рождения</div>
+          <div id="bdayRows"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card links-card" id="linksSec">
+      <div class="side-head">⚡ Быстрый доступ
+        <span class="tools">
+          <button class="btn btn-sm add" id="linkAdd" title="Добавить группу">+ группа</button>
+        </span>
+      </div>
+      <div id="linksBody"><div class="task-empty">Загружаю…</div></div>
+      <div class="task-state" id="linksState"></div>
+    </div>
+  </section>
+
   <div id="notice" class="notice"></div>
 
-  <section class="cat reveal" id="dashboard">
+  <section class="cat reveal" id="dashboard" data-pane="att">
     <div class="cat-head">
       <h2>Аналитика посещаемости</h2>
       <span class="dash-tools">
@@ -975,7 +1070,7 @@
     </div>
   </section>
 
-  <section class="cat alt reveal" id="gardenSec">
+  <section class="cat alt reveal" id="gardenSec" data-pane="garden">
     <div class="cat-head">
       <h2>Грядка долголетия</h2>
       <span class="dash-tools">
@@ -998,67 +1093,7 @@
       </div>
     </div>
   </section>
-  <section class="cat alt reveal" id="tasksSec">
-    <div class="cat-head">
-      <h2>Календарь задач</h2>
-      <span class="count" id="taskCount" style="display:none"></span>
-      <span class="dash-tools">
-        <span id="taskMeta"></span>
-        <button id="taskAdd" class="add" title="Добавить задачу">+ задача</button>
-        <button id="notifyBtn" title="Включить уведомления о задачах на день">🔔</button>
-        <a id="tasksLink" href="#" target="_blank" rel="noopener" style="display:none">таблица ↗</a>
-      </span>
-    </div>
-    <div class="task-wrap">
-      <div>
-        <div class="task-state" id="taskState"></div>
-        <div class="task-tools">
-          <div class="pf-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="tkSearch" type="text" placeholder="Поиск по задачам…" autocomplete="off"></div>
-          <select id="tkFilter"><option value="active">Активные</option><option value="today">На сегодня</option><option value="done">Выполненные</option><option value="all">Все</option></select>
-          <select id="tkWho"><option value="">Все ответственные</option></select>
-          <select id="tkSort"><option value="due">По сроку</option><option value="priority">По приоритету</option><option value="text">По названию</option></select>
-        </div>
-        <form id="taskForm" class="task-form" hidden>
-          <span class="form-title" id="taskFormTitle">Новая задача</span>
-          <input type="date" id="tfDate" required>
-          <input type="text" id="tfText" class="grow" placeholder="Что нужно сделать?" required maxlength="140">
-          <input type="text" id="tfWho" placeholder="Ответственный" maxlength="40" list="tfWhoList"><datalist id="tfWhoList"></datalist>
-          <select id="tfPriority">
-            <option value="Обычный">Обычный приоритет</option>
-            <option value="Высокий">Высокий приоритет</option>
-            <option value="Низкий">Низкий приоритет</option>
-          </select>
-          <input type="text" id="tfCategory" placeholder="Категория (необязательно)" maxlength="40" list="tfCatList"><datalist id="tfCatList"></datalist>
-          <select id="tfRepeat">
-            <option value="">Без повторения</option>
-            <option value="неделя">Каждую неделю</option>
-            <option value="месяц">Каждый месяц</option>
-          </select>
-          <button type="submit" id="tfSubmit">Сохранить</button>
-          <button type="button" class="cancel" id="tfCancel">Отмена</button>
-        </form>
-        <div class="task-card" id="taskRows"><div class="task-empty">Загружаю задачи…</div></div>
-      </div>
-      <div class="task-side">
-        <div class="task-card bday-card">
-          <div class="side-head">🎂 Ближайшие дни рождения</div>
-          <div id="bdayRows"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="task-card links-card" id="linksSec">
-      <div class="side-head">⚡ Быстрый доступ
-        <span class="tools">
-          <button class="btn btn-sm add" id="linkAdd" title="Добавить группу">+ группа</button>
-        </span>
-      </div>
-      <div id="linksBody"><div class="task-empty">Загружаю…</div></div>
-      <div class="task-state" id="linksState"></div>
-    </div>
-  </section>
-
-  <section class="cat reveal" id="clubsSec">
+  <section class="cat reveal" id="clubsSec" data-pane="clubs">
     <div class="cat-head">
       <h2>Клубы центра</h2>
       <span class="count" id="clubsCount"></span>
@@ -1080,7 +1115,7 @@
     <div class="clubs-grid" id="clubsGrid"><div class="task-empty">Загружаю клубы…</div></div>
   </section>
 
-  <section class="cat reveal" id="partnersTeaserSec">
+  <section class="cat reveal" id="partnersTeaserSec" data-pane="sections">
     <div class="cat-head"><h2>Партнёрские связи</h2><span class="count" id="teaserCount"></span></div>
     <div class="partners-teaser">
       <img class="ring" src="assets/ring-green.png" alt="">
@@ -1093,8 +1128,10 @@
     </div>
   </section>
 
-  <div id="content"></div>
-  <div id="empty" class="empty">Ничего не найдено. Попробуйте другое слово.</div>
+  <div data-pane="sections">
+    <div id="content"></div>
+    <div id="empty" class="empty">Ничего не найдено. Попробуйте другое слово.</div>
+  </div>
 </div>
 
 <div id="partnersView">
@@ -1116,7 +1153,7 @@
 
   <div class="pf-bar">
     <div class="pf-search">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <input id="pfSearch" type="text" placeholder="Название, адрес, описание, категория…" autocomplete="off">
     </div>
     <div class="pf-view">
@@ -1462,13 +1499,52 @@ function parseCSV(text) {
   if (row.some(v => v.trim() !== '')) rows.push(row);
   return rows;
 }
+/* ============================================================
+   КЭШ ТАБЛИЦ
+   Данные приходят девятнадцатью запросами к Google и суммарно занимают
+   до девяти секунд: всё это время сотрудник смотрел на пустые блоки.
+   Последний ответ каждой таблицы лежит в localStorage — портал рисуется
+   из него мгновенно, а свежее подтягивается следом и перерисовывает.
+   Побочная польза: без сети портал показывает последние известные данные,
+   а не пустоту.
+   ============================================================ */
+let csvFromCache = false;   /* true — берём только кэш, в сеть не ходим */
+
+function csvKey(url) { return 'csv:' + url.replace(/[?&]_=\d+/, ''); }
+function csvRead(url) {
+  try { const r = localStorage.getItem(csvKey(url)); return r ? JSON.parse(r) : null; }
+  catch (e) { return null; }
+}
+function csvWrite(url, text) {
+  const put = () => localStorage.setItem(csvKey(url), JSON.stringify({ t: Date.now(), v: text }));
+  try { put(); } catch (e) {
+    /* квота кончилась — выбрасываем старые срезы таблиц и пробуем ещё раз */
+    Object.keys(localStorage).filter(k => k.indexOf('csv:') === 0).forEach(k => localStorage.removeItem(k));
+    try { put(); } catch (e2) { /* не влезло — работаем без кэша */ }
+  }
+}
+function csvHasCache() {
+  try { return Object.keys(localStorage).some(k => k.indexOf('csv:') === 0); }
+  catch (e) { return false; }
+}
+async function getCSV(url) {
+  if (csvFromCache) {
+    const hit = csvRead(url);
+    if (!hit) throw new Error('нет в кэше');
+    return hit.v;
+  }
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const text = await res.text();
+  csvWrite(url, text);
+  return text;
+}
+
 /* gviz отдаёт первый лист книги, если листа с таким именем нет, — проверяем заголовок */
 async function loadSheetCSV(sheetName, expectHeader0) {
   const url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID +
     '/gviz/tq?tqx=out:csv&sheet=' + encodeURIComponent(sheetName) + '&_=' + Date.now();
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  const rows = parseCSV(await res.text());
+  const rows = parseCSV(await getCSV(url));
   if (expectHeader0 && (!rows[0] || (rows[0][0] || '').trim().toLowerCase() !== expectHeader0)) {
     throw new Error('sheet "' + sheetName + '" not found');
   }
@@ -1614,6 +1690,30 @@ function showGate() { gateEl.hidden = false; document.getElementById('gateLogin'
 /* ============================================================
    Навигация: главная ↔ карта партнёров (внутри того же портала)
    ============================================================ */
+/* Вкладки главной: на экране одна панель, остальные скрыты. */
+let mainTab = load('presnya-tab', 'tasks');
+function setTab(t, remember) {
+  if (!document.querySelector('[data-pane="' + t + '"]')) t = 'tasks';
+  mainTab = t;
+  if (remember !== false) store('presnya-tab', t);
+  document.querySelectorAll('#mainTabs button').forEach(btn => {
+    const on = btn.dataset.tab === t;
+    btn.classList.toggle('on', on);
+    btn.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+  document.querySelectorAll('[data-pane]').forEach(p => p.classList.toggle('on', p.dataset.pane === t));
+  watchReveal();
+  /* грядка знает ширину окна, а не свою: после показа кадр пересобираем */
+  if (t === 'garden' && typeof renderGarden === 'function') renderGarden();
+}
+document.getElementById('mainTabs').addEventListener('click', e => {
+  const b = e.target.closest('button[data-tab]');
+  if (!b) return;
+  setView('main');
+  setTab(b.dataset.tab);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
 function setView(view, push) {
   const partners = view === 'partners';
   document.body.classList.toggle('view-partners', partners);
@@ -1636,6 +1736,10 @@ document.addEventListener('click', e => {
   if (scroll) {
     e.preventDefault();
     setView('main');
+    /* секции теперь на разных вкладках — сначала открыть нужную */
+    const pane = (document.getElementById(scroll.dataset.scroll) || {}).closest
+      ? document.getElementById(scroll.dataset.scroll).closest('[data-pane]') : null;
+    if (pane) setTab(pane.dataset.pane);
     setTimeout(() => document.getElementById(scroll.dataset.scroll).scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
   }
 });
@@ -2065,9 +2169,7 @@ let monthData = {}, monthOrder = [], currentMonth = null, liveFlag = false;
 async function fetchMonth(m) {
   const url = 'https://docs.google.com/spreadsheets/d/' + ATTENDANCE_SHEET +
     '/gviz/tq?tqx=out:csv&sheet=' + encodeURIComponent(m);
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  const centers = parseAttendance(await res.text());
+  const centers = parseAttendance(await getCSV(url));
   if (!centers) throw new Error('empty');
   return centers;
 }
@@ -2423,9 +2525,7 @@ async function loadGarden() {
   try {
     const url = 'https://docs.google.com/spreadsheets/d/' + GARDEN_SHEET_ID +
       '/gviz/tq?tqx=out:csv&gid=' + GARDEN_GID + '&_=' + Date.now();
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const rows = parseCSV(await res.text()).slice(1).filter(r => (r[0] || '').trim());
+    const rows = parseCSV(await getCSV(url)).slice(1).filter(r => (r[0] || '').trim());
 
     const людей = rows.length;
     const dealt = rows.filter(r => (r[3] || '').trim());
@@ -2843,9 +2943,7 @@ function clubsCsvUrl(sheet) {
 async function loadClubs() {
   let live = false;
   try {
-    const res = await fetch(clubsCsvUrl(CLUBS_SHEET_PRESNYA));
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const list = parseClubRows(parseCSV(await res.text()), /пресн/i)
+    const list = parseClubRows(parseCSV(await getCSV(clubsCsvUrl(CLUBS_SHEET_PRESNYA))), /пресн/i)
       .filter(c => /^\d{6,9}$/.test(c.num));
     if (list.length) { clubs = list; live = true; }
   } catch (e) { /* реестр чужой: его недоступность не считается сбоем портала */ }
@@ -2943,9 +3041,7 @@ async function loadCaoClubs() {
   try {
     const res = await Promise.all(sheets.map(async name => {
       try {
-        const r = await fetch(clubsCsvUrl(name));
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        const list = parseClubRows(parseCSV(await r.text()), null);
+        const list = parseClubRows(parseCSV(await getCSV(clubsCsvUrl(name))), null);
         return { name, list };
       } catch (e) { return { name, list: null }; }
     }));
@@ -3757,7 +3853,20 @@ async function refreshAll(manual) {
   watchReveal();
   if (manual) toast(failed ? 'Часть данных недоступна — показаны последние известные' : 'Данные обновлены', failed ? 'err' : 'ok');
 }
-refreshAll();
+/* Первый проход рисует портал из кэша — мгновенно. Второй идёт за свежим.
+   При первом в жизни визите кэша нет, и остаётся обычная загрузка. */
+setTab(mainTab, false);
+
+if (csvHasCache()) {
+  csvFromCache = true;
+  setSync('load', 'данные из кэша…');
+  refreshAll().then(() => {
+    csvFromCache = false;
+    setTimeout(() => refreshAll(), 250);
+  });
+} else {
+  refreshAll();
+}
 setInterval(() => refreshAll(), 10 * 60 * 1000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshAll(); });
 document.getElementById('globalRefresh').addEventListener('click', () => refreshAll(true));
