@@ -585,6 +585,47 @@
     border: 1px solid var(--line); border-radius: 999px; font-size: var(--fs-xs); color: var(--ink-soft); }
   .cao-dirs .cd b { font-size: var(--fs-2xs); letter-spacing: .02em; color: var(--ink); }
   .cao-dirs .cd em { font-style: normal; color: var(--rasp); font-weight: 700; }
+  /* ---------- Цветок роста ----------
+     Не украшение: каждый из четырёх лепестков привязан к своему показателю
+     и раскрывается, только когда показатель действительно хорош. Закрытый
+     бутон — такой же честный сигнал, как раскрытый цветок. */
+  .bloom { display: flex; align-items: center; gap: 20px; margin-bottom: 14px;
+    padding: 14px 18px; background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius); box-shadow: var(--shadow); }
+  .bloom-flower { width: 104px; height: 128px; flex: none; overflow: visible; }
+  .bloom-flower .stem { fill: none; stroke: var(--green); stroke-width: 3.5; stroke-linecap: round; opacity: .55; }
+  .bloom-flower .leaf { fill: var(--green); opacity: .4; }
+  .bloom-flower .petal { fill: var(--line); transform: scale(var(--open, .32));
+    transform-box: fill-box; transform-origin: 50% 100%;
+    transition: transform .8s var(--ease), fill .6s var(--ease); }
+
+  .bloom-flower .petal.k0.on { fill: var(--rasp); }
+  .bloom-flower .petal.k1.on { fill: var(--teal); }
+  .bloom-flower .petal.k2.on { fill: var(--amber); }
+  .bloom-flower .petal.k3.on { fill: var(--green); }
+  .bloom-flower .core { fill: var(--bar-muted); transition: fill .6s var(--ease), r .6s var(--ease); }
+  .bloom.s1 .core { fill: #e8d7a8; } .bloom.s2 .core { fill: #f0c96a; }
+  .bloom.s3 .core { fill: #f2b739; } .bloom.s4 .core { fill: var(--amber); }
+  .bloom.s4 .bloom-flower { filter: drop-shadow(0 4px 14px rgba(224,138,30,.35)); }
+  .bloom-text { min-width: 0; }
+  .bloom-head { font-size: var(--fs-lg); font-weight: 800; letter-spacing: -.01em; }
+  .bloom-sub { font-size: var(--fs-xs); color: var(--ink-soft); margin: 3px 0 9px; line-height: 1.4; }
+  .bloom-list { display: flex; flex-wrap: wrap; gap: 7px; }
+  .bloom-item { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px;
+    border: 1px solid var(--line); border-radius: 999px; font-size: var(--fs-xs); color: var(--ink-mute); }
+  .bloom-item i { width: 8px; height: 8px; border-radius: 50%; background: var(--bar-muted); flex: none; }
+  .bloom-item.on { color: var(--ink); border-color: var(--line-soft); }
+  .bloom-item.on b { font-weight: 700; }
+  .bloom-item.on.k0 i { background: var(--rasp); } .bloom-item.on.k1 i { background: var(--teal); }
+  .bloom-item.on.k2 i { background: var(--amber); } .bloom-item.on.k3 i { background: var(--green); }
+  .bloom-item em { font-style: normal; color: var(--ink-mute); }
+  @media (max-width: 560px) {
+    .bloom { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .bloom-flower { width: 84px; height: 104px; align-self: center; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bloom-flower .petal, .bloom-flower .core { transition: none; }
+  }
 
   /* ---------- Задачи: панель поиска/фильтров, приоритеты ---------- */
   .task-tools { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
@@ -825,6 +866,26 @@
           <div class="val c-green" id="statCapacity">—</div>
           <div class="lbl">мощность центра (из 401 чел./день)</div>
           <svg id="capSpark" viewBox="0 0 200 26" class="cap-spark" role="img" aria-label="Загрузка мощности по дням"></svg>
+        </div>
+      </div>
+      <div class="bloom" id="bloomCard">
+        <svg class="bloom-flower" viewBox="-62 -72 124 152" role="img" aria-labelledby="bloomSvgTitle">
+          <title id="bloomSvgTitle">Цветок центра: раскрывается по мере роста показателей</title>
+          <path class="stem" d="M0 14 C 0 40, 0 54, 0 74" />
+          <path class="leaf" d="M0 54 C -17 45, -28 53, -26 64 C -15 70, -2 63, 0 54Z" />
+          <path class="leaf" d="M0 40 C 17 31, 28 39, 26 50 C 15 56, 2 49, 0 40Z" />
+          <g class="petals">
+            <g transform="rotate(-45)"><ellipse class="petal" data-k="0" cx="0" cy="-27" rx="14" ry="25" /></g>
+            <g transform="rotate(45)"><ellipse class="petal" data-k="1" cx="0" cy="-27" rx="14" ry="25" /></g>
+            <g transform="rotate(135)"><ellipse class="petal" data-k="2" cx="0" cy="-27" rx="14" ry="25" /></g>
+            <g transform="rotate(-135)"><ellipse class="petal" data-k="3" cx="0" cy="-27" rx="14" ry="25" /></g>
+          </g>
+          <circle class="core" cx="0" cy="0" r="10" />
+        </svg>
+        <div class="bloom-text">
+          <div class="bloom-head" id="bloomHead">Считаю показатели…</div>
+          <div class="bloom-sub" id="bloomSub">Цветок раскрывается по мере роста показателей центра.</div>
+          <div class="bloom-list" id="bloomList"></div>
         </div>
       </div>
       <div class="dash-cards">
@@ -1671,7 +1732,12 @@ function parseAttendance(csv) {
   if (lastFilled < 0) return null;
   const num = s => { const v = parseInt(s, 10); return v > 0 ? v : 0; };
   for (const c of centers) {
-    c.days = c.raw.slice(0, lastFilled + 1).map((s, i) => ({ day: (header[dayIdx[i]] || '').trim(), v: num(s) }));
+    /* a — анкеты того же дня: нужны цветку роста, раньше хранилась только сумма */
+    c.days = c.raw.slice(0, lastFilled + 1).map((s, i) => ({
+      day: (header[dayIdx[i]] || '').trim(),
+      v: num(s),
+      a: c.anketRaw ? num(c.anketRaw[i]) : null,
+    }));
     const work = c.days.filter(d => d.v > 0);
     c.total = work.reduce((s, d) => s + d.v, 0);
     c.avg = work.length ? Math.round(c.total / work.length) : 0;
@@ -1747,6 +1813,7 @@ function renderDashboard(centers, live, monthName) {
   document.getElementById('statCapacity').innerHTML = pct1(capPct) + '<small> %</small>';
   renderCapacitySpark(me);
   renderCapacityChart(me);
+  setBloomAttendance(me);
 
   /* KPI в шапке */
   const lastDay = [...me.days].reverse().find(d => d.v > 0);
@@ -2289,6 +2356,101 @@ function renderLinks(live) {
 /* стартовое наполнение — из файла «Быстрый доступ.xlsx» от Данилы (13.09.2026), без выдуманных строк;
    используется ТОЛЬКО пока лист «Быстрый доступ» в таблице пуст — после импорта источник данных всегда таблица */
 /* ============================================================
+   ЦВЕТОК РОСТА
+   Четыре лепестка — четыре показателя центра. Раскрытие общее и пропорционально
+   числу сработавших показателей: так силуэт остаётся цветком даже при одном
+   из четырёх. Цвет лепестка говорит, какой именно показатель сработал.
+   Закрытый бутон — такой же честный сигнал, как полный цвет; пороги простые
+   и названы в подсказках, чтобы цветку можно было верить, а не гадать.
+   ============================================================ */
+let bloomAtt = null;   /* заполняется из дашборда: тренды и загрузка */
+
+/* Сравниваем две равные половины хвоста ряда. Окно сжимается под объём данных:
+   в начале месяца рабочих дней мало, и требовать две пятидневки значило бы
+   показывать закрытый бутон каждое первое число — не по вине команды. */
+function trendUp(series, nMax) {
+  const v = series.filter(x => x != null);
+  const n = Math.min(nMax, Math.floor(v.length / 2));
+  if (n < 2) return null;
+  const last = v.slice(-n).reduce((a, b) => a + b, 0);
+  const prev = v.slice(-n * 2, -n).reduce((a, b) => a + b, 0);
+  return { up: last >= prev, last: last / n, prev: prev / n, n: n };
+}
+
+function setBloomAttendance(me) {
+  const work = me.days.filter(d => d.v > 0);
+  const vis = trendUp(work.map(d => d.v), 5);
+  /* анкеты берём за те же рабочие дни, что и посещаемость */
+  const ank = trendUp(work.map(d => (d.a == null ? 0 : d.a)), 5);
+  bloomAtt = {
+    win: vis ? vis.n : null,
+    visUp: vis ? vis.up : null,
+    visDelta: vis ? Math.round(100 * (vis.last - vis.prev) / (vis.prev || 1)) : null,
+    ankUp: ank ? ank.up : null,
+    ankLast: ank ? Math.round(ank.last * 5) : null,
+    ankPrev: ank ? Math.round(ank.prev * 5) : null,
+    capPct: me.avg ? 100 * me.avg / CAPACITY : null,
+  };
+  renderBloom();
+}
+
+function renderBloom() {
+  const card = document.getElementById('bloomCard');
+  if (!card) return;
+  const a = bloomAtt;
+  const openClubs = clubs.length ? clubs.filter(c => clubState(c.status) === 'open').length : null;
+  const clubPct = clubs.length ? 100 * openClubs / clubs.length : null;
+
+  /* Пороги: для динамики — рост к предыдущей пятидневке, для уровня — половина.
+     Половина вместимости и половина клубов с открытым набором. */
+  const items = [
+    { k: 0, name: 'Посещаемость', on: a ? a.visUp : null,
+      note: a && a.visDelta != null ? (a.visDelta >= 0 ? '+' + a.visDelta + '%' : a.visDelta + '%') : '—',
+      hint: 'вторая половина рабочих дней против первой, до 5 дней в каждой' },
+    { k: 1, name: 'Новые участники', on: a ? a.ankUp : null,
+      note: a && a.ankLast != null ? a.ankLast + ' анкет' : '—',
+      hint: 'анкеты за те же дни, тем же сравнением' },
+    { k: 2, name: 'Мощность', on: a && a.capPct != null ? a.capPct >= 50 : null,
+      note: a && a.capPct != null ? Math.round(a.capPct) + '%' : '—',
+      hint: 'средняя загрузка не ниже половины от 401 чел./день' },
+    { k: 3, name: 'Клубы', on: clubPct != null ? clubPct >= 50 : null,
+      note: clubPct != null ? openClubs + ' из ' + clubs.length : '—',
+      hint: 'не меньше половины клубов с открытым набором' },
+  ];
+
+  const known = items.filter(i => i.on !== null);
+  const score = known.filter(i => i.on).length;
+
+  items.forEach(i => {
+    const petal = card.querySelector('.petal[data-k="' + i.k + '"]');
+    if (!petal) return;
+    petal.classList.toggle('on', i.on === true);
+    petal.classList.add('k' + i.k);
+    const t = i.name + ': ' + (i.on === true ? 'растёт' : i.on === false ? 'не растёт' : 'нет данных');
+    petal.innerHTML = '<title>' + esc(t + ' — ' + i.hint) + '</title>';
+  });
+
+  /* Раскрытие общее для всех лепестков: так силуэт остаётся цветком даже при
+     одном сработавшем показателе. Какой именно работает — показывает цвет. */
+  card.className = 'bloom s' + score;
+  card.style.setProperty('--open', (0.32 + 0.68 * score / items.length).toFixed(3));
+  card.querySelector('.core').setAttribute('r', 9 + score);
+
+  const head = ['Цветок ещё не раскрылся', 'Раскрывается: один показатель из четырёх',
+    'Половина показателей растёт', 'Почти полный цвет: три из четырёх',
+    'Полный цвет — растут все четыре показателя'][score];
+  document.getElementById('bloomHead').textContent =
+    known.length < items.length && score === 0 ? 'Считаю показатели…' : head;
+  document.getElementById('bloomSub').textContent = score === 4
+    ? 'Так держать: посещаемость и новые участники растут, центр загружен, клубы открыты.'
+    : 'Цветок раскрывается по мере роста показателей, цвет лепестка — какой из них сработал. Наведите на лепесток или на плашку, чтобы увидеть правило.';
+
+  document.getElementById('bloomList').innerHTML = items.map(i =>
+    '<span class="bloom-item k' + i.k + (i.on ? ' on' : '') + '" title="' + esc(i.hint) + '">' +
+    '<i></i><b>' + esc(i.name) + '</b> <em>' + esc(i.note) + '</em></span>').join('');
+}
+
+/* ============================================================
    КЛУБЫ ЦЕНТРА
    Источник — «Реестр клубов ЦАО», чужая таблица: читаем только на чтение,
    по gid листа. Её недоступность не ломает портал — показывается встроенный
@@ -2442,6 +2604,8 @@ function renderClubs() {
 
   document.getElementById('clubsShown').textContent =
     list.length === clubs.length ? '' : 'показано ' + list.length + ' из ' + clubs.length;
+
+  renderBloom();
 }
 
 document.getElementById('clubsDirs').addEventListener('click', e => {
