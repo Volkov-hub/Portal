@@ -592,25 +592,37 @@
   .garden-scene .g-sky { fill: url(#gardenSky); }
   .garden-scene .g-soil { fill: url(#gardenSoil); }
   .garden-scene .g-cloud { fill: #fff; opacity: .72; }
-  .garden-scene .g-sun { fill: #f6c74b; opacity: .85;
-    filter: drop-shadow(0 0 14px rgba(246,199,75,.55)); transition: opacity .6s var(--ease); }
-  .garden-scene .g-stem { fill: none; stroke: #3f8f55; stroke-width: 2.9; stroke-linecap: round; }
-  .garden-scene .g-leaf { fill: #4da368; }
-  .garden-scene .g-bud { fill: #6fb585; }
-  .garden-scene .g-petal { fill: #f08fa8; }
-  .garden-scene .g-core { fill: #f6c74b; }
-  .garden-scene .g-plant.bloom .g-petal { fill: #ec5f86; }
   .garden-scene .g-empty { fill: #cdbdae; font: 600 13px var(--font); }
+  .garden-scene .g-farmer { cursor: default; }
 
-  /* всходы появляются снизу по очереди — грядка «прорастает» при открытии */
-  .garden-scene .g-plant { transform-box: fill-box; transform-origin: 50% 100%;
-    animation: sprout .75s var(--ease) both; animation-delay: var(--d, 0ms); }
-  @keyframes sprout { from { transform: scaleY(.05); opacity: 0; } to { transform: none; opacity: 1; } }
+  /* всходы прорастают по очереди, потом едва заметно покачиваются —
+     движение должно читаться боковым зрением, а не отвлекать от работы */
+  .garden-scene .g-plant { animation: sprout .7s var(--ease) both, sway var(--sway, 7s) ease-in-out infinite alternate; }
+  .garden-scene .g-plant { animation-delay: var(--d, 0ms), calc(700ms + var(--d, 0ms)); }
+  @keyframes sprout { from { transform: scaleY(.06); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes sway { from { rotate: calc(var(--amp, 1.2deg) * -1); } to { rotate: var(--amp, 1.2deg); } }
 
-  /* грядка ждёт: цвет уходит, солнце тускнеет — но ростки не исчезают,
-     сделанная работа не должна пропадать с экрана */
-  .garden-card.waiting .garden-scene { filter: saturate(.35); }
-  .garden-card.waiting .g-sun { opacity: .3; }
+  .garden-scene .g-head { transform-box: fill-box; transform-origin: 50% 50%;
+    animation: headturn 14s ease-in-out infinite alternate; }
+  @keyframes headturn { from { rotate: -6deg; } to { rotate: 6deg; } }
+
+  .garden-scene .g-glow { animation: breathe 6s ease-in-out infinite alternate; }
+  @keyframes breathe { from { opacity: .12; } to { opacity: .26; } }
+
+  .garden-scene .g-fly { animation: fly 17s linear infinite; offset-rotate: 0deg; }
+  @keyframes fly {
+    0% { transform: translate(40px, 120px) scale(.9); opacity: 0; }
+    10% { opacity: 1; }
+    35% { transform: translate(260px, 78px) scale(1); }
+    60% { transform: translate(470px, 112px) scale(.95); }
+    85% { transform: translate(700px, 70px) scale(1); opacity: 1; }
+    100% { transform: translate(820px, 104px) scale(.9); opacity: 0; }
+  }
+
+  /* грядка ждёт: цвет уходит, но ростки остаются — сделанная работа
+     не должна пропадать с экрана */
+  .garden-card.waiting .garden-scene { filter: saturate(.3); }
+  .garden-card.waiting .g-glow, .garden-card.waiting .g-fly { opacity: 0; }
 
   .garden-body { padding: 16px 18px 18px; }
   .garden-head { font-size: var(--fs-lg); font-weight: 800; letter-spacing: -.01em; }
@@ -620,23 +632,38 @@
     background: linear-gradient(90deg, #4da368, #7cc091); transition: width .9s var(--ease); }
   .garden-bar-lbl { font-size: var(--fs-xs); color: var(--ink-mute); font-weight: 700; margin-bottom: 14px; }
 
-  .garden-staff { display: grid; gap: 7px; margin-top: 6px; }
-  .g-row { display: grid; grid-template-columns: 132px 1fr 36px 44px; align-items: center; gap: 10px;
-    font-size: var(--fs-sm); }
-  .g-row .g-name { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .g-row.top .g-name { color: var(--rasp); }
-  .g-track { height: 12px; border-radius: 999px; background: var(--bg-2); overflow: hidden; }
-  .g-track i { display: block; height: 100%; border-radius: 999px; background: #7cc091; transition: width .7s var(--ease); }
-  .g-row.top .g-track i { background: var(--rasp); }
-  .g-num { font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
-  .g-ret { font-size: var(--fs-xs); color: var(--ink-soft); white-space: nowrap; }
+  /* ---------- карточки фермеров ---------- */
+  .garden-staff { display: grid; gap: 10px; margin-top: 8px; }
+  .farmer { display: grid; grid-template-columns: 46px 1fr 96px; align-items: center; gap: 14px;
+    padding: 12px 14px; background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--r-control); transition: border-color .18s, box-shadow .18s, transform .18s var(--ease); }
+  .farmer:hover { border-color: var(--rasp); box-shadow: var(--shadow); transform: translateY(-1px); }
+  .farmer.king { border-color: #eccb73; background: linear-gradient(180deg, #fffaf0, var(--card)); }
+  .f-ava { width: 46px; height: 52px; }
+  .farmer.king .g-crown { animation: crownshine 3.4s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+  @keyframes crownshine { 0%, 70%, 100% { opacity: 1; } 82% { opacity: .55; } }
+  .f-name { font-size: var(--fs-md); font-weight: 800; display: flex; align-items: center; gap: 6px; }
+  .f-crown { font-size: var(--fs-sm); }
+  .f-nums { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 3px;
+    font-size: var(--fs-xs); color: var(--ink-soft); }
+  .f-nums b { color: var(--ink); font-weight: 800; font-variant-numeric: tabular-nums; }
+  .f-nums .f-dim { color: var(--ink-mute); }
+  .f-mini { display: block; height: 46px; width: 100%; max-width: 230px; margin-top: 6px; overflow: hidden; }
+  .f-mini .g-plant { animation: none; }
+  .f-hist { text-align: right; }
+  .f-spark { width: 78px; height: 22px; }
+  .f-nohist { font-size: var(--fs-2xs); color: var(--ink-mute); line-height: 1.3; display: inline-block; }
 
   @media (max-width: 560px) {
-    .g-row { grid-template-columns: 96px 1fr 30px 38px; gap: 7px; font-size: var(--fs-xs); }
+    .farmer { grid-template-columns: 38px 1fr; gap: 10px; }
+    .f-ava { width: 38px; height: 44px; }
+    .f-hist { grid-column: 1 / -1; text-align: left; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .garden-scene .g-plant { animation: none; }
-    .garden-bar i, .g-track i { transition: none; }
+    .garden-scene .g-plant, .garden-scene .g-head, .garden-scene .g-glow,
+    .garden-scene .g-fly, .farmer.king .g-crown { animation: none; }
+    .garden-scene .g-fly { opacity: 0; }
+    .garden-bar i { transition: none; }
   }
 
   /* ---------- Задачи: панель поиска/фильтров, приоритеты ---------- */
@@ -2421,8 +2448,10 @@ async function loadGarden() {
       returned: returned.length,
       waiting: людей - dealt.length,
       inWork: taken.filter(r => !(r[3] || '').trim()).length,
+      /* порядок тот же, по чему даётся корона — по отработке,
+         иначе коронованный оказывается не первым в списке */
       staff: Object.values(byEmp).sort((a, b) =>
-        b.returned - a.returned || b.dealt - a.dealt || b.taken - a.taken),
+        b.dealt - a.dealt || b.returned - a.returned || b.taken - a.taken),
     };
     rememberGarden(garden);
   } catch (e) {
@@ -2432,75 +2461,113 @@ async function loadGarden() {
 }
 
 /* История на устройстве: в исходной таблице нет дат, поэтому динамику
-   «оживает или ждёт» приходится считать по снимкам при открытии портала.
-   Это честно работает для тех, кто заходит регулярно. */
+   приходится считать по снимкам при открытии портала — общую и по каждому
+   фермеру отдельно. Это честно работает для тех, кто заходит регулярно. */
 function rememberGarden(g) {
   const key = 'presnya-garden-log';
   const today = new Date().toISOString().slice(0, 10);
   const log = load(key, []).filter(x => x && x.d && x.d !== today);
-  log.push({ d: today, w: g.dealt, r: g.returned });
-  store(key, log.slice(-60));
+  const by = {};
+  g.staff.forEach(s => { by[s.name] = { w: s.dealt, r: s.returned }; });
+  log.push({ d: today, w: g.dealt, r: g.returned, by: by });
+  store(key, log.slice(-90));
 }
 function gardenMomentum() {
   const log = load('presnya-garden-log', []);
   if (log.length < 2) return null;
   const now = log[log.length - 1];
-  const weekAgo = new Date(Date.now() - 14 * 864e5).toISOString().slice(0, 10);
-  const past = log.filter(x => x.d <= weekAgo).pop() || log[0];
+  const edge = new Date(Date.now() - 14 * 864e5).toISOString().slice(0, 10);
+  const past = log.filter(x => x.d <= edge).pop() || log[0];
   return { dealt: now.w - past.w, returned: now.r - past.r, since: past.d };
+}
+/* ряд значений сотрудника по снимкам — для искры в карточке фермера */
+function farmerSeries(name) {
+  return load('presnya-garden-log', [])
+    .map(x => (x.by && x.by[name]) ? x.by[name].w : null)
+    .filter(v => v != null);
 }
 
 /* Детерминированный «случай»: грядка не должна перетасовываться при каждой
    перерисовке, иначе она выглядит дёргано. */
 function seeded(i) { const x = Math.sin(i * 12.9898) * 43758.5453; return x - Math.floor(x); }
 
+/* Четыре вида цветов, чтобы грядка не выглядела штампованной */
+const FLOWERS = [
+  { petals: 8, rx: .34, ry: .95, fill: '#f08fb0', core: '#f7c948' },
+  { petals: 6, rx: .62, ry: .72, fill: '#d4557a', core: '#ffd97a' },
+  { petals: 5, rx: .5, ry: .92, fill: '#efa945', core: '#d9701f' },
+  { petals: 7, rx: .38, ry: .88, fill: '#fbfbfa', core: '#f3b63c' },
+  { petals: 6, rx: .55, ry: .78, fill: '#b58ad6', core: '#f7c948' },
+];
+
+function flowerSVG(i, cx, cy, r) {
+  const f = FLOWERS[Math.floor(seeded(i + 41) * FLOWERS.length)];
+  const turn = seeded(i + 17) * 360;
+  let s = '<g class="g-head" style="--spin:' + turn.toFixed(0) + 'deg">';
+  for (let p = 0; p < f.petals; p++) {
+    const a = (p / f.petals) * 360 + turn;
+    s += '<ellipse class="g-petal" cx="' + cx.toFixed(1) + '" cy="' + (cy - r * 0.92).toFixed(1) +
+      '" rx="' + (r * f.rx).toFixed(1) + '" ry="' + (r * f.ry).toFixed(1) +
+      '" fill="' + f.fill + '" transform="rotate(' + a.toFixed(0) + ' ' + cx.toFixed(1) + ' ' + cy.toFixed(1) + ')"/>';
+  }
+  s += '<circle class="g-core" cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) +
+    '" r="' + (r * 0.42).toFixed(1) + '" fill="' + f.core + '"/>';
+  return s + '</g>';
+}
+
 function plantSVG(i, x, baseY, bloom) {
   const r1 = seeded(i), r2 = seeded(i + 7), r3 = seeded(i + 13), r4 = seeded(i + 23);
-  const h = (bloom ? 44 : 34) + r1 * 20;
+  const h = (bloom ? 46 : 33) + r1 * 20;
   const lean = (r2 - 0.5) * 16;
   const top = baseY - h;
-  const tone = 0.78 + r3 * 0.22;          /* разные оттенки зелени */
-  const s = [];
+  const green = ['#3f8f55', '#4e9d63', '#357f4b', '#5aa870'][Math.floor(r3 * 4)];
 
-  s.push('<path class="g-stem" style="opacity:' + tone.toFixed(2) + '" d="M' + x + ' ' + baseY +
-    ' C' + (x + lean * 0.2) + ' ' + (baseY - h * 0.45) +
-    ' ' + (x + lean * 0.9) + ' ' + (baseY - h * 0.7) +
-    ' ' + (x + lean) + ' ' + top + '"/>');
-
-  /* два листа на разной высоте и в разные стороны — силуэт перестаёт быть палкой */
   const leaf = (frac, dir, size) => {
-    const ly = baseY - h * frac;
-    const lx = x + lean * frac * 0.8;
-    return '<path class="g-leaf" style="opacity:' + (tone * 0.95).toFixed(2) + '" d="M' + lx.toFixed(1) + ' ' + ly.toFixed(1) +
-      ' q' + (size * 0.6 * dir).toFixed(1) + ' ' + (-size * 0.75).toFixed(1) +
-      ' ' + (size * dir).toFixed(1) + ' ' + (-size * 0.1).toFixed(1) +
-      ' q' + (-size * 0.55 * dir).toFixed(1) + ' ' + (size * 0.7).toFixed(1) +
-      ' ' + (-size * dir).toFixed(1) + ' ' + (size * 0.1).toFixed(1) + ' Z"/>';
+    const ly = baseY - h * frac, lx = x + lean * frac * 0.8;
+    return '<path d="M' + lx.toFixed(1) + ' ' + ly.toFixed(1) +
+      ' q' + (size * .6 * dir).toFixed(1) + ' ' + (-size * .78).toFixed(1) +
+      ' ' + (size * dir).toFixed(1) + ' ' + (-size * .08).toFixed(1) +
+      ' q' + (-size * .55 * dir).toFixed(1) + ' ' + (size * .72).toFixed(1) +
+      ' ' + (-size * dir).toFixed(1) + ' ' + (size * .08).toFixed(1) + ' Z" fill="' + green + '"/>';
   };
-  const side = r4 > 0.5 ? 1 : -1;
-  s.push(leaf(0.34, side, 11 + r1 * 4));
-  s.push(leaf(0.58, -side, 9 + r2 * 4));
-
+  const side = r4 > .5 ? 1 : -1;
   const cx = x + lean, cy = top;
-  if (bloom) {
-    const r = 6 + r3 * 2;
-    const petals = 6;
-    for (let p = 0; p < petals; p++) {
-      const a = (p / petals) * Math.PI * 2 + r2 * 1.5;
-      const px = cx + Math.cos(a) * r * 1.08, py = cy + Math.sin(a) * r * 1.08;
-      s.push('<ellipse class="g-petal" cx="' + px.toFixed(1) + '" cy="' + py.toFixed(1) +
-        '" rx="' + r.toFixed(1) + '" ry="' + (r * 0.64).toFixed(1) +
-        '" transform="rotate(' + ((a * 180 / Math.PI) + 90).toFixed(0) + ' ' +
-        px.toFixed(1) + ' ' + py.toFixed(1) + ')"/>');
-    }
-    s.push('<circle class="g-core" cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) +
-      '" r="' + (r * 0.5).toFixed(1) + '"/>');
-  } else {
-    /* нераспустившийся бутон: капля, а не точка */
-    s.push('<path class="g-bud" style="opacity:' + tone.toFixed(2) + '" d="M' + cx.toFixed(1) + ' ' + (cy - 6).toFixed(1) +
-      ' q4.2 3.4 0 8.4 q-4.2-5 0-8.4 Z"/>');
-  }
-  return '<g class="g-plant' + (bloom ? ' bloom' : '') + '" style="--d:' + (i * 42) + 'ms">' + s.join('') + '</g>';
+
+  let s = '<path d="M' + x + ' ' + baseY + ' C' + (x + lean * .2) + ' ' + (baseY - h * .45) +
+    ' ' + (x + lean * .9) + ' ' + (baseY - h * .7) + ' ' + cx + ' ' + cy +
+    '" fill="none" stroke="' + green + '" stroke-width="2.9" stroke-linecap="round"/>';
+  s += leaf(.34, side, 11 + r1 * 4);
+  s += leaf(.58, -side, 9 + r2 * 4);
+  s += bloom
+    ? flowerSVG(i, cx, cy, 7.5 + r3 * 2.5)
+    : '<path d="M' + cx.toFixed(1) + ' ' + (cy - 6).toFixed(1) +
+      ' q4.2 3.4 0 8.4 q-4.2-5 0-8.4 Z" fill="' + green + '" opacity=".9"/>';
+
+  return '<g class="g-plant' + (bloom ? ' bloom' : '') +
+    '" style="--d:' + (i * 38) + 'ms;--sway:' + (5.5 + r2 * 4).toFixed(1) + 's;--amp:' +
+    (bloom ? 1.6 : 1.1).toFixed(1) + 'deg" transform-origin="' + x + ' ' + baseY + '">' + s + '</g>';
+}
+
+/* Фермер: сотрудник, который разбирает список. Корона — у первого по отработке. */
+function farmerSVG(x, baseY, sc, shirt, crown, title) {
+  const g = (v) => (v * sc).toFixed(1);
+  const hy = baseY - +g(30);
+  return '<g class="g-farmer" transform="translate(' + x + ' 0)">' +
+    '<title>' + esc(title) + '</title>' +
+    '<ellipse cx="0" cy="' + baseY + '" rx="' + g(11) + '" ry="' + g(2.6) + '" fill="#000" opacity=".12"/>' +
+    '<path d="M' + -g(8) + ' ' + baseY + ' L' + -g(6.2) + ' ' + (baseY - +g(17)) +
+    ' L' + g(6.2) + ' ' + (baseY - +g(17)) + ' L' + g(8) + ' ' + baseY + ' Z" fill="' + shirt + '"/>' +
+    '<path d="M' + -g(6) + ' ' + (baseY - +g(15)) + ' q' + -g(5) + ' ' + g(5) + ' ' + -g(3) + ' ' + g(10) +
+    '" stroke="' + shirt + '" stroke-width="' + g(2.8) + '" fill="none" stroke-linecap="round"/>' +
+    '<path d="M' + g(6) + ' ' + (baseY - +g(15)) + ' q' + g(5) + ' ' + g(5) + ' ' + g(3) + ' ' + g(10) +
+    '" stroke="' + shirt + '" stroke-width="' + g(2.8) + '" fill="none" stroke-linecap="round"/>' +
+    '<circle cx="0" cy="' + (hy + +g(6)) + '" r="' + g(6.4) + '" fill="#f0c9a4"/>' +
+    (crown
+      ? '<path class="g-crown" d="M' + -g(7) + ' ' + (hy - +g(1)) + ' L' + -g(7) + ' ' + (hy - +g(7)) +
+        ' L' + -g(3.5) + ' ' + (hy - +g(3.5)) + ' L0 ' + (hy - +g(9)) + ' L' + g(3.5) + ' ' + (hy - +g(3.5)) +
+        ' L' + g(7) + ' ' + (hy - +g(7)) + ' L' + g(7) + ' ' + (hy - +g(1)) + ' Z" fill="#f2b826"/>'
+      : '<path d="M' + -g(7.5) + ' ' + (hy + +g(1)) + ' q' + g(7.5) + ' ' + -g(5) + ' ' + g(15) + ' 0 Z" fill="#c98f4e"/>') +
+    '</g>';
 }
 
 function renderGarden() {
@@ -2520,11 +2587,9 @@ function renderGarden() {
   /* На телефоне кадр уже и ростков меньше: при полной ширине они сжимаются
      до четырнадцати пикселей и грядка превращается в траву. */
   const narrow = window.innerWidth < 560;
-  const W = narrow ? 420 : 860, GROUND = 150;
+  const W = narrow ? 420 : 860, GROUND = 150, H = 196;
 
-  /* Один росток на дело. Когда дел станет много, один росток берёт на себя
-     нескольких — иначе грядка превратится в кашу. */
-  const MAXP = narrow ? 16 : 46;
+  const MAXP = narrow ? 14 : 44;
   const per = Math.max(1, Math.ceil(g.dealt / MAXP));
   const plants = Math.min(MAXP, Math.ceil(g.dealt / per));
   const blooms = Math.min(plants, Math.round(g.returned / per) || (g.returned ? 1 : 0));
@@ -2544,35 +2609,63 @@ function renderGarden() {
     const x = plants === 1 ? W / 2 : 45 + step * i + jitter;
     body += plantSVG(i, +x.toFixed(1), GROUND, bloomAt.has(i));
   }
-  scene.setAttribute('viewBox', '0 0 ' + W + ' 196');
-  /* край земли слегка волнистый — ровная прямая читается как таблица, а не грядка */
-  const soil = 'M0 ' + (GROUND + 4) +
-    ' C' + (W * 0.18) + ' ' + (GROUND - 4) + ' ' + (W * 0.34) + ' ' + (GROUND + 5) + ' ' + (W * 0.5) + ' ' + (GROUND + 1) +
-    ' C' + (W * 0.68) + ' ' + (GROUND - 4) + ' ' + (W * 0.84) + ' ' + (GROUND + 5) + ' ' + W + ' ' + (GROUND + 1) +
-    ' L' + W + ' ' + (GROUND + 40) + ' L0 ' + (GROUND + 40) + ' Z';
 
+  /* мелочь, из-за которой грядка перестаёт быть схемой: травинки и камешки */
+  let detail = '';
+  for (let i = 0; i < (narrow ? 14 : 30); i++) {
+    const x = 12 + seeded(i + 61) * (W - 24), y = GROUND + 3 + seeded(i + 71) * 8;
+    const hh = 4 + seeded(i + 81) * 5, dir = seeded(i + 91) > .5 ? 1 : -1;
+    detail += '<path d="M' + x.toFixed(1) + ' ' + y.toFixed(1) + ' q' + (dir * 2) + ' ' +
+      (-hh * .7) + ' ' + (dir * 3.4) + ' ' + (-hh) + '" stroke="#63a271" stroke-width="1.5" fill="none" opacity=".55"/>';
+  }
+  for (let i = 0; i < (narrow ? 5 : 11); i++) {
+    const x = 16 + seeded(i + 101) * (W - 32), y = GROUND + 14 + seeded(i + 111) * 18;
+    detail += '<ellipse cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" rx="' +
+      (2 + seeded(i + 121) * 2.6).toFixed(1) + '" ry="' + (1.4 + seeded(i + 131) * 1.4).toFixed(1) +
+      '" fill="#000" opacity=".10"/>';
+  }
+
+  /* фермеры стоят на земле перед грядкой; корона — у первого по отработке */
+  const shirts = ['#2f7fb8', '#b8543f', '#50785e', '#7a5aa6', '#b88a2f'];
+  const staff = g.staff.filter(s => s.taken > 0);
+  const best = staff.length ? Math.max(...staff.map(s => s.dealt)) : 0;
+  let people = '';
+  staff.slice(0, 5).forEach((s, i) => {
+    const x = staff.length === 1 ? W * .5 : (W * 0.16) + (W * 0.68) * (i / Math.max(1, Math.min(5, staff.length) - 1));
+    people += farmerSVG(+x.toFixed(1), GROUND + 33, narrow ? .85 : 1.15, shirts[i % shirts.length],
+      s.dealt === best && best > 0,
+      s.name + ' — отработано ' + s.dealt + (s.returned ? ', вернулись ' + s.returned : ''));
+  });
+
+  const soil = 'M0 ' + (GROUND + 4) +
+    ' C' + (W * .18) + ' ' + (GROUND - 4) + ' ' + (W * .34) + ' ' + (GROUND + 5) + ' ' + (W * .5) + ' ' + (GROUND + 1) +
+    ' C' + (W * .68) + ' ' + (GROUND - 4) + ' ' + (W * .84) + ' ' + (GROUND + 5) + ' ' + W + ' ' + (GROUND + 1) +
+    ' L' + W + ' ' + H + ' L0 ' + H + ' Z';
+
+  scene.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
   scene.innerHTML =
     /* defs рисуем здесь же: innerHTML затирает содержимое svg целиком,
        и градиенты из статической разметки не доживали до второй отрисовки */
     '<defs>' +
       '<linearGradient id="gardenSky" x1="0" y1="0" x2="0" y2="1">' +
-        '<stop offset="0" stop-color="#dceeff"/>' +
-        '<stop offset=".55" stop-color="#f3f7ec"/>' +
-        '<stop offset="1" stop-color="#fcf3df"/>' +
-      '</linearGradient>' +
+        '<stop offset="0" stop-color="#dceeff"/><stop offset=".55" stop-color="#f3f7ec"/>' +
+        '<stop offset="1" stop-color="#fcf3df"/></linearGradient>' +
       '<linearGradient id="gardenSoil" x1="0" y1="0" x2="0" y2="1">' +
-        '<stop offset="0" stop-color="#8a6243"/>' +
-        '<stop offset="1" stop-color="#5d3f2b"/>' +
-      '</linearGradient>' +
+        '<stop offset="0" stop-color="#8a6243"/><stop offset="1" stop-color="#5d3f2b"/></linearGradient>' +
+      '<radialGradient id="gardenSun"><stop offset="0" stop-color="#ffdc6b"/>' +
+        '<stop offset="1" stop-color="#f6c74b"/></radialGradient>' +
     '</defs>' +
-    '<rect class="g-sky" x="0" y="0" width="' + W + '" height="' + (GROUND + 40) + '"/>' +
-    '<circle class="g-sun" cx="' + (W - 72) + '" cy="36" r="21"/>' +
-    '<circle class="g-cloud" cx="' + (W * 0.22) + '" cy="34" r="15"/>' +
-    '<circle class="g-cloud" cx="' + (W * 0.22 + 18) + '" cy="38" r="11"/>' +
-    '<circle class="g-cloud" cx="' + (W * 0.22 - 16) + '" cy="39" r="10"/>' +
+    '<rect class="g-sky" x="0" y="0" width="' + W + '" height="' + H + '"/>' +
+    '<circle class="g-glow" cx="' + (W - 72) + '" cy="36" r="34" fill="#f6c74b" opacity=".18"/>' +
+    '<circle class="g-sun" cx="' + (W - 72) + '" cy="36" r="21" fill="url(#gardenSun)"/>' +
+    '<circle class="g-cloud" cx="' + (W * .2) + '" cy="32" r="15"/>' +
+    '<circle class="g-cloud" cx="' + (W * .2 + 18) + '" cy="36" r="11"/>' +
+    '<circle class="g-cloud" cx="' + (W * .2 - 16) + '" cy="37" r="10"/>' +
     '<path class="g-soil" d="' + soil + '"/>' +
-    body +
-    (plants ? '' : '<text class="g-empty" x="' + (W / 2) + '" y="' + (GROUND - 28) +
+    detail + body + people +
+    (g.returned ? '<g class="g-fly"><ellipse cx="0" cy="0" rx="3.4" ry="2.2" fill="#e8a0bd"/>' +
+      '<ellipse cx="0" cy="3" rx="2.6" ry="1.8" fill="#f0b8cf"/></g>' : '') +
+    (plants ? '' : '<text class="g-empty" x="' + (W / 2) + '" y="' + (GROUND - 30) +
       '" text-anchor="middle">грядка пока пуста — первое отработанное дело даст первый росток</text>');
 
   const pct = g.total ? (100 * g.dealt / g.total) : 0;
@@ -2601,21 +2694,58 @@ function renderGarden() {
     tile('🪴', g.waiting, 'ждут своей очереди', '') +
     (mom ? tile('📆', (mom.dealt > 0 ? '+' : '') + mom.dealt, 'за две недели', mom.dealt > 0 ? 'c-green' : 'c-mute') : '');
 
-  const staff = g.staff.filter(s => s.taken > 0);
-  const best = staff.length ? Math.max(...staff.map(s => s.dealt)) : 0;
-  document.getElementById('gardenStaff').innerHTML = !staff.length
-    ? '<div class="task-empty">В таблице пока не отмечено, кто взял дела в работу.</div>'
-    : staff.map((s, i) =>
-      '<div class="g-row' + (i === 0 && s.dealt === best && best > 0 ? ' top' : '') + '">' +
-      '<span class="g-name">' + (i === 0 && best > 0 ? '🏅 ' : '') + esc(s.name) + '</span>' +
-      '<div class="g-track"><i style="width:' + (best ? Math.max(5, 100 * s.dealt / best) : 0) + '%"></i></div>' +
-      '<span class="g-num" title="отработано дел">' + s.dealt + '</span>' +
-      '<span class="g-ret" title="из них вернулись в проект">' +
-        (s.returned ? '🌼 ' + s.returned : '') + '</span></div>').join('');
+  renderFarmers(staff, best, shirts);
 }
 
-/* ============================================================
-    '<span class="bloom-item k' + i.k + (i.on ? ' on' : '') + '" title="' + esc(i.hint) + '">' +
+/* Карточка фермера: его доля грядки, цифры и искра по накопленным снимкам */
+function renderFarmers(staff, best, shirts) {
+  const box = document.getElementById('gardenStaff');
+  if (!staff.length) {
+    box.innerHTML = '<div class="task-empty">В таблице пока не отмечено, кто взял дела в работу.</div>';
+    return;
+  }
+  box.innerHTML = staff.map((s, i) => {
+    const king = s.dealt === best && best > 0;
+    const conv = s.dealt ? Math.round(100 * s.returned / s.dealt) : 0;
+    const series = farmerSeries(s.name);
+
+    let spark = '<span class="f-nohist">история копится — нужен ещё один день</span>';
+    if (series.length >= 2) {
+      const mn = Math.min(...series), mx = Math.max(...series), span = (mx - mn) || 1;
+      const pts = series.map((v, k) =>
+        (k / (series.length - 1) * 78).toFixed(1) + ',' + (20 - (v - mn) / span * 17).toFixed(1)).join(' ');
+      spark = '<svg class="f-spark" viewBox="0 0 78 22" aria-label="динамика отработки"><polyline points="' +
+        pts + '" fill="none" stroke="' + (king ? '#a81d37' : '#4da368') + '" stroke-width="1.8" ' +
+        'stroke-linejoin="round" stroke-linecap="round"/></svg>';
+    }
+
+    /* маленькая грядка самого фермера */
+    const n = Math.min(12, s.dealt);
+    const bl = Math.min(n, s.returned);
+    /* Кадр считаем по самому высокому ростку: раньше они рисовались
+       выше viewBox и закрывали собой имя и цифры фермера. */
+    let mini = '';
+    for (let k = 0; k < n; k++) mini += plantSVG(k + i * 50, 16 + k * 26, 74, k < bl);
+
+    return '<article class="farmer' + (king ? ' king' : '') + '">' +
+      '<svg class="f-ava" viewBox="-20 0 40 46" aria-hidden="true">' +
+        farmerSVG(0, 42, 1.25, shirts[i % shirts.length], king, s.name) + '</svg>' +
+      '<div class="f-main">' +
+        '<div class="f-name">' + (king ? '<span class="f-crown" title="первый по отработке">👑</span> ' : '') +
+          esc(s.name) + '</div>' +
+        '<div class="f-nums">' +
+          '<span><b>' + s.dealt + '</b> отработано</span>' +
+          '<span><b>' + s.returned + '</b> вернулись</span>' +
+          '<span><b>' + conv + '%</b> конверсия</span>' +
+          '<span class="f-dim">взято ' + s.taken + '</span>' +
+        '</div>' +
+        '<svg class="f-mini" viewBox="0 0 ' + Math.max(80, 16 + n * 26) + ' 82" preserveAspectRatio="xMinYMax meet" aria-hidden="true">' +
+          mini + '</svg>' +
+      '</div>' +
+      '<div class="f-hist">' + spark + '</div>' +
+      '</article>';
+  }).join('');
+}
 
 /* ============================================================
    КЛУБЫ ЦЕНТРА
