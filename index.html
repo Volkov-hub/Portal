@@ -567,6 +567,24 @@
     font-size: var(--fs-xs); color: var(--ink-soft); }
   .clubs-legend span { display: flex; align-items: center; gap: 6px; }
   .clubs-legend i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  /* Сводка клубов работает фильтром, поэтому плитки — кнопки */
+  .pstats button.tile { cursor: pointer; font-family: var(--font); text-align: left; }
+  .pstats button.tile:hover { border-color: var(--rasp); }
+  .pstats button.tile.on { border-color: var(--rasp); box-shadow: 0 0 0 2px rgba(168,29,55,.12); }
+  .pstats .tile .val.c-amber { color: var(--amber); }
+  .pstats .tile .val.c-mute { color: var(--ink-mute); }
+  .clubs-shown { font-size: var(--fs-xs); color: var(--ink-mute); font-weight: 600; }
+
+  /* Полоса центра: вся длина — всего клубов, заливка — те, где открыт набор */
+  .rank-row .track { position: relative; overflow: hidden; }
+  .rank-row .track i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--green); }
+
+  /* Направления по округу */
+  .cao-dirs { display: flex; flex-wrap: wrap; gap: 6px; }
+  .cao-dirs .cd { display: inline-flex; align-items: baseline; gap: 6px; padding: 5px 10px;
+    border: 1px solid var(--line); border-radius: 999px; font-size: var(--fs-xs); color: var(--ink-soft); }
+  .cao-dirs .cd b { font-size: var(--fs-2xs); letter-spacing: .02em; color: var(--ink); }
+  .cao-dirs .cd em { font-style: normal; color: var(--rasp); font-weight: 700; }
 
   /* ---------- Задачи: панель поиска/фильтров, приоритеты ---------- */
   .task-tools { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
@@ -859,6 +877,20 @@
             <svg id="caoChart" viewBox="0 0 440 220" role="img" aria-label="Поток ЦАО по дням"></svg>
           </div>
         </div>
+        <div class="dash-cards one" style="margin-top:14px">
+          <div class="chart-card">
+            <h3>Клубы по центрам округа <span class="badge" id="caoClubsBadge"></span></h3>
+            <div class="cap" id="caoClubsCap">Реестр клубов ЦАО — лист на каждый центр</div>
+            <div class="legend">
+              <span class="li"><span class="sw box" style="background:#038c47"></span>набор открыт</span>
+              <span class="li"><span class="sw box" style="background:#cfcbc8"></span>пауза или по записи</span>
+              <span class="li"><span class="sw box" style="background:#a81d37"></span>Пресненский</span>
+            </div>
+            <div class="rank-rows" id="caoClubsRows"><div class="task-empty">Загружаю реестр округа…</div></div>
+            <div class="cap" style="margin-top:14px">Направления по округу · красным — сколько у нас</div>
+            <div class="cao-dirs" id="caoClubsDirs"></div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -928,6 +960,7 @@
       <h2>Клубы центра</h2>
       <span class="count" id="clubsCount"></span>
       <span class="dash-tools">
+        <span class="clubs-shown" id="clubsShown"></span>
         <span id="clubsMeta"></span>
         <button id="clubsRefresh" title="Обновить список клубов">⟳</button>
         <a id="clubsLink" href="#" target="_blank" rel="noopener">реестр ↗</a>
@@ -938,7 +971,7 @@
       <span><i style="background:var(--green)"></i>идёт набор</span>
       <span><i style="background:var(--amber)"></i>по записи</span>
       <span><i style="background:var(--bar-muted)"></i>набор приостановлен</span>
-      <span>нажатие открывает список участников группы</span>
+      <span>плитка клуба открывает список участников, сводка выше — фильтр</span>
     </div>
     <div class="pf-chips" id="clubsDirs"></div>
     <div class="clubs-grid" id="clubsGrid"><div class="task-empty">Загружаю клубы…</div></div>
@@ -1968,7 +2001,11 @@ function setMore(open) {
   moreBtn.innerHTML = open ? 'Скрыть графики <span>▴</span>' : 'Ещё графики <span>▾</span>';
   store('presnya-more', open);
 }
-moreBtn.addEventListener('click', () => setMore(moreBox.hidden));
+moreBtn.addEventListener('click', () => {
+  const open = moreBox.hidden;
+  setMore(open);
+  if (open) loadCaoClubs();
+});
 setMore(load('presnya-more', false));
 
 /* ============================================================
@@ -2260,6 +2297,7 @@ function renderLinks(live) {
    ============================================================ */
 const CLUBS_SHEET_ID = '177EGdB70p38wLZUAzEokryomknkKs0Oiz1b4ktbEIYY';
 const CLUBS_GID = '392902746';
+const CLUBS_SHEET_PRESNYA = 'Пресненский';
 
 /* резерв: реестр клубов ЦМД «Пресненский», снимок 06.10.2026
    [название, направление, статус, номер группы, описание] */
@@ -2308,31 +2346,47 @@ const DEFAULT_CLUBS = [
   ["Клуб \"Хобби хор\"", "МУЗЫКА", "По записи", "2427036", "Занятия хора (по предварительному прослушиваню у преподователя)"],
 ];
 
-let clubs = [], clubsFromSeed = false, clubDir = '';
+let clubs = [], clubsFromSeed = false, clubDir = '', clubSt = '';
 
 function clubState(status) {
   if (/приостановл/i.test(status)) return 'off';
   if (/по записи/i.test(status)) return 'rec';
   return 'open';
 }
+/* 1 клуб, 2 клуба, 5 клубов — иначе интерфейс читается как машинный */
+function plural(n, one, few, many) {
+  const a = Math.abs(n) % 100, b = a % 10;
+  if (a > 10 && a < 20) return many;
+  if (b > 1 && b < 5) return few;
+  if (b === 1) return one;
+  return many;
+}
+function clubWord(n) { return n + ' ' + plural(n, 'клуб', 'клуба', 'клубов'); }
 function clubGroupUrl(num) { return 'https://smd.mos.ru/groups/' + num + '/participants'; }
+
+/* Разбор листа реестра: строки одного центра → список клубов */
+function parseClubRows(rows, centerRe) {
+  return rows.slice(1)
+    .filter(r => (!centerRe || centerRe.test(r[1] || '')) && (r[4] || '').trim())
+    .map(r => ({
+      name: (r[4] || '').trim(),
+      dir: (r[3] || '').replace(/^КЛУБ\s+/i, '').trim() || '—',
+      status: (r[5] || '').trim(),
+      num: (r[6] || '').trim().replace(/^G-0*/, ''),
+      desc: (r[8] || '').replace(/\s+/g, ' ').trim(),
+    }));
+}
+function clubsCsvUrl(sheet) {
+  return 'https://docs.google.com/spreadsheets/d/' + CLUBS_SHEET_ID +
+    '/gviz/tq?tqx=out:csv&sheet=' + encodeURIComponent(sheet) + '&_=' + Date.now();
+}
 
 async function loadClubs() {
   let live = false;
   try {
-    const url = 'https://docs.google.com/spreadsheets/d/' + CLUBS_SHEET_ID +
-      '/gviz/tq?tqx=out:csv&gid=' + CLUBS_GID + '&_=' + Date.now();
-    const res = await fetch(url);
+    const res = await fetch(clubsCsvUrl(CLUBS_SHEET_PRESNYA));
     if (!res.ok) throw new Error('HTTP ' + res.status);
-    const list = parseCSV(await res.text()).slice(1)
-      .filter(r => /пресн/i.test(r[1] || '') && (r[4] || '').trim())
-      .map(r => ({
-        name: (r[4] || '').trim(),
-        dir: (r[3] || '').replace(/^КЛУБ\s+/i, '').trim(),
-        status: (r[5] || '').trim(),
-        num: (r[6] || '').trim().replace(/^G-0*/, ''),
-        desc: (r[8] || '').replace(/\s+/g, ' ').trim(),
-      }))
+    const list = parseClubRows(parseCSV(await res.text()), /пресн/i)
       .filter(c => /^\d{6,9}$/.test(c.num));
     if (list.length) { clubs = list; live = true; }
   } catch (e) { /* реестр чужой: его недоступность не считается сбоем портала */ }
@@ -2344,20 +2398,25 @@ async function loadClubs() {
 
 function renderClubs() {
   const n = f => clubs.filter(f).length;
-  const open = n(c => clubState(c.status) === 'open');
-  const rec = n(c => clubState(c.status) === 'rec');
-  const off = n(c => clubState(c.status) === 'off');
+  const by = { open: n(c => clubState(c.status) === 'open'), rec: n(c => clubState(c.status) === 'rec'), off: n(c => clubState(c.status) === 'off') };
 
-  document.getElementById('clubsCount').textContent = clubs.length + ' клубов';
+  document.getElementById('clubsCount').textContent = clubWord(clubs.length);
   document.getElementById('clubsMeta').textContent = clubsFromSeed ? 'встроенный список' : 'из реестра ЦАО';
   document.getElementById('clubsLink').href =
     'https://docs.google.com/spreadsheets/d/' + CLUBS_SHEET_ID + '/edit?gid=' + CLUBS_GID;
 
+  /* Сводка работает фильтром: нажатие на плитку оставляет клубы этого статуса.
+     Отдельных кнопок фильтра не заводим — меньше элементов на экране. */
+  const tile = (st, ico, val, lbl, cls) =>
+    '<button class="tile' + (clubSt === st ? ' on' : '') + '" data-st="' + st + '" ' +
+    'title="' + (clubSt === st ? 'Показать все клубы' : 'Оставить только: ' + lbl) + '">' +
+    '<span class="ico">' + ico + '</span><div class="val' + (cls ? ' ' + cls : '') + '">' + val +
+    '</div><div class="lbl">' + lbl + '</div></button>';
   document.getElementById('clubsStats').innerHTML =
-    '<div class="tile accent"><span class="ico">🎭</span><div class="val">' + clubs.length + '</div><div class="lbl">клубов всего</div></div>' +
-    '<div class="tile"><span class="ico">✅</span><div class="val c-green">' + open + '</div><div class="lbl">идёт набор</div></div>' +
-    '<div class="tile"><span class="ico">📝</span><div class="val" style="color:var(--amber)">' + rec + '</div><div class="lbl">по записи</div></div>' +
-    '<div class="tile"><span class="ico">⏸</span><div class="val" style="color:var(--ink-mute)">' + off + '</div><div class="lbl">набор приостановлен</div></div>';
+    tile('', '🎭', clubs.length, 'клубов всего', '') +
+    tile('open', '✅', by.open, 'идёт набор', 'c-green') +
+    tile('rec', '📝', by.rec, 'по записи', 'c-amber') +
+    tile('off', '⏸', by.off, 'набор приостановлен', 'c-mute');
 
   const dirs = [...new Set(clubs.map(c => c.dir))].filter(Boolean)
     .sort((a, b) => n(c => c.dir === b) - n(c => c.dir === a));
@@ -2366,17 +2425,23 @@ function renderClubs() {
     dirs.map(d => '<button class="' + (clubDir === d ? 'on' : '') + '" data-dir="' + esc(d) + '">' +
       esc(d) + ' (' + n(c => c.dir === d) + ')</button>').join('');
 
-  const list = clubDir ? clubs.filter(c => c.dir === clubDir) : clubs;
+  const list = clubs.filter(c =>
+    (!clubDir || c.dir === clubDir) && (!clubSt || clubState(c.status) === clubSt));
+
+  /* Описание клуба ушло в подсказку: плитка держит имя, направление и номер,
+     иначе сорок две карточки с текстом превращаются в стену. */
   document.getElementById('clubsGrid').innerHTML = list.map(c =>
     '<a class="club" href="' + clubGroupUrl(c.num) + '" target="_blank" rel="noopener" title="' +
-      esc(c.status) + ' — открыть список участников">' +
+      esc(c.status + (c.desc ? ' — ' + c.desc : '')) + '">' +
       '<span class="st ' + clubState(c.status) + '"></span>' +
       '<span class="club-body">' +
         '<span class="club-name">' + esc(c.name) + '</span>' +
-        (c.desc ? '<span class="club-desc">' + esc(c.desc) + '</span>' : '') +
         '<span class="club-meta">' + esc(c.dir) + ' · ' + esc(c.num) + '</span>' +
       '</span></a>').join('') ||
-    '<div class="task-empty">В этом направлении клубов нет.</div>';
+    '<div class="task-empty">Под этот выбор клубов нет.</div>';
+
+  document.getElementById('clubsShown').textContent =
+    list.length === clubs.length ? '' : 'показано ' + list.length + ' из ' + clubs.length;
 }
 
 document.getElementById('clubsDirs').addEventListener('click', e => {
@@ -2385,7 +2450,88 @@ document.getElementById('clubsDirs').addEventListener('click', e => {
   clubDir = b.dataset.dir;
   renderClubs();
 });
+document.getElementById('clubsStats').addEventListener('click', e => {
+  const b = e.target.closest('button[data-st]');
+  if (!b) return;
+  clubSt = (clubSt === b.dataset.st) ? '' : b.dataset.st;
+  renderClubs();
+});
 document.getElementById('clubsRefresh').addEventListener('click', loadClubs);
+
+/* ---------- Клубы всего округа ----------
+   Двенадцать листов реестра — по листу на центр. Грузим только когда
+   раскрыт блок «Ещё графики»: двенадцать запросов не нужны тем, кто
+   зашёл отметить посещаемость. */
+/* var, а не let: функцию дёргают и до того, как выполнится эта строка
+   (например из обработчика «Ещё графики»), а let оставил бы её
+   в temporal dead zone и уронил бы вызов без видимой ошибки. */
+var caoClubsLoaded = false;
+
+async function loadCaoClubs() {
+  if (caoClubsLoaded) return;
+  caoClubsLoaded = true;
+  const sheets = ['Арбат', 'Басманный', 'Замоскворечье', 'Красносельский',
+    'Мещанский', 'Пресненский', 'Таганский 1', 'Таганский 2', 'Тверской 1',
+    'Тверской 2', 'Хамовники', 'Якиманка (на ремонте)'];
+  const rows = document.getElementById('caoClubsRows');
+  try {
+    const res = await Promise.all(sheets.map(async name => {
+      try {
+        const r = await fetch(clubsCsvUrl(name));
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const list = parseClubRows(parseCSV(await r.text()), null);
+        return { name, list };
+      } catch (e) { return { name, list: null }; }
+    }));
+    const centers = res.filter(c => c.list).map(c => ({
+      name: c.name.replace(/\s*\(на ремонте\)/i, ''),
+      repair: /ремонт/i.test(c.name),
+      total: c.list.length,
+      open: c.list.filter(x => clubState(x.status) === 'open').length,
+      dirs: c.list.reduce((a, x) => { a[x.dir] = (a[x.dir] || 0) + 1; return a; }, {}),
+    }));
+    if (!centers.length) throw new Error('нет данных');
+    renderCaoClubs(centers);
+  } catch (e) {
+    caoClubsLoaded = false;
+    rows.innerHTML = '<div class="task-empty">Реестр округа сейчас недоступен. ' +
+      'Нажмите «Ещё графики» повторно, чтобы попробовать снова.</div>';
+  }
+}
+
+function renderCaoClubs(centers) {
+  centers.sort((a, b) => b.total - a.total);
+  const total = centers.reduce((a, c) => a + c.total, 0);
+  const max = Math.max(...centers.map(c => c.total), 1);
+  const me = centers.find(c => /пресн/i.test(c.name));
+  const pos = centers.indexOf(me) + 1;
+
+  document.getElementById('caoClubsBadge').textContent = clubWord(total) + ' в округе';
+  document.getElementById('caoClubsCap').textContent = me
+    ? 'Пресненский — ' + clubWord(me.total) + ', ' + pos + '-е место из ' + centers.length +
+      '; набор открыт в ' + me.open + ' из ' + me.total
+    : 'Реестр клубов ЦАО';
+
+  document.getElementById('caoClubsRows').innerHTML = centers.map((c, i) =>
+    '<div class="rank-row' + (c === me ? ' me' : '') + '">' +
+    '<span class="pos">' + (i + 1) + '</span>' +
+    '<span class="nm" title="' + esc(c.name) + (c.repair ? ' — на ремонте' : '') + '">' +
+      esc(c.name) + (c.repair ? ' ⚒' : '') + '</span>' +
+    '<div><div class="track" style="width:' + Math.max(4, Math.round(100 * c.total / max)) + '%">' +
+      '<i style="width:' + (c.total ? Math.round(100 * c.open / c.total) : 0) + '%' +
+      (c === me ? ';background:var(--rasp)' : '') + '"></i></div></div>' +
+    '<span class="v">' + c.total + '</span></div>').join('');
+
+  const dirTotals = {};
+  centers.forEach(c => Object.entries(c.dirs).forEach(([d, n]) => { dirTotals[d] = (dirTotals[d] || 0) + n; }));
+  document.getElementById('caoClubsDirs').innerHTML =
+    Object.entries(dirTotals).sort((a, b) => b[1] - a[1]).filter(([d]) => d !== '—')
+      .map(([d, n]) => '<span class="cd"><b>' + esc(d) + '</b>' + n +
+        '<em>у нас ' + ((me && me.dirs[d]) || 0) + '</em></span>').join('');
+}
+
+/* Если блок графиков раскрыт с прошлого визита — подтягиваем реестр округа сразу. */
+if (!moreBox.hidden) loadCaoClubs();
 
 const DEFAULT_LINKS = [
   ['l01', 'Свободное посещение (КАФЕ)', '2419571', 'https://smd.mos.ru/groups/2419571/participants'],
