@@ -85,6 +85,8 @@
     --ch-off: #e2dedb;
     --ch-off-2: #d9d5d2;
     --ch-rasp: #a81d37;   /* наш центр */
+    --ch-off-band: #f4f2f0;  /* подложка нерабочего дня */
+    --ch-miss-bg: #fbeef1;   /* штриховка пропуска */
     --ch-pink: #ea6c85;
     --ch-green: #0f8f5f;
     --ch-teal: #2baf96;
@@ -694,6 +696,10 @@
   [data-pane].on > *:nth-child(4) { animation-delay: .15s; }
   @media (prefers-reduced-motion: reduce) { [data-pane].on > * { animation: none; } }
 
+  /* Столбец, выбранный с клавиатуры */
+  .chart-card svg:focus-visible { outline: 2.5px solid var(--brand); outline-offset: 3px; border-radius: 6px; }
+  .chart-card svg .kb { stroke: var(--ink); stroke-width: 2; paint-order: stroke; }
+
   /* Строка «что горит» под плитками клубов */
   .clubs-note { display: flex; align-items: flex-start; gap: 10px; margin-top: 12px;
     background: var(--bg); border-radius: var(--r-control); padding: 11px 13px;
@@ -1004,6 +1010,7 @@
     --ch-grid: #2c2935; --ch-grid-strong: #3c3847; --ch-axis: #8f8992;
     --ch-off: #322f3a; --ch-off-2: #3b3744;
     --ch-rasp: #f06a9e; --ch-pink: #f7a6c4;
+    --ch-off-band: #1b231e; --ch-miss-bg: #2c2028;
     --ch-green: #44d98a; --ch-teal: #35c8ab;
     --gd-sky-1: #15242f; --gd-sky-2: #18272a; --gd-sky-3: #26241d;
     --gd-soil-1: #4b3626; --gd-soil-2: #2d2017;
@@ -1297,28 +1304,30 @@
           <svg id="capSpark" viewBox="0 0 200 26" class="cap-spark" role="img" aria-label="Загрузка мощности по дням"></svg>
         </div>
       </div>
-      <div class="dash-cards">
+      <div class="dash-cards one">
         <div class="chart-card">
-          <h3>Посещаемость по дням <span class="badge" id="dayBadge"></span></h3>
-          <div class="legend">
-            <span class="li"><span class="sw box" style="background:var(--ch-rasp)"></span>день выше среднего</span>
-            <span class="li"><span class="sw box" style="background:var(--ch-pink)"></span>ниже среднего</span>
-            <span class="li"><span class="sw" style="background:var(--ch-green)"></span>среднее за месяц</span>
+            <h3>Посещаемость по дням <span class="badge" id="dayBadge"></span></h3>
+            <div class="legend">
+              <span class="li"><span class="sw box" style="background:var(--ch-rasp)"></span>день выше среднего</span>
+              <span class="li"><span class="sw box" style="background:var(--ch-pink)"></span>ниже среднего</span>
+              <span class="li"><span class="sw" style="background:var(--ch-green)"></span>среднее за месяц</span>
+            </div>
+            <svg id="dayChart" viewBox="0 0 720 220" role="img" aria-label="Посещаемость по дням"></svg>
           </div>
-          <svg id="dayChart" viewBox="0 0 720 220" role="img" aria-label="Посещаемость по дням"></svg>
-        </div>
+      </div>
+      <div class="dash-cards" style="margin-top:14px">
         <div class="chart-card">
-          <h3>Поток по дням недели</h3>
-          <div class="cap" id="wdCap">Среднее за рабочий день</div>
-          <div class="wd-months" id="wdMonths"></div>
-          <div class="wd-rows" id="wdRows"></div>
-          <div class="wd-note" id="wdNote"></div>
-        </div>
+            <h3>Поток по дням недели</h3>
+            <div class="cap" id="wdCap">Среднее за рабочий день</div>
+            <div class="wd-months" id="wdMonths"></div>
+            <div class="wd-rows" id="wdRows"></div>
+            <div class="wd-note" id="wdNote"></div>
+          </div>
         <div class="chart-card">
-          <h3>Центры ЦАО</h3>
-          <div class="cap">В среднем за рабочий день · последние 30 дней</div>
-          <div class="rank-rows" id="rankRows"></div>
-        </div>
+            <h3>Центры ЦАО</h3>
+            <div class="cap">В среднем за рабочий день · последние 30 дней</div>
+            <div class="rank-rows" id="rankRows"></div>
+          </div>
       </div>
       <div class="dash-cards one" style="margin-top:14px">
         <div class="chart-card">
@@ -1996,6 +2005,8 @@ function readPalette() {
   CH.grid = g('--ch-grid'); CH.gridStrong = g('--ch-grid-strong');
   CH.axis = g('--ch-axis'); CH.off = g('--ch-off'); CH.off2 = g('--ch-off-2');
   CH.rasp = g('--ch-rasp'); CH.pink = g('--ch-pink');
+  CH.offBand = g('--ch-off-band'); CH.missBg = g('--ch-miss-bg');
+  CH.label = g('--ink-soft'); CH.greenSoft = g('--green-soft'); CH.greenInk = g('--green-dark');
   CH.green = g('--ch-green'); CH.teal = g('--ch-teal');
   CH.sky1 = g('--gd-sky-1'); CH.sky2 = g('--gd-sky-2'); CH.sky3 = g('--gd-sky-3');
   CH.soil1 = g('--gd-soil-1'); CH.soil2 = g('--gd-soil-2');
@@ -2433,7 +2444,7 @@ function renderDashboard(centers, live, monthName) {
   const capPct = 100 * me.avg / CAPACITY;
   document.getElementById('statCapacity').innerHTML = pct1(capPct) + '<small> %</small>';
   renderCapacitySpark(me);
-  renderCapacityChart(me);
+  renderCapacityChart(me, monthName);
 
   /* KPI в шапке */
   const lastDay = [...me.days].reverse().find(d => d.v > 0);
@@ -2444,35 +2455,9 @@ function renderDashboard(centers, live, monthName) {
   setNum('kpiAvg', me.avg);
   document.getElementById('kpiCap').innerHTML = pct1(capPct) + '<small>%</small>';
 
-  document.getElementById('dayBadge').textContent = 'ср. ' + me.avg + ' чел.';
+  document.getElementById('dayBadge').textContent = monthName.toLowerCase() + ' · весь месяц';
 
-  /* график по дням */
-  const svg = document.getElementById('dayChart');
-  const W = 720, H = 220, padL = 8, padR = 8, padB = 24, padT = 20;
-  const n = me.days.length, gap = 2;
-  const bw = (W - padL - padR - gap * (n - 1)) / n;
-  const maxV = me.max || 1;
-  let out = '';
-  me.days.forEach((d, i) => {
-    const x = padL + i * (bw + gap);
-    const h = Math.round((H - padT - padB) * d.v / maxV);
-    const y = H - padB - h;
-    if (d.v > 0) {
-      const fill = d.v >= me.avg ? CH.rasp : CH.pink;
-      out += '<rect class="bar" x="' + x.toFixed(1) + '" y="' + y + '" width="' + bw.toFixed(1) + '" height="' + h + '" rx="3" fill="' + fill + '" data-tip="' + esc('<b>' + d.day + '-е число</b><br>Посещаемость: ' + d.v + ' чел.<br>Загрузка: ' + pct1(100 * d.v / CAPACITY) + '%') + '"/>';
-      if (d.v === me.max) out += '<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (y - 6) + '" text-anchor="middle" font-size="11" font-weight="800" fill="' + CH.rasp + '">' + d.v + '</text>';
-    } else {
-      out += '<rect x="' + x.toFixed(1) + '" y="' + (H - padB - 3) + '" width="' + bw.toFixed(1) + '" height="3" rx="1.5" fill="#e2dedb" data-tip="' + esc('<b>' + d.day + '-е число</b><br>выходной') + '"/>';
-    }
-    out += '<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (H - 7) + '" text-anchor="middle" font-size="9.5" fill="' + CH.axis + '">' + d.day + '</text>';
-  });
-  if (me.avg > 0) {
-    const ay = (H - padB - (H - padT - padB) * me.avg / maxV).toFixed(1);
-    out += '<line x1="' + padL + '" y1="' + ay + '" x2="' + (W - padR) + '" y2="' + ay + '" stroke="#038c47" stroke-width="1.5" stroke-dasharray="5 4"/>' +
-      '<text x="' + (W - padR - 2) + '" y="' + (ay - 5) + '" text-anchor="end" font-size="10" font-weight="800" fill="' + CH.green + '">ср. ' + me.avg + '</text>';
-  }
-  svg.innerHTML = out;
-  bindTips(svg);
+  renderDayChart(me, monthName);
 
   /* рейтинг центров ЦАО */
   const maxAvg = sorted[0] ? sorted[0].avg || 1 : 1;
@@ -2523,46 +2508,6 @@ function renderCapacitySpark(me) {
     const fill = d.v === 0 ? CH.off : pct > 0.85 ? CH.rasp : pct > 0.5 ? CH.pink : CH.teal;
     out += '<rect x="' + x.toFixed(1) + '" y="' + (d.v === 0 ? H - 1 : H - h) + '" width="' + bw.toFixed(1) + '" height="' + (d.v === 0 ? 1 : Math.max(1, h)) + '" rx="1" fill="' + fill + '" data-tip="' + esc('<b>' + d.day + '-е</b><br>Посещаемость: ' + d.v + '<br>Мощность: ' + CAPACITY + '<br>Загрузка: ' + pct1(100 * d.v / CAPACITY) + '%') + '"/>';
   });
-  svg.innerHTML = out;
-  bindTips(svg);
-}
-
-/* полноценный ежедневный график мощности: факт / 401 × 100% */
-function renderCapacityChart(me) {
-  const svg = document.getElementById('capChart');
-  const W = 720, H = 230, padL = 34, padR = 10, padB = 26, padT = 18;
-  const n = me.days.length, gap = 2;
-  const bw = (W - padL - padR - gap * (n - 1)) / n;
-  const plotH = H - padT - padB;
-  const yOf = p => H - padB - plotH * Math.min(1, p);
-  let out = '';
-  /* сетка 25/50/75/100% */
-  [0.25, 0.5, 0.75, 1].forEach(g => {
-    const y = yOf(g).toFixed(1);
-    out += '<line x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y + '" stroke="' + (g === 1 ? CH.gridStrong : CH.grid) + '" stroke-width="1"' + (g === 1 ? ' stroke-dasharray="4 3"' : '') + '/>' +
-      '<text x="' + (padL - 6) + '" y="' + (+y + 3.5) + '" text-anchor="end" font-size="10" fill="' + CH.axis + '">' + Math.round(g * 100) + '%</text>';
-  });
-  out += '<text x="' + (W - padR) + '" y="' + (yOf(1) - 6) + '" text-anchor="end" font-size="10" font-weight="800" fill="' + CH.rasp + '">мощность ' + CAPACITY + ' чел./день</text>';
-  const workDays = me.days.filter(d => d.v > 0);
-  const avgPct = workDays.length ? workDays.reduce((s, d) => s + d.v / CAPACITY, 0) / workDays.length : 0;
-  me.days.forEach((d, i) => {
-    const x = padL + i * (bw + gap);
-    const p = d.v / CAPACITY;
-    const tip = '<b>' + d.day + '-е число</b><br>Посещаемость: ' + d.v + '<br>Мощность: ' + CAPACITY + '<br>Загрузка: ' + pct1(100 * p) + '%';
-    if (d.v > 0) {
-      const y = yOf(p);
-      const fill = p > 0.85 ? CH.rasp : p > 0.5 ? CH.pink : CH.teal;
-      out += '<rect class="bar" x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + (H - padB - y).toFixed(1) + '" rx="3" fill="' + fill + '" data-tip="' + esc(tip) + '"/>';
-    } else {
-      out += '<rect x="' + x.toFixed(1) + '" y="' + (H - padB - 3) + '" width="' + bw.toFixed(1) + '" height="3" rx="1.5" fill="#e2dedb" data-tip="' + esc('<b>' + d.day + '-е число</b><br>выходной') + '"/>';
-    }
-    if (n <= 20 || i % 2 === 0) out += '<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="9.5" fill="' + CH.axis + '">' + d.day + '</text>';
-  });
-  if (avgPct > 0) {
-    const ay = yOf(avgPct).toFixed(1);
-    out += '<line x1="' + padL + '" y1="' + ay + '" x2="' + (W - padR) + '" y2="' + ay + '" stroke="#038c47" stroke-width="1.5" stroke-dasharray="5 4"/>' +
-      '<text x="' + (padL + 4) + '" y="' + (+ay - 5) + '" font-size="10.5" font-weight="800" fill="' + CH.green + '">средняя загрузка ' + pct1(100 * avgPct) + '%</text>';
-  }
   svg.innerHTML = out;
   bindTips(svg);
 }
@@ -2773,6 +2718,246 @@ function renderGoal(monthName) {
     needBox.innerHTML = '<b>' + Math.ceil(need) + '</b>нужно в среднем в оставшиеся ' +
       ahead + ' ' + plural(ahead, 'день', 'дня', 'дней') + ', чтобы закрыть месяц по цели';
   }
+}
+
+/* ============================================================
+   ДНЕВНЫЕ ГРАФИКИ
+   Раньше рисовались только заполненные дни, поэтому ширина столбца
+   зависела от числа месяца: в начале месяца пять столбцов на всю
+   карточку (123 px), в конце тридцать один по 27 px. Один и тот же
+   график за месяц менял облик вчетверо.
+   Теперь место отводится под все дни месяца сразу: ширина постоянна,
+   видно, сколько месяца впереди, и пропуск в данных перестаёт прятаться
+   за тем же серым огрызком, что и выходной.
+   ============================================================ */
+const WD_SHORT = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
+
+/* Чем день является по данным таблицы. Пустая суббота — это выходной,
+   а не пропуск: центр по субботам не работает, и отдельный учёт пустых
+   субботних ячеек ведёт карточка потока по дням недели. */
+function dayKind(d, date, today) {
+  if (d && d.v > 0) return 'data';
+  const raw = d && d.r != null ? String(d.r).trim() : null;
+  if (raw === '-') return 'off';
+  if (raw !== null && raw !== '' && Number(raw) === 0) return 'off';
+  /* Субботу проверяем раньше будущего: нерабочий день — факт расписания,
+     а не предсказание, и подсветка должна идти через весь месяц. */
+  if (date.getDay() === 6) return 'off';
+  if (date > today) return 'future';
+  if (+date === +today) return 'today';
+  return 'miss';
+}
+
+/* Полный месяц: дни из таблицы плюс те, что ещё не наступили. */
+function monthGrid(me, monthName) {
+  const mi = MONTHS_RU.indexOf(monthName);
+  if (mi < 0) return me.days.map(d => ({ d: d, day: parseInt(d.day, 10) || 0, kind: 'data', date: null }));
+  const year = yearForMonth(mi);
+  const dim = new Date(year, mi + 1, 0).getDate();
+  const today = midnight(new Date());
+  const byDay = {};
+  me.days.forEach(d => { const n = parseInt(d.day, 10); if (n) byDay[n] = d; });
+  const out = [];
+  for (let n = 1; n <= dim; n++) {
+    const date = midnight(new Date(year, mi, n));
+    const d = byDay[n] || null;
+    out.push({ d: d, day: n, date: date, w: (date.getDay() + 6) % 7, kind: dayKind(d, date, today) });
+  }
+  return out;
+}
+
+/* Общий построитель дневного столбчатого графика. */
+function dayBarChart(cfg) {
+  const svg = cfg.svg;
+  if (!svg) return;
+  const W = 720, H = 252, padR = 12, padT = 24, padB = 46;
+  const padL = cfg.padL || 30;
+  const plotH = H - padT - padB, base = H - padB;
+  const grid = cfg.items;
+  const N = grid.length || 1;
+  const gap = 3;
+  const step = (W - padL - padR + gap) / N;
+  const bw = Math.max(4, step - gap);
+  const maxV = Math.max(1, cfg.max);
+  const yOf = v => base - plotH * Math.min(1, v / maxV);
+
+  let out = '<defs><pattern id="' + cfg.id + 'Miss" width="6" height="6" ' +
+    'patternTransform="rotate(45)" patternUnits="userSpaceOnUse">' +
+    '<rect width="6" height="6" fill="' + CH.missBg + '"/>' +
+    '<line x1="0" y1="0" x2="0" y2="6" stroke="' + CH.rasp + '" stroke-width="2" opacity=".5"/>' +
+    '</pattern></defs>';
+
+  /* подложка нерабочих дней — ритм недели читается до чтения подписей */
+  grid.forEach((g, i) => {
+    if (g.kind !== 'off') return;
+    out += '<rect x="' + (padL + i * step - gap / 2).toFixed(1) + '" y="' + padT +
+      '" width="' + step.toFixed(1) + '" height="' + (base - padT + 26).toFixed(1) +
+      '" fill="' + CH.offBand + '"/>';
+  });
+
+  /* сетка */
+  (cfg.ticks || []).forEach(t => {
+    const y = yOf(t.v);
+    out += '<line x1="' + padL + '" y1="' + y.toFixed(1) + '" x2="' + (W - padR) + '" y2="' + y.toFixed(1) +
+      '" stroke="' + (t.strong ? CH.gridStrong : CH.grid) + '" stroke-width="1"' +
+      (t.strong ? ' stroke-dasharray="4 3"' : '') + '/>' +
+      '<text x="' + (padL - 7) + '" y="' + (y + 3.5).toFixed(1) + '" text-anchor="end" font-size="10" fill="' +
+      CH.axis + '">' + t.label + '</text>';
+  });
+  if (cfg.topRight) {
+    const ty = cfg.topRightAt != null ? yOf(cfg.topRightAt) - 6 : padT - 8;
+    out += '<text x="' + (W - padR) + '" y="' + ty.toFixed(1) + '" text-anchor="end" font-size="10" ' +
+      'font-weight="800" fill="' + CH.rasp + '">' + esc(cfg.topRight) + '</text>';
+  }
+
+  /* столбцы */
+  const showEvery = step >= 17 ? 1 : 2;
+  grid.forEach((g, i) => {
+    const x = padL + i * step, cx = x + bw / 2;
+    const tip = cfg.tipOf(g);
+    if (g.kind === 'data') {
+      const v = cfg.valueOf(g), y = yOf(v);
+      out += '<rect class="bar" x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + bw.toFixed(1) +
+        '" height="' + (base - y).toFixed(1) + '" rx="3" fill="' + cfg.colorOf(g) +
+        '" data-tip="' + esc(tip) + '"/>';
+      if (step >= 15) {
+        out += '<text x="' + cx.toFixed(1) + '" y="' + (y - 5).toFixed(1) + '" text-anchor="middle" ' +
+          'font-size="9.5" font-weight="800" fill="' + cfg.colorOf(g) + '">' + cfg.labelOf(g) + '</text>';
+      }
+    } else if (g.kind === 'miss') {
+      out += '<rect x="' + x.toFixed(1) + '" y="' + (base - 34) + '" width="' + bw.toFixed(1) +
+        '" height="34" rx="3" fill="url(#' + cfg.id + 'Miss)" stroke="' + CH.rasp +
+        '" stroke-width="1.2" stroke-dasharray="3 2.5" data-tip="' + esc(tip) + '"/>' +
+        '<text x="' + cx.toFixed(1) + '" y="' + (base - 40) + '" text-anchor="middle" font-size="11" ' +
+        'font-weight="800" fill="' + CH.rasp + '">?</text>';
+    } else if (g.kind === 'today') {
+      out += '<rect x="' + x.toFixed(1) + '" y="' + (base - 26) + '" width="' + bw.toFixed(1) +
+        '" height="26" rx="3" fill="none" stroke="' + CH.rasp + '" stroke-width="1.6" ' +
+        'stroke-dasharray="3 2.5" data-tip="' + esc(tip) + '"/>';
+    } else if (g.kind === 'future') {
+      out += '<rect x="' + x.toFixed(1) + '" y="' + (base - 5) + '" width="' + bw.toFixed(1) +
+        '" height="5" rx="2" fill="' + CH.off + '" data-tip="' + esc(tip) + '"/>';
+    } else {
+      out += '<rect x="' + x.toFixed(1) + '" y="' + (base - 4) + '" width="' + bw.toFixed(1) +
+        '" height="4" rx="2" fill="' + CH.off2 + '" data-tip="' + esc(tip) + '"/>';
+    }
+
+    const isToday = g.kind === 'today';
+    if (i % showEvery === 0 || isToday) {
+      out += '<text x="' + cx.toFixed(1) + '" y="' + (base + 16) + '" text-anchor="middle" font-size="9.5" ' +
+        'font-weight="' + (isToday ? '800' : '600') + '" fill="' +
+        (isToday ? CH.rasp : g.kind === 'off' ? CH.axis : CH.label) + '">' + g.day + '</text>';
+    }
+    if (g.w != null && step >= 15) {
+      out += '<text x="' + cx.toFixed(1) + '" y="' + (base + 28) + '" text-anchor="middle" font-size="8.5" ' +
+        'font-weight="700" fill="' + CH.axis + '">' + WD_SHORT[g.w] + '</text>';
+    }
+  });
+
+  /* средняя — подпись уезжает в левое поле, чтобы не ложиться на столбец */
+  if (cfg.avg > 0) {
+    const ay = yOf(cfg.avg);
+    out += '<line x1="' + padL + '" y1="' + ay.toFixed(1) + '" x2="' + (W - padR) + '" y2="' + ay.toFixed(1) +
+      '" stroke="' + CH.green + '" stroke-width="1.6" stroke-dasharray="5 4"/>' +
+      '<rect x="1" y="' + (ay - 9).toFixed(1) + '" width="' + (padL - 5) + '" height="18" rx="5" fill="' +
+      CH.greenSoft + '"/>' +
+      '<text x="' + ((padL - 4) / 2).toFixed(1) + '" y="' + (ay + 3.5).toFixed(1) +
+      '" text-anchor="middle" font-size="9.5" font-weight="800" fill="' + CH.greenInk + '">ср.</text>' +
+      '<text x="' + (W - padR) + '" y="' + (ay - 6).toFixed(1) + '" text-anchor="end" font-size="10" ' +
+      'font-weight="800" fill="' + CH.greenInk + '">' + esc(cfg.avgLabel) + '</text>';
+  }
+
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  svg.innerHTML = out;
+  bindTips(svg);
+  bindChartKeys(svg);
+}
+
+/* Клавиатура: стрелки ведут по дням, подсказка идёт следом.
+   До этого все точки графиков открывались только наведением мыши. */
+function bindChartKeys(svg) {
+  if (svg.dataset.keys === '1') return;     /* слушатели вешаем один раз */
+  svg.dataset.keys = '1';
+  svg.setAttribute('tabindex', '0');
+  let idx = -1;
+  const spots = () => [...svg.querySelectorAll('[data-tip]')];
+  const clear = () => {
+    svg.querySelectorAll('.kb').forEach(x => x.classList.remove('kb'));
+    hideTip(); idx = -1;
+  };
+  function go(i) {
+    const list = spots();
+    if (!list.length) return;
+    idx = Math.max(0, Math.min(list.length - 1, i));
+    list.forEach((b, k) => b.classList.toggle('kb', k === idx));
+    const r = list[idx].getBoundingClientRect();
+    showTip({ clientX: r.left + r.width / 2, clientY: r.top }, list[idx].dataset.tip);
+  }
+  svg.addEventListener('keydown', e => {
+    const k = e.key;
+    if (k === 'ArrowRight') { go(idx + 1); e.preventDefault(); }
+    else if (k === 'ArrowLeft') { go(idx < 0 ? 0 : idx - 1); e.preventDefault(); }
+    else if (k === 'Home') { go(0); e.preventDefault(); }
+    else if (k === 'End') { go(spots().length - 1); e.preventDefault(); }
+    else if (k === 'Escape') { clear(); }
+  });
+  svg.addEventListener('blur', clear);
+}
+
+/* ---------- посещаемость по дням ---------- */
+function renderDayChart(me, monthName) {
+  const grid = monthGrid(me, monthName);
+  const vals = grid.filter(g => g.kind === 'data');
+  dayBarChart({
+    svg: document.getElementById('dayChart'),
+    id: 'day', padL: 34,
+    items: grid,
+    max: me.max || 1,
+    ticks: [{ v: me.max, label: me.max, strong: true }, { v: me.max / 2, label: Math.round(me.max / 2) }],
+    valueOf: g => g.d.v,
+    labelOf: g => g.d.v,
+    colorOf: g => g.d.v >= me.avg ? CH.rasp : CH.pink,
+    tipOf: g => tipFor(g, me),
+    avg: me.avg,
+    avgLabel: 'среднее за месяц ' + me.avg,
+  });
+  return vals.length;
+}
+
+/* ---------- мощность по дням ---------- */
+function renderCapacityChart(me, monthName) {
+  const grid = monthGrid(me, monthName);
+  const work = grid.filter(g => g.kind === 'data');
+  const avgPct = work.length ? work.reduce((s, g) => s + g.d.v / CAPACITY, 0) / work.length : 0;
+  dayBarChart({
+    svg: document.getElementById('capChart'),
+    id: 'cap', padL: 40,
+    items: grid,
+    max: CAPACITY,
+    ticks: [0.25, 0.5, 0.75, 1].map(p => ({ v: CAPACITY * p, label: Math.round(p * 100) + '%', strong: p === 1 })),
+    valueOf: g => g.d.v,
+    labelOf: g => Math.round(100 * g.d.v / CAPACITY),
+    colorOf: g => { const p = g.d.v / CAPACITY; return p > 0.85 ? CH.rasp : p > 0.5 ? CH.pink : CH.teal; },
+    tipOf: g => tipFor(g, me),
+    topRight: 'мощность ' + CAPACITY + ' чел./день',
+    topRightAt: CAPACITY,
+    avg: avgPct * CAPACITY,
+    avgLabel: 'средняя загрузка ' + pct1(100 * avgPct) + '%',
+  });
+}
+
+/* Подсказка у всех дневных графиков одна: день, что с ним, сколько людей. */
+function tipFor(g, me) {
+  const head = '<b>' + g.day + '-е' + (g.w != null ? ', ' + WD_SHORT[g.w] : '') + '</b>';
+  if (g.kind === 'data') {
+    return head + '<br>Посещаемость: ' + g.d.v + ' чел.' +
+      '<br>Загрузка: ' + pct1(100 * g.d.v / CAPACITY) + '%' +
+      (g.d.a != null ? '<br>Анкет: ' + g.d.a : '');
+  }
+  if (g.kind === 'off') return head + '<br>не работаем';
+  if (g.kind === 'today') return head + '<br>сегодня — данных ещё нет';
+  if (g.kind === 'future') return head + '<br>ещё не наступило';
+  return head + '<br>день прошёл, цифры нет';
 }
 
 function renderCmpChart(me, centers, rank, total) {
