@@ -5,7 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
 <title>ЦМД Пресненский — рабочий портал</title>
-<meta name="theme-color" content="#a81d37">
+<meta name="theme-color" content="#a81d37" id="themeColor">
+<script>
+  /* Тему ставим до отрисовки: иначе на долю секунды мигает светлый фон. */
+  (function () {
+    try {
+      var v = localStorage.getItem('presnya-theme');
+      var t = v ? JSON.parse(v) : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+  })();
+</script>
 <link rel="icon" type="image/png" href="assets/ring-rasp.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,6 +49,36 @@
     --bg-2: #eeece9;
     --card: #ffffff;
     --bar-muted: #cfcbc8;
+    /* цвета, которые раньше стояли в правилах литералами */
+    --chip-bg: #efedeb;
+    --green-btn: #02733c;   /* белый на #038c47 давал 4.33 при норме 4.5 */
+    --bg-3: #f6f4f2;
+    --map-bg: #eae7e4;
+    --topbar-bg: rgba(255,255,255,.86);
+    --rasp-soft-2: #f6dde3;
+    --teal-ink: #176456;
+    --pink-ink: #d1476a;
+    --amber-ink: #7a5410;
+    --green-ink: #0f4d2c;
+    --on-brand: #fff;          /* текст на залитой фирменной кнопке */
+    --crown-line: #eccb73;
+    --crown-bg: #fffaf0;
+    /* палитра графиков: одно определение служит обеим темам */
+    --ch-grid: #f0edea;
+    --ch-grid-strong: #e0dcd9;
+    --ch-axis: #9a9597;
+    --ch-off: #e2dedb;
+    --ch-off-2: #d9d5d2;
+    --ch-rasp: #a81d37;
+    --ch-pink: #ea6c85;
+    --ch-green: #038c47;
+    --ch-teal: #2baf96;
+    /* грядка */
+    --gd-sky-1: #dceeff;
+    --gd-sky-2: #f3f7ec;
+    --gd-sky-3: #fcf3df;
+    --gd-soil-1: #8a6243;
+    --gd-soil-2: #5d3f2b;
     --radius: 18px;
     --radius-sm: 12px;
     --radius-xs: 8px;
@@ -95,12 +135,12 @@
   .btn:active { transform: translateY(1px) scale(.99); }
   .btn-primary { background: var(--rasp); color: #fff; box-shadow: 0 6px 16px rgba(168,29,55,.22); }
   .btn-primary:hover { background: var(--rasp-dark); box-shadow: 0 8px 22px rgba(168,29,55,.3); transform: translateY(-1px); }
-  .btn-green { background: var(--green); color: #fff; box-shadow: 0 6px 16px rgba(3,140,71,.22); }
+  .btn-green { background: var(--green-btn); color: #fff; box-shadow: 0 6px 16px rgba(3,140,71,.22); }
   .btn-green:hover { background: var(--green-dark); box-shadow: 0 8px 22px rgba(3,140,71,.3); transform: translateY(-1px); }
   .btn-ghost { background: var(--card); color: var(--ink); border-color: var(--line); }
   .btn-ghost:hover { border-color: var(--rasp); color: var(--rasp); transform: translateY(-1px); box-shadow: var(--shadow); }
   .btn-soft { background: var(--rasp-soft); color: var(--rasp-dark); }
-  .btn-soft:hover { background: #f6dde3; }
+  .btn-soft:hover { background: var(--rasp-soft-2); }
   .btn-light { background: rgba(255,255,255,.14); color: #fff; border-color: rgba(255,255,255,.22); backdrop-filter: blur(6px); }
   .btn-light:hover { background: rgba(255,255,255,.24); transform: translateY(-1px); }
   .btn-sm { padding: 7px 12px; font-size: var(--fs-sm); border-radius: 10px; }
@@ -123,7 +163,7 @@
   .gate .ring.a { left: -140px; bottom: -160px; transform: rotate(-14deg); }
   .gate .ring.b { right: -150px; top: -170px; transform: rotate(26deg); }
   .gate-card {
-    position: relative; width: 100%; max-width: 380px; background: #fff; border-radius: 22px;
+    position: relative; width: 100%; max-width: 380px; background: var(--card); border-radius: 22px;
     padding: 34px 30px 26px; box-shadow: 0 30px 80px rgba(0,0,0,.35);
     text-align: center; display: flex; flex-direction: column; gap: 12px;
     animation: pop .5s var(--ease) both;
@@ -135,7 +175,7 @@
   .gate-field { position: relative; display: flex; align-items: center; }
   .gate-card input {
     font: 500 var(--fs-md) var(--font); border: 1.5px solid var(--line); border-radius: 12px;
-    padding: 12px 14px; color: var(--ink); width: 100%; background: #fff; transition: border-color .15s, box-shadow .15s;
+    padding: 12px 14px; color: var(--ink); width: 100%; background: var(--card); transition: border-color .15s, box-shadow .15s;
   }
   .gate-card input:focus { outline: none; border-color: var(--rasp); box-shadow: 0 0 0 4px rgba(168,29,55,.08); }
   .gate-field input { padding-right: 46px; }
@@ -156,7 +196,7 @@
   /* ---------- Верхняя панель ---------- */
   .topbar {
     position: sticky; top: 0; z-index: 60;
-    background: rgba(255,255,255,.86); backdrop-filter: blur(12px) saturate(1.2);
+    background: var(--topbar-bg); backdrop-filter: blur(12px) saturate(1.2);
     border-bottom: 1px solid var(--line);
   }
   .topbar-inner {
@@ -178,6 +218,7 @@
   .sync { font-size: var(--fs-xs); color: var(--ink-mute); display: flex; align-items: center; gap: 6px; white-space: nowrap; }
   .sync .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px var(--green-soft); }
   .sync.err .dot { background: var(--rasp); box-shadow: 0 0 0 3px var(--rasp-soft); }
+  .theme-btn { font-size: 15px; line-height: 1; }
   .ribbon { height: 4px; background: linear-gradient(90deg, var(--rasp) 0 50%, var(--green) 50% 100%); }
 
   /* ---------- Hero ---------- */
@@ -250,10 +291,10 @@
   .cat-head::before { content: ''; width: 6px; height: 22px; background: var(--rasp); border-radius: 3px; }
   section.cat.alt .cat-head::before { background: var(--green); }
   .cat-head h2 { font-size: var(--fs-2xl); font-weight: 800; letter-spacing: -.01em; }
-  .cat-head .count { font-size: var(--fs-xs); font-weight: 800; color: var(--green); background: var(--green-soft); border-radius: 999px; padding: 3px 10px; }
+  .cat-head .count { font-size: var(--fs-xs); font-weight: 800; color: var(--green-dark); background: var(--green-soft); border-radius: 999px; padding: 3px 10px; }
   .cat-head .meta { margin-left: auto; font-size: var(--fs-sm); color: var(--ink-soft); }
   .dash-tools { margin-left: auto; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: var(--fs-sm); color: var(--ink-soft); }
-  .dash-tools a { color: var(--green); font-weight: 700; text-decoration: none; }
+  .dash-tools a { color: var(--green-dark); font-weight: 700; text-decoration: none; }
   .dash-tools a:hover { text-decoration: underline; }
   .dash-tools button { border: 1px solid var(--line); background: var(--card); color: var(--ink-soft); border-radius: 10px; height: 32px; min-width: 32px; padding: 0 10px; font: 700 var(--fs-sm) var(--font); cursor: pointer; transition: all .15s; }
   .dash-tools button:hover { color: var(--rasp); border-color: var(--rasp); box-shadow: var(--shadow); }
@@ -276,7 +317,7 @@
   @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } * { animation-duration: .01ms !important; } }
 
   /* скелетон загрузки */
-  .skeleton { border-radius: var(--radius); background: linear-gradient(90deg, var(--bg-2) 25%, #f6f4f2 37%, var(--bg-2) 63%); background-size: 400% 100%; animation: shimmer 1.4s ease infinite; }
+  .skeleton { border-radius: var(--radius); background: linear-gradient(90deg, var(--bg-2) 25%, var(--bg-3) 37%, var(--bg-2) 63%); background-size: 400% 100%; animation: shimmer 1.4s ease infinite; }
   @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
   .skel-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 14px; }
   .skel-grid .skeleton { height: 92px; }
@@ -296,8 +337,8 @@
   .tile .val { font-size: var(--fs-3xl); font-weight: 800; color: var(--rasp); line-height: 1.1; letter-spacing: -.02em; }
   .tile .val small { font-size: var(--fs-md); font-weight: 700; color: var(--ink-soft); }
   .tile .val.c-green { color: var(--green); }
-  .tile .val.c-teal { color: #1d8a75; }
-  .tile .val.c-pink { color: #d1476a; }
+  .tile .val.c-teal { color: var(--teal-ink); }
+  .tile .val.c-pink { color: var(--pink-ink); }
   .tile .val .up { color: var(--green); }
   .tile .val .down { color: var(--rasp); }
   .tile .lbl { margin-top: 5px; font-size: var(--fs-sm); color: var(--ink-soft); line-height: 1.3; }
@@ -355,12 +396,12 @@
   .card .type { flex: none; font-size: var(--fs-2xs); font-weight: 800; border-radius: 6px; padding: 3px 8px; white-space: nowrap; }
   .type-sheet { background: var(--green-soft); color: var(--green); }
   .type-doc   { background: var(--green-soft); color: var(--green); }
-  .type-disk  { background: #efedeb; color: var(--ink-soft); }
+  .type-disk  { background: var(--chip-bg); color: var(--ink-soft); }
   .type-mail  { background: var(--rasp-soft); color: var(--rasp); }
-  .type-web   { background: var(--teal-soft); color: #1d7e6c; }
+  .type-web   { background: var(--teal-soft); color: var(--teal-ink); }
   .card h3 { font-size: var(--fs-md); font-weight: 700; line-height: 1.3; padding-right: 26px; }
   .card p { font-size: var(--fs-sm); line-height: 1.45; color: var(--ink-soft); }
-  .card .star { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border: none; background: transparent; border-radius: 8px; cursor: pointer; font-size: var(--fs-lg); line-height: 1; color: #cdc9c7; transition: background .12s, color .12s, transform .12s; }
+  .card .star { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border: none; background: transparent; border-radius: 8px; cursor: pointer; font-size: var(--fs-lg); line-height: 1; color: var(--bar-muted); transition: background .12s, color .12s, transform .12s; }
   .card .star:hover { background: var(--rasp-soft); color: var(--rasp); transform: scale(1.1); }
   .card .star.on { color: var(--rasp); }
   .empty { display: none; text-align: center; color: var(--ink-soft); padding: 50px 0; font-size: var(--fs-md); }
@@ -377,7 +418,7 @@
   .task-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; font-size: var(--fs-md); animation: rowIn .35s var(--ease) both; }
   @keyframes rowIn { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: none; } }
   .task-row + .task-row { border-top: 1px solid var(--line-soft); }
-  .task-row .when { flex: none; width: 88px; text-align: center; font-size: var(--fs-xs); font-weight: 800; border-radius: 999px; padding: 4px 0; background: var(--green-soft); color: var(--green); }
+  .task-row .when { flex: none; width: 88px; text-align: center; font-size: var(--fs-xs); font-weight: 800; border-radius: 999px; padding: 4px 0; background: var(--green-soft); color: var(--green-dark); }
   .task-row.today .when { background: var(--rasp); color: #fff; box-shadow: 0 4px 10px rgba(168,29,55,.25); }
   .task-row.overdue .when { background: var(--rasp-soft); color: var(--rasp); }
   .task-row .txt { flex: 1; min-width: 0; line-height: 1.35; }
@@ -396,7 +437,7 @@
   .task-form .form-title { flex-basis: 100%; font-size: var(--fs-xs); font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--rasp); }
   .task-row .mine, .task-row .rep { flex: none; font-size: var(--fs-2xs); font-weight: 800; border-radius: 6px; padding: 2px 6px; }
   .task-row .mine { color: var(--teal); background: var(--teal-soft); }
-  .task-row .rep { color: #1d8a75; background: var(--teal-soft); }
+  .task-row .rep { color: var(--teal-ink); background: var(--teal-soft); }
   .task-row .acts { flex: none; display: flex; gap: 4px; opacity: .55; transition: opacity .15s; }
   .task-row:hover .acts { opacity: 1; }
   .task-row .acts button { border: 1px solid var(--line); background: var(--card); border-radius: 8px; width: 28px; height: 28px; font-size: var(--fs-sm); line-height: 1; cursor: pointer; color: var(--ink-soft); transition: all .12s; }
@@ -407,7 +448,7 @@
   .task-pin-head { font-size: var(--fs-xs); font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--rasp); padding: 10px 0 4px; }
   .task-state { display: none; margin: 4px 0 10px; font-size: var(--fs-sm); border-radius: 10px; padding: 8px 12px; }
   .task-state.show { display: block; }
-  .task-state.warn { background: var(--amber-soft); color: #7a5410; }
+  .task-state.warn { background: var(--amber-soft); color: var(--amber-ink); }
   .task-state.err { background: var(--rasp-soft); color: var(--rasp-dark); }
 
   /* ---------- Дни рождения ---------- */
@@ -416,10 +457,10 @@
   .side-head .tools { margin-left: auto; display: flex; gap: 6px; }
   .bday-row { display: flex; align-items: baseline; gap: 10px; padding: 8px 0; font-size: var(--fs-sm); }
   .bday-row + .bday-row { border-top: 1px solid var(--line-soft); }
-  .bday-row .when { flex: none; width: 64px; text-align: center; font-size: var(--fs-xs); font-weight: 800; border-radius: 999px; padding: 3px 0; background: var(--rasp-soft); color: var(--rasp); }
+  .bday-row .when { flex: none; width: 64px; text-align: center; font-size: var(--fs-xs); font-weight: 800; border-radius: 999px; padding: 3px 0; background: var(--rasp-soft); color: var(--rasp-dark); }
   .bday-row.today .when { background: var(--rasp); color: #fff; }
   .bday-row .nm { flex: 1; font-weight: 600; }
-  .bday-row .role { font-size: var(--fs-2xs); font-weight: 800; color: var(--green); background: var(--green-soft); border-radius: 6px; padding: 2px 6px; }
+  .bday-row .role { font-size: var(--fs-2xs); font-weight: 800; color: var(--green-dark); background: var(--green-soft); border-radius: 6px; padding: 2px 6px; }
   .bday-row .in { flex: none; font-size: var(--fs-xs); color: var(--ink-soft); }
 
   /* ---------- Быстрый доступ ---------- */
@@ -436,7 +477,7 @@
   .links-table .acts button:hover { border-color: var(--rasp); color: var(--rasp); }
 
   /* ---------- Тизер партнёров на главной ---------- */
-  .partners-teaser { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; align-items: center; padding: 22px 24px; background: linear-gradient(120deg, #fff 0%, var(--green-soft) 100%); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); position: relative; overflow: hidden; }
+  .partners-teaser { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; align-items: center; padding: 22px 24px; background: linear-gradient(120deg, var(--card) 0%, var(--green-soft) 100%); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); position: relative; overflow: hidden; }
   .partners-teaser .ring { position: absolute; right: -60px; bottom: -90px; width: 260px; opacity: .08; pointer-events: none; }
   .partners-teaser h3 { font-size: var(--fs-xl); font-weight: 800; letter-spacing: -.01em; margin-bottom: 6px; }
   .partners-teaser p { font-size: var(--fs-md); color: var(--ink-soft); line-height: 1.5; margin-bottom: 14px; }
@@ -478,7 +519,7 @@
   #pfToggle.on { border-color: var(--rasp); color: var(--rasp); }
   #partnersMapWrap { display: none; margin-bottom: 16px; }
   #partnersMapWrap.show { display: block; }
-  #partnersMap { height: 520px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); box-shadow: var(--shadow-md); background: #eae7e4; }
+  #partnersMap { height: 520px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); box-shadow: var(--shadow-md); background: var(--map-bg); }
   .leaflet-container { font-family: var(--font); }
   .leaflet-control-attribution { font-size: var(--fs-2xs) !important; background: rgba(255,255,255,.8) !important; }
   .leaflet-popup-content-wrapper { border-radius: 12px !important; box-shadow: var(--shadow-md) !important; font-family: var(--font); }
@@ -501,23 +542,23 @@
   .pcard-status { display: flex; gap: 6px; flex-wrap: wrap; }
   .pbadge { display: inline-block; font-size: var(--fs-2xs); font-weight: 800; border-radius: 6px; padding: 2px 8px; white-space: nowrap; letter-spacing: .01em; }
   .pr-high { background: var(--rasp-soft); color: var(--rasp); }
-  .pr-mid  { background: var(--amber-soft); color: #9a6a10; }
-  .pr-low  { background: #efedeb; color: var(--ink-soft); }
+  .pr-mid  { background: var(--amber-soft); color: var(--amber-ink); }
+  .pr-low  { background: var(--chip-bg); color: var(--ink-soft); }
   .st-partner { background: var(--green-soft); color: var(--green); }
-  .st-new     { background: var(--teal-soft); color: #1d7e6c; }
-  .st-refused { background: #efedeb; color: var(--ink-soft); }
-  .st-default { background: var(--teal-soft); color: #1d7e6c; }
+  .st-new     { background: var(--teal-soft); color: var(--teal-ink); }
+  .st-refused { background: var(--chip-bg); color: var(--ink-soft); }
+  .st-default { background: var(--teal-soft); color: var(--teal-ink); }
   .tag { background: var(--bg); color: var(--ink-soft); }
   .pm-head { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 10px; }
   .pm-head .dot.lg { width: 44px; height: 44px; border-radius: 12px; flex: none; display: flex; align-items: center; justify-content: center; font-size: var(--fs-2xl); }
   .pm-head h2 { font-size: var(--fs-xl); margin-bottom: 2px; }
   .pm-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
   .pm-desc { font-size: var(--fs-sm); line-height: 1.5; color: var(--ink-soft); margin-bottom: 10px; }
-  .pm-use { font-size: var(--fs-sm); line-height: 1.5; margin-bottom: 12px; padding: 10px 12px; background: var(--green-soft); border-radius: 10px; color: #0f4d2c; }
+  .pm-use { font-size: var(--fs-sm); line-height: 1.5; margin-bottom: 12px; padding: 10px 12px; background: var(--green-soft); border-radius: 10px; color: var(--green-ink); }
   .pm-use b { color: var(--green); }
   .pm-contacts { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; font-size: var(--fs-sm); }
   .pm-contacts a { color: var(--rasp); font-weight: 700; text-decoration: none; background: var(--rasp-soft); border-radius: 8px; padding: 5px 10px; }
-  .pm-contacts a:hover { background: #f6dde3; }
+  .pm-contacts a:hover { background: var(--rasp-soft-2); }
   .pm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; font-size: var(--fs-sm); margin-bottom: 14px; padding: 10px 12px; background: var(--bg); border-radius: 10px; }
   .pm-grid .k { color: var(--ink-soft); }
   .pm-grid .v { font-weight: 700; text-align: right; }
@@ -529,7 +570,7 @@
   .comm-row .comm-top { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
   .comm-row .comm-date { font-weight: 800; color: var(--ink-soft); font-size: var(--fs-xs); }
   .comm-row .comm-channel { font-size: var(--fs-2xs); font-weight: 800; color: var(--rasp); background: var(--rasp-soft); border-radius: 6px; padding: 1px 7px; }
-  .comm-row .comm-result { font-size: var(--fs-2xs); font-weight: 800; color: var(--green); background: var(--green-soft); border-radius: 6px; padding: 1px 7px; }
+  .comm-row .comm-result { font-size: var(--fs-2xs); font-weight: 800; color: var(--green-dark); background: var(--green-soft); border-radius: 6px; padding: 1px 7px; }
   .comm-row .comm-comment { margin-top: 3px; color: var(--ink); }
   .comm-row .comm-next { margin-top: 2px; font-size: var(--fs-xs); color: var(--ink-soft); font-style: italic; }
   .guide-block { margin-bottom: 16px; }
@@ -665,7 +706,7 @@
     padding: 12px 14px; background: var(--card); border: 1px solid var(--line);
     border-radius: var(--r-control); transition: border-color .18s, box-shadow .18s, transform .18s var(--ease); }
   .farmer:hover { border-color: var(--rasp); box-shadow: var(--shadow); transform: translateY(-1px); }
-  .farmer.king { border-color: #eccb73; background: linear-gradient(180deg, #fffaf0, var(--card)); }
+  .farmer.king { border-color: var(--crown-line); background: linear-gradient(180deg, var(--crown-bg), var(--card)); }
   .f-ava { width: 46px; height: 52px; }
   .farmer.king .g-crown { animation: crownshine 3.4s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
   @keyframes crownshine { 0%, 70%, 100% { opacity: 1; } 82% { opacity: .55; } }
@@ -753,6 +794,61 @@
   dialog .dlg-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; }
 
   /* ---------- Широкие экраны: рабочая область растёт вместо пустых полей ---------- */
+  /* ============================================================
+     ТЁМНАЯ ТЕМА
+     data-theme ставится скриптом в <head> ещё до отрисовки, поэтому
+     здесь нужен один набор правил, а не дубль под prefers-color-scheme.
+     Малиновый и зелёный на тёмном фоне осветлены: исходные #a81d37 и
+     #038c47 дают на фоне #141318 контраст около 2,5 при норме 4,5.
+     ============================================================ */
+  :root[data-theme="dark"] {
+    --rasp: #ef5d78; --rasp-dark: #f47a90; --rasp-deep: #c23b57;
+    --rasp-soft: #33222a; --rasp-line: #4d333c; --rasp-soft-2: #3d2832;
+    --green: #35cc7c; --green-dark: #55d995; --green-soft: #17311f;
+    --teal: #35c8ab; --teal-soft: #14322d; --pink: #f4889f;
+    --lime: #4bd98a; --amber: #f0a73a; --amber-soft: #352816;
+    --ink: #ece9ea; --ink-soft: #b0aaad; --ink-mute: #968f93;
+    --line: #35313b; --line-soft: #2a2731;
+    --bg: #141318; --bg-2: #1c1b22; --bg-3: #24222c;
+    --card: #1f1e26; --bar-muted: #433e49;
+    --chip-bg: #2b2833; --map-bg: #23212b;
+    --topbar-bg: rgba(31,30,38,.88);
+    --green-btn: #35cc7c;
+    --teal-ink: #5ddcc0; --pink-ink: #f79bb0;
+    --amber-ink: #f0b454; --green-ink: #6cdc9a;
+    --on-brand: #150f12;       /* на светлой малине белый текст уже не читается */
+    --crown-line: #9c7c2e;
+    --crown-bg: #2a2418;
+    --shadow: 0 1px 2px rgba(0,0,0,.42), 0 6px 18px rgba(0,0,0,.34);
+    --shadow-md: 0 2px 6px rgba(0,0,0,.46), 0 12px 32px rgba(0,0,0,.4);
+    --shadow-hover: 0 3px 8px rgba(239,93,120,.16), 0 16px 36px rgba(0,0,0,.45);
+    --ch-grid: #2c2935; --ch-grid-strong: #3c3847; --ch-axis: #8f8992;
+    --ch-off: #322f3a; --ch-off-2: #3b3744;
+    --ch-rasp: #ef5d78; --ch-pink: #f79bb0;
+    --ch-green: #35cc7c; --ch-teal: #35c8ab;
+    --gd-sky-1: #18273a; --gd-sky-2: #1b2a2c; --gd-sky-3: #2b2620;
+    --gd-soil-1: #4b3626; --gd-soil-2: #2d2017;
+  }
+  /* на тёмной теме фирменная заливка светлая — текст на ней должен быть тёмным */
+  :root[data-theme="dark"] .btn-primary,
+  :root[data-theme="dark"] .btn-green,
+  :root[data-theme="dark"] .month-chips button.on,
+  :root[data-theme="dark"] .tabbar button.on,
+  :root[data-theme="dark"] .task-row.today .when,
+  :root[data-theme="dark"] .bday-row.today .when,
+  :root[data-theme="dark"] .pf-view-btn.on,
+  :root[data-theme="dark"] .dash-tools button.add,
+  :root[data-theme="dark"] .btn.add,
+  :root[data-theme="dark"] .task-form button,
+  :root[data-theme="dark"] .gate-card button[type=submit],
+  :root[data-theme="dark"] .links-table a.idlink:hover { color: var(--on-brand); }
+  /* герой остаётся малиновым, но вечером не должен слепить */
+  :root[data-theme="dark"] .hero, :root[data-theme="dark"] .gate { filter: saturate(.9) brightness(.78); }
+  :root[data-theme="dark"] .garden-scene .g-cloud { opacity: .24; }
+  :root[data-theme="dark"] .garden-scene .g-empty { fill: #6f6258; }
+  /* карта светлая по своей природе — приглушаем, чтобы не резала глаз */
+  :root[data-theme="dark"] #partnersMap .leaflet-tile { filter: brightness(.72) saturate(.82); }
+
   @media (min-width: 1400px) { :root { --maxw: 1320px; } }
   @media (min-width: 1700px) { :root { --maxw: 1460px; } }
   @media (min-width: 2000px) { :root { --maxw: 1560px; } }
@@ -847,6 +943,7 @@
     </nav>
     <div class="topbar-tools">
       <span class="sync" id="syncState" title="Данные обновляются автоматически: при открытии, каждые 10 минут и при возврате на вкладку"><span class="dot"></span><span class="t" id="syncText">загрузка…</span></span>
+      <button class="btn btn-ghost btn-icon theme-btn" id="themeBtn" type="button" title="Тёмная тема" aria-label="Переключить тему" aria-pressed="false">☾</button>
       <button class="btn btn-ghost btn-icon" id="globalRefresh" title="Обновить данные">⟳</button>
       <a class="btn btn-green btn-sm" href="https://my.mts-link.ru/j/93021939/551741639/stream-new/1048204767" target="_blank" rel="noopener" title="Открыть «Искренний сервис» (MTS Link)">💬 <span class="t">Искренний сервис</span></a>
     </div>
@@ -1006,9 +1103,9 @@
         <div class="chart-card">
           <h3>Посещаемость по дням <span class="badge" id="dayBadge"></span></h3>
           <div class="legend">
-            <span class="li"><span class="sw box" style="background:#a81d37"></span>день выше среднего</span>
-            <span class="li"><span class="sw box" style="background:#ea6c85"></span>ниже среднего</span>
-            <span class="li"><span class="sw" style="background:#038c47"></span>среднее за месяц</span>
+            <span class="li"><span class="sw box" style="background:var(--ch-rasp)"></span>день выше среднего</span>
+            <span class="li"><span class="sw box" style="background:var(--ch-pink)"></span>ниже среднего</span>
+            <span class="li"><span class="sw" style="background:var(--ch-green)"></span>среднее за месяц</span>
           </div>
           <svg id="dayChart" viewBox="0 0 720 220" role="img" aria-label="Посещаемость по дням"></svg>
         </div>
@@ -1022,10 +1119,10 @@
         <div class="chart-card">
           <h3>Мощность центра по дням <span class="badge">401 чел./день = 100%</span></h3>
           <div class="legend">
-            <span class="li"><span class="sw box" style="background:#2baf96"></span>до 50%</span>
-            <span class="li"><span class="sw box" style="background:#ea6c85"></span>50–85%</span>
-            <span class="li"><span class="sw box" style="background:#a81d37"></span>выше 85%</span>
-            <span class="li"><span class="sw" style="background:#038c47"></span>средняя загрузка</span>
+            <span class="li"><span class="sw box" style="background:var(--ch-teal)"></span>до 50%</span>
+            <span class="li"><span class="sw box" style="background:var(--ch-pink)"></span>50–85%</span>
+            <span class="li"><span class="sw box" style="background:var(--ch-rasp)"></span>выше 85%</span>
+            <span class="li"><span class="sw" style="background:var(--ch-green)"></span>средняя загрузка</span>
           </div>
           <svg id="capChart" viewBox="0 0 720 230" role="img" aria-label="Загрузка мощности центра по дням"></svg>
         </div>
@@ -1037,8 +1134,8 @@
             <h3>Пресненский на фоне округа</h3>
             <div class="cmp-summary" id="cmpSummary"></div>
             <div class="legend">
-              <span class="li"><span class="sw" style="background:#a81d37"></span>Пресненский</span>
-              <span class="li"><span class="sw" style="background:#2baf96"></span>среднее по другим ЦМД ЦАО</span>
+              <span class="li"><span class="sw" style="background:var(--ch-rasp)"></span>Пресненский</span>
+              <span class="li"><span class="sw" style="background:var(--ch-teal)"></span>среднее по другим ЦМД ЦАО</span>
             </div>
             <svg id="cmpChart" viewBox="0 0 720 220" role="img" aria-label="Сравнение с центрами ЦАО"></svg>
           </div>
@@ -1046,8 +1143,8 @@
             <h3>Весь поток ЦАО по дням</h3>
             <div class="cap">Все центры округа вместе, человек в день</div>
             <div class="legend">
-              <span class="li"><span class="sw box" style="background:#038c47"></span>рабочий день</span>
-              <span class="li"><span class="sw box" style="background:#d9d5d2"></span>выходной</span>
+              <span class="li"><span class="sw box" style="background:var(--ch-green)"></span>рабочий день</span>
+              <span class="li"><span class="sw box" style="background:var(--ch-off-2)"></span>выходной</span>
             </div>
             <svg id="caoChart" viewBox="0 0 440 220" role="img" aria-label="Поток ЦАО по дням"></svg>
           </div>
@@ -1057,9 +1154,9 @@
             <h3>Клубы по центрам округа <span class="badge" id="caoClubsBadge"></span></h3>
             <div class="cap" id="caoClubsCap">Реестр клубов ЦАО — лист на каждый центр</div>
             <div class="legend">
-              <span class="li"><span class="sw box" style="background:#038c47"></span>набор открыт</span>
-              <span class="li"><span class="sw box" style="background:#cfcbc8"></span>пауза или по записи</span>
-              <span class="li"><span class="sw box" style="background:#a81d37"></span>Пресненский</span>
+              <span class="li"><span class="sw box" style="background:var(--ch-green)"></span>набор открыт</span>
+              <span class="li"><span class="sw box" style="background:var(--bar-muted)"></span>пауза или по записи</span>
+              <span class="li"><span class="sw box" style="background:var(--ch-rasp)"></span>Пресненский</span>
             </div>
             <div class="rank-rows" id="caoClubsRows"><div class="task-empty">Загружаю реестр округа…</div></div>
             <div class="cap" style="margin-top:14px">Направления по округу · красным — сколько у нас</div>
@@ -1646,6 +1743,58 @@ function watchReveal() {
    («все, у кого есть ссылка» сохраняется).
    Если APPS_SCRIPT_URL не задан, вход невозможен — зашитых паролей в коде нет.
    ============================================================ */
+/* ============================================================
+   ТЕМА
+   Портал открывают и в светлом кабинете, и вечером из дома. По умолчанию
+   тема берётся из настроек системы; как только человек нажал кнопку,
+   выбор запоминается и система больше не вмешивается.
+   Цвета графиков и грядки живут в CSS-переменных, поэтому при смене темы
+   достаточно перечитать палитру и перерисовать уже загруженные данные —
+   в сеть повторно не ходим.
+   ============================================================ */
+const CH = {};
+function readPalette() {
+  const cs = getComputedStyle(document.documentElement);
+  const g = n => cs.getPropertyValue(n).trim();
+  CH.grid = g('--ch-grid'); CH.gridStrong = g('--ch-grid-strong');
+  CH.axis = g('--ch-axis'); CH.off = g('--ch-off'); CH.off2 = g('--ch-off-2');
+  CH.rasp = g('--ch-rasp'); CH.pink = g('--ch-pink');
+  CH.green = g('--ch-green'); CH.teal = g('--ch-teal');
+  CH.sky1 = g('--gd-sky-1'); CH.sky2 = g('--gd-sky-2'); CH.sky3 = g('--gd-sky-3');
+  CH.soil1 = g('--gd-soil-1'); CH.soil2 = g('--gd-soil-2');
+}
+readPalette();
+
+function repaintThemed() {
+  try { if (typeof monthData !== 'undefined' && currentMonth && monthData[currentMonth]) renderDashboard(monthData[currentMonth], liveFlag, currentMonth); } catch (e) {}
+  try { if (typeof garden !== 'undefined' && garden) renderGarden(); } catch (e) {}
+  try { if (typeof caoClubsCache !== 'undefined' && caoClubsCache) renderCaoClubs(caoClubsCache); } catch (e) {}
+}
+
+const themeMQ = window.matchMedia('(prefers-color-scheme: dark)');
+function applyTheme(t, repaint) {
+  document.documentElement.setAttribute('data-theme', t);
+  const btn = document.getElementById('themeBtn');
+  if (btn) {
+    btn.textContent = t === 'dark' ? '☀' : '☾';
+    btn.title = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+  }
+  const meta = document.getElementById('themeColor');
+  if (meta) meta.setAttribute('content', t === 'dark' ? '#141318' : '#a81d37');
+  readPalette();
+  if (repaint !== false) repaintThemed();
+}
+applyTheme(document.documentElement.getAttribute('data-theme') || 'light', false);
+themeMQ.addEventListener('change', () => {
+  if (!load('presnya-theme', '')) applyTheme(themeMQ.matches ? 'dark' : 'light');
+});
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  store('presnya-theme', next);
+  applyTheme(next);
+});
+
 const gateEl = document.getElementById('gate');
 function showGate() { gateEl.hidden = false; document.getElementById('gateLogin').focus(); }
 (function () {
@@ -1983,18 +2132,18 @@ function renderDashboard(centers, live, monthName) {
     const h = Math.round((H - padT - padB) * d.v / maxV);
     const y = H - padB - h;
     if (d.v > 0) {
-      const fill = d.v >= me.avg ? '#a81d37' : '#ea6c85';
+      const fill = d.v >= me.avg ? CH.rasp : CH.pink;
       out += '<rect class="bar" x="' + x.toFixed(1) + '" y="' + y + '" width="' + bw.toFixed(1) + '" height="' + h + '" rx="3" fill="' + fill + '" data-tip="' + esc('<b>' + d.day + '-е число</b><br>Посещаемость: ' + d.v + ' чел.<br>Загрузка: ' + pct1(100 * d.v / CAPACITY) + '%') + '"/>';
-      if (d.v === me.max) out += '<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (y - 6) + '" text-anchor="middle" font-size="11" font-weight="800" fill="#a81d37">' + d.v + '</text>';
+      if (d.v === me.max) out += '<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (y - 6) + '" text-anchor="middle" font-size="11" font-weight="800" fill="' + CH.rasp + '">' + d.v + '</text>';
     } else {
       out += '<rect x="' + x.toFixed(1) + '" y="' + (H - padB - 3) + '" width="' + bw.toFixed(1) + '" height="3" rx="1.5" fill="#e2dedb" data-tip="' + esc('<b>' + d.day + '-е число</b><br>выходной') + '"/>';
     }
-    out += '<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (H - 7) + '" text-anchor="middle" font-size="9.5" fill="#9a9597">' + d.day + '</text>';
+    out += '<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (H - 7) + '" text-anchor="middle" font-size="9.5" fill="' + CH.axis + '">' + d.day + '</text>';
   });
   if (me.avg > 0) {
     const ay = (H - padB - (H - padT - padB) * me.avg / maxV).toFixed(1);
     out += '<line x1="' + padL + '" y1="' + ay + '" x2="' + (W - padR) + '" y2="' + ay + '" stroke="#038c47" stroke-width="1.5" stroke-dasharray="5 4"/>' +
-      '<text x="' + (W - padR - 2) + '" y="' + (ay - 5) + '" text-anchor="end" font-size="10" font-weight="800" fill="#038c47">ср. ' + me.avg + '</text>';
+      '<text x="' + (W - padR - 2) + '" y="' + (ay - 5) + '" text-anchor="end" font-size="10" font-weight="800" fill="' + CH.green + '">ср. ' + me.avg + '</text>';
   }
   svg.innerHTML = out;
   bindTips(svg);
@@ -2043,7 +2192,7 @@ function renderCapacitySpark(me) {
     const x = i * (bw + gap);
     const pct = Math.min(1, d.v / CAPACITY);
     const h = Math.round(H * pct);
-    const fill = d.v === 0 ? '#e2dedb' : pct > 0.85 ? '#a81d37' : pct > 0.5 ? '#ea6c85' : '#2baf96';
+    const fill = d.v === 0 ? CH.off : pct > 0.85 ? CH.rasp : pct > 0.5 ? CH.pink : CH.teal;
     out += '<rect x="' + x.toFixed(1) + '" y="' + (d.v === 0 ? H - 1 : H - h) + '" width="' + bw.toFixed(1) + '" height="' + (d.v === 0 ? 1 : Math.max(1, h)) + '" rx="1" fill="' + fill + '" data-tip="' + esc('<b>' + d.day + '-е</b><br>Посещаемость: ' + d.v + '<br>Мощность: ' + CAPACITY + '<br>Загрузка: ' + pct1(100 * d.v / CAPACITY) + '%') + '"/>';
   });
   svg.innerHTML = out;
@@ -2062,10 +2211,10 @@ function renderCapacityChart(me) {
   /* сетка 25/50/75/100% */
   [0.25, 0.5, 0.75, 1].forEach(g => {
     const y = yOf(g).toFixed(1);
-    out += '<line x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y + '" stroke="' + (g === 1 ? '#e0dcd9' : '#f0edea') + '" stroke-width="1"' + (g === 1 ? ' stroke-dasharray="4 3"' : '') + '/>' +
-      '<text x="' + (padL - 6) + '" y="' + (+y + 3.5) + '" text-anchor="end" font-size="10" fill="#9a9597">' + Math.round(g * 100) + '%</text>';
+    out += '<line x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y + '" stroke="' + (g === 1 ? CH.gridStrong : CH.grid) + '" stroke-width="1"' + (g === 1 ? ' stroke-dasharray="4 3"' : '') + '/>' +
+      '<text x="' + (padL - 6) + '" y="' + (+y + 3.5) + '" text-anchor="end" font-size="10" fill="' + CH.axis + '">' + Math.round(g * 100) + '%</text>';
   });
-  out += '<text x="' + (W - padR) + '" y="' + (yOf(1) - 6) + '" text-anchor="end" font-size="10" font-weight="800" fill="#a81d37">мощность ' + CAPACITY + ' чел./день</text>';
+  out += '<text x="' + (W - padR) + '" y="' + (yOf(1) - 6) + '" text-anchor="end" font-size="10" font-weight="800" fill="' + CH.rasp + '">мощность ' + CAPACITY + ' чел./день</text>';
   const workDays = me.days.filter(d => d.v > 0);
   const avgPct = workDays.length ? workDays.reduce((s, d) => s + d.v / CAPACITY, 0) / workDays.length : 0;
   me.days.forEach((d, i) => {
@@ -2074,17 +2223,17 @@ function renderCapacityChart(me) {
     const tip = '<b>' + d.day + '-е число</b><br>Посещаемость: ' + d.v + '<br>Мощность: ' + CAPACITY + '<br>Загрузка: ' + pct1(100 * p) + '%';
     if (d.v > 0) {
       const y = yOf(p);
-      const fill = p > 0.85 ? '#a81d37' : p > 0.5 ? '#ea6c85' : '#2baf96';
+      const fill = p > 0.85 ? CH.rasp : p > 0.5 ? CH.pink : CH.teal;
       out += '<rect class="bar" x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + (H - padB - y).toFixed(1) + '" rx="3" fill="' + fill + '" data-tip="' + esc(tip) + '"/>';
     } else {
       out += '<rect x="' + x.toFixed(1) + '" y="' + (H - padB - 3) + '" width="' + bw.toFixed(1) + '" height="3" rx="1.5" fill="#e2dedb" data-tip="' + esc('<b>' + d.day + '-е число</b><br>выходной') + '"/>';
     }
-    if (n <= 20 || i % 2 === 0) out += '<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="9.5" fill="#9a9597">' + d.day + '</text>';
+    if (n <= 20 || i % 2 === 0) out += '<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="9.5" fill="' + CH.axis + '">' + d.day + '</text>';
   });
   if (avgPct > 0) {
     const ay = yOf(avgPct).toFixed(1);
     out += '<line x1="' + padL + '" y1="' + ay + '" x2="' + (W - padR) + '" y2="' + ay + '" stroke="#038c47" stroke-width="1.5" stroke-dasharray="5 4"/>' +
-      '<text x="' + (padL + 4) + '" y="' + (+ay - 5) + '" font-size="10.5" font-weight="800" fill="#038c47">средняя загрузка ' + pct1(100 * avgPct) + '%</text>';
+      '<text x="' + (padL + 4) + '" y="' + (+ay - 5) + '" font-size="10.5" font-weight="800" fill="' + CH.green + '">средняя загрузка ' + pct1(100 * avgPct) + '%</text>';
   }
   svg.innerHTML = out;
   bindTips(svg);
@@ -2124,18 +2273,18 @@ function renderCmpChart(me, centers, rank, total) {
   let out = '';
   for (const gv of [Math.round(maxV / 2), maxV]) {
     out += '<line x1="' + padL + '" y1="' + y(gv).toFixed(1) + '" x2="' + (W - padR) + '" y2="' + y(gv).toFixed(1) + '" stroke="#f0edea" stroke-width="1"/>' +
-      '<text x="' + padL + '" y="' + (y(gv) - 4).toFixed(1) + '" font-size="9.5" fill="#9a9597">' + gv + '</text>';
+      '<text x="' + padL + '" y="' + (y(gv) - 4).toFixed(1) + '" font-size="9.5" fill="' + CH.axis + '">' + gv + '</text>';
   }
   out += '<path d="' + path(s => s.cao) + '" fill="none" stroke="#2baf96" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
   out += '<path d="' + path(s => s.mine) + '" fill="none" stroke="#a81d37" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>';
   const lastMine = [...series].reverse().find(s => s.mine > 0);
   const lastCao = [...series].reverse().find(s => s.cao > 0);
-  if (lastMine) out += '<text x="' + (W - padR + 5) + '" y="' + (y(lastMine.mine) + 3).toFixed(1) + '" font-size="11" font-weight="800" fill="#a81d37">' + lastMine.mine + '</text>';
+  if (lastMine) out += '<text x="' + (W - padR + 5) + '" y="' + (y(lastMine.mine) + 3).toFixed(1) + '" font-size="11" font-weight="800" fill="' + CH.rasp + '">' + lastMine.mine + '</text>';
   if (lastCao) out += '<text x="' + (W - padR + 5) + '" y="' + (y(lastCao.cao) + 3).toFixed(1) + '" font-size="11" font-weight="700" fill="#2baf96">' + lastCao.cao + '</text>';
   series.forEach((s, i) => {
     const tip = '<b>' + s.day + '-е число</b><br>Пресненский: ' + (s.mine || '—') + '<br>Среднее по ЦАО: ' + (s.cao || '—');
     out += '<rect x="' + (x(i) - step / 2).toFixed(1) + '" y="0" width="' + step.toFixed(1) + '" height="' + (H - padB) + '" fill="transparent" data-tip="' + esc(tip) + '"/>';
-    if (i % 2 === 0) out += '<text x="' + x(i).toFixed(1) + '" y="' + (H - 7) + '" text-anchor="middle" font-size="9.5" fill="#9a9597">' + s.day + '</text>';
+    if (i % 2 === 0) out += '<text x="' + x(i).toFixed(1) + '" y="' + (H - 7) + '" text-anchor="middle" font-size="9.5" fill="' + CH.axis + '">' + s.day + '</text>';
   });
   svg.innerHTML = out;
   bindTips(svg);
@@ -2155,11 +2304,11 @@ function renderCaoChart(me, centers) {
     const yp = H - padB - h;
     if (t.v > 0) {
       out += '<rect class="bar" x="' + xp.toFixed(1) + '" y="' + yp + '" width="' + bw.toFixed(1) + '" height="' + h + '" rx="2.5" fill="#038c47" data-tip="' + esc('<b>' + t.day + '-е число</b><br>Весь ЦАО: ' + t.v.toLocaleString('ru-RU') + ' чел.') + '"/>';
-      if (t.v === maxV) out += '<text x="' + (xp + bw / 2).toFixed(1) + '" y="' + (yp - 6) + '" text-anchor="middle" font-size="10.5" font-weight="800" fill="#038c47">' + t.v + '</text>';
+      if (t.v === maxV) out += '<text x="' + (xp + bw / 2).toFixed(1) + '" y="' + (yp - 6) + '" text-anchor="middle" font-size="10.5" font-weight="800" fill="' + CH.green + '">' + t.v + '</text>';
     } else {
       out += '<rect x="' + xp.toFixed(1) + '" y="' + (H - padB - 3) + '" width="' + bw.toFixed(1) + '" height="3" rx="1.5" fill="#d9d5d2" data-tip="' + esc('<b>' + t.day + '-е число</b><br>выходной') + '"/>';
     }
-    if (i % 2 === 0) out += '<text x="' + (xp + bw / 2).toFixed(1) + '" y="' + (H - 7) + '" text-anchor="middle" font-size="9" fill="#9a9597">' + t.day + '</text>';
+    if (i % 2 === 0) out += '<text x="' + (xp + bw / 2).toFixed(1) + '" y="' + (H - 7) + '" text-anchor="middle" font-size="9" fill="' + CH.axis + '">' + t.day + '</text>';
   });
   svg.innerHTML = out;
   bindTips(svg);
@@ -2748,10 +2897,10 @@ function renderGarden() {
        и градиенты из статической разметки не доживали до второй отрисовки */
     '<defs>' +
       '<linearGradient id="gardenSky" x1="0" y1="0" x2="0" y2="1">' +
-        '<stop offset="0" stop-color="#dceeff"/><stop offset=".55" stop-color="#f3f7ec"/>' +
-        '<stop offset="1" stop-color="#fcf3df"/></linearGradient>' +
+        '<stop offset="0" stop-color=' + '"' + CH.sky1 + '"' + '/><stop offset=".55" stop-color=' + '"' + CH.sky2 + '"' + '/>' +
+        '<stop offset="1" stop-color=' + '"' + CH.sky3 + '"' + '/></linearGradient>' +
       '<linearGradient id="gardenSoil" x1="0" y1="0" x2="0" y2="1">' +
-        '<stop offset="0" stop-color="#8a6243"/><stop offset="1" stop-color="#5d3f2b"/></linearGradient>' +
+        '<stop offset="0" stop-color=' + '"' + CH.soil1 + '"' + '/><stop offset="1" stop-color=' + '"' + CH.soil2 + '"' + '/></linearGradient>' +
       '<radialGradient id="gardenSun"><stop offset="0" stop-color="#ffdc6b"/>' +
         '<stop offset="1" stop-color="#f6c74b"/></radialGradient>' +
     '</defs>' +
@@ -3061,7 +3210,9 @@ async function loadCaoClubs() {
   }
 }
 
+let caoClubsCache = null;
 function renderCaoClubs(centers) {
+  caoClubsCache = centers;
   centers.sort((a, b) => b.total - a.total);
   const total = centers.reduce((a, c) => a + c.total, 0);
   const max = Math.max(...centers.map(c => c.total), 1);
