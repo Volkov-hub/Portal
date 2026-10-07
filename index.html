@@ -677,6 +677,29 @@
   [data-pane].on > *:nth-child(4) { animation-delay: .15s; }
   @media (prefers-reduced-motion: reduce) { [data-pane].on > * { animation: none; } }
 
+  /* Поток по дням недели: строка-день, полоса, число и доля мощности. */
+  .wd-rows { display: grid; gap: 7px; margin-top: 4px; }
+  .wd-row { display: grid; grid-template-columns: 92px 1fr 104px; align-items: center; gap: 10px; }
+  .wd-row .nm { font-size: var(--fs-xs); font-weight: 700; color: var(--ink-soft); }
+  .wd-row .track-wrap { background: var(--bg-2); border-radius: 999px; height: 16px; overflow: hidden; }
+  .wd-row .track { height: 100%; border-radius: 999px; background: var(--green);
+    transition: width .8s var(--ease); min-width: 3px; }
+  .wd-row.best .track { background: var(--brand); }
+  .wd-row.worst .track { background: var(--accent); }
+  .wd-row.off .track { display: none; }
+  .wd-row.off .track-wrap { background: repeating-linear-gradient(45deg,
+    var(--bg-2) 0 5px, var(--line) 5px 10px); }
+  .wd-row .num { font-size: var(--fs-xs); font-weight: 800; text-align: right;
+    font-variant-numeric: tabular-nums; color: var(--ink); }
+  .wd-row .num small { font-weight: 700; color: var(--ink-mute); margin-left: 5px; }
+  .wd-row.off .num { color: var(--ink-mute); font-weight: 700; }
+  .wd-row.best .nm, .wd-row.best .num { color: var(--brand-dark); }
+  .wd-row.worst .nm, .wd-row.worst .num { color: var(--accent-dark); }
+  .wd-note { margin-top: 12px; font-size: var(--fs-xs); line-height: 1.5; color: var(--ink-soft);
+    background: var(--bg); border-radius: var(--r-control); padding: 9px 11px; }
+  .wd-note b { color: var(--ink); }
+  @media (max-width: 560px) { .wd-row { grid-template-columns: 74px 1fr 88px; gap: 8px; } }
+
   .tabbar button:hover { color: var(--brand); border-color: var(--brand); transform: translateY(-1px); }
   .tabbar button.on { background: var(--brand); border-color: var(--brand); color: #fff;
     box-shadow: 0 4px 12px rgba(15,107,79,.22); }
@@ -1151,6 +1174,12 @@
             <span class="li"><span class="sw" style="background:var(--ch-green)"></span>среднее за месяц</span>
           </div>
           <svg id="dayChart" viewBox="0 0 720 220" role="img" aria-label="Посещаемость по дням"></svg>
+        </div>
+        <div class="chart-card">
+          <h3>Поток по дням недели</h3>
+          <div class="cap" id="wdCap">Среднее за рабочий день · по всем месяцам таблицы</div>
+          <div class="wd-rows" id="wdRows"></div>
+          <div class="wd-note" id="wdNote"></div>
         </div>
         <div class="chart-card">
           <h3>Центры ЦАО</h3>
@@ -2074,6 +2103,7 @@ function parseAttendance(csv) {
     c.days = c.raw.slice(0, lastFilled + 1).map((s, i) => ({
       day: (header[dayIdx[i]] || '').trim(),
       v: num(s),
+      r: s,          /* исходная ячейка: '-' — выходной, '' — не заполнено */
       a: c.anketRaw ? num(c.anketRaw[i]) : null,
     }));
     const work = c.days.filter(d => d.v > 0);
@@ -2207,6 +2237,7 @@ function renderDashboard(centers, live, monthName) {
     '<span class="v">' + c.avg + '</span></div>'
   ).join('');
 
+  renderWeekdayFlow();
   renderCmpChart(me, centers, rank, roll.length);
   renderCaoChart(me, centers);
 }
@@ -2283,6 +2314,105 @@ function renderCapacityChart(me) {
   }
   svg.innerHTML = out;
   bindTips(svg);
+}
+
+/* ============================================================
+   ПОТОК ПО ДНЯМ НЕДЕЛИ
+   Месячный лист не хранит год, поэтому берём текущий, а для месяцев
+   из будущего — прошлый: иначе в январе разрез по декабрю съедет
+   на другой день недели.
+   Считаем только дни с посещениями: «-» (выходной) и пустые ячейки
+   (не заполнено) в среднее не попадают и показываются отдельно.
+   ============================================================ */
+const WD_NAMES = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+
+function yearForMonth(mi) {
+  const now = new Date();
+  return mi > now.getMonth() ? now.getFullYear() - 1 : now.getFullYear();
+}
+
+function weekdayFlow() {
+  const acc = WD_NAMES.map(() => ({ sum: 0, days: 0, off: 0, zero: 0, miss: 0 }));
+  const today = midnight(new Date());
+  let months = 0;
+  MONTHS_RU.forEach((mName, mi) => {
+    const centers = monthData[mName];
+    if (!centers) return;
+    const me = centers.find(c => /пресн/i.test(c.name));
+    if (!me) return;
+    months++;
+    const year = yearForMonth(mi);
+    me.days.forEach(d => {
+      const dom = parseInt(d.day, 10);
+      if (!dom) return;
+      const date = new Date(year, mi, dom);
+      if (midnight(date) >= today) return;        /* сегодня и будущее не судим */
+      const w = (date.getDay() + 6) % 7;          /* 0 = понедельник */
+      const raw = (d.r || '').trim();
+      if (d.v > 0) { acc[w].sum += d.v; acc[w].days++; }
+      else if (raw === '-') acc[w].off++;          /* помечен выходным */
+      else if (raw === '') acc[w].miss++;          /* ячейка пуста */
+      else acc[w].zero++;                         /* явный ноль: закрыто или праздник */
+    });
+  });
+  return {
+    months,
+    rows: acc.map((a, w) => ({
+      w, name: WD_NAMES[w],
+      avg: a.days ? a.sum / a.days : 0,
+      days: a.days, off: a.off, zero: a.zero, miss: a.miss,
+    })),
+  };
+}
+
+function renderWeekdayFlow() {
+  const box = document.getElementById('wdRows');
+  if (!box) return;
+  const { rows, months } = weekdayFlow();
+  const working = rows.filter(r => r.days > 0);
+  if (!working.length) { box.innerHTML = '<div class="task-empty">Пока нет данных для разреза.</div>'; return; }
+
+  const max = Math.max(...working.map(r => r.avg));
+  const best = working.reduce((a, b) => b.avg > a.avg ? b : a);
+  const worst = working.reduce((a, b) => b.avg < a.avg ? b : a);
+
+  box.innerHTML = rows.map(r => {
+    if (!r.days) {
+      /* День без единого посещения. Ноль и прочерк значат «центр закрыт»,
+         пустая ячейка — что данных просто нет. Это разные вещи. */
+      const closed = r.off + r.zero;
+      const why = closed && !r.miss ? 'не работаем'
+        : closed ? 'не работаем'
+        : r.miss ? 'нет данных' : '—';
+      const tip = r.name + ': посещений не было. ' +
+        (closed ? closed + ' ' + plural(closed, 'день отмечен', 'дня отмечены', 'дней отмечены') + ' как нерабочие. ' : '') +
+        (r.miss ? r.miss + ' ' + plural(r.miss, 'день', 'дня', 'дней') + ' — пустая ячейка.' : '');
+      return '<div class="wd-row off" title="' + esc(tip) + '"><span class="nm">' + r.name + '</span>' +
+        '<div class="track-wrap"><div class="track" style="width:0"></div></div>' +
+        '<span class="num">' + why + '</span></div>';
+    }
+    const cls = r === best ? ' best' : r === worst ? ' worst' : '';
+    const pct = 100 * r.avg / CAPACITY;
+    const tip = r.name + ': ' + pct1(r.avg) + ' чел. в среднем за ' +
+      r.days + ' ' + plural(r.days, 'день', 'дня', 'дней') +
+      (r.zero ? ', нерабочих ' + r.zero : '') + (r.miss ? ', не заполнено ' + r.miss : '');
+    return '<div class="wd-row' + cls + '" title="' + esc(tip) + '">' +
+      '<span class="nm">' + r.name + '</span>' +
+      '<div class="track-wrap"><div class="track" style="width:' +
+        Math.max(2, Math.round(100 * r.avg / max)) + '%"></div></div>' +
+      '<span class="num">' + pct1(r.avg) + '<small>' + pct1(pct) + '%</small></span></div>';
+  }).join('');
+
+  document.getElementById('wdCap').textContent =
+    'Среднее за рабочий день · ' + months + ' ' + plural(months, 'месяц', 'месяца', 'месяцев') + ' таблицы';
+
+  const gap = worst.avg > 0 ? Math.round(100 * (best.avg - worst.avg) / worst.avg) : 0;
+  const missTotal = rows.reduce((s, r) => s + r.miss, 0);
+  let txt = 'Сильнее всего <b>' + best.name.toLowerCase() + '</b> — ' + pct1(best.avg) +
+    ' чел., слабее всего <b>' + worst.name.toLowerCase() + '</b> — ' + pct1(worst.avg) + '.';
+  if (gap > 0) txt += ' Разрыв <b>' + gap + '%</b> — это и есть управляемый резерв.';
+  if (missTotal) txt += ' Пустых ячеек в таблице: <b>' + missTotal + '</b> — день прошёл, цифры нет.';
+  document.getElementById('wdNote').innerHTML = txt;
 }
 
 function renderCmpChart(me, centers, rank, total) {
