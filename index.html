@@ -694,6 +694,19 @@
   [data-pane].on > *:nth-child(4) { animation-delay: .15s; }
   @media (prefers-reduced-motion: reduce) { [data-pane].on > * { animation: none; } }
 
+  /* Строка «что горит» под плитками клубов */
+  .clubs-note { display: flex; align-items: flex-start; gap: 10px; margin-top: 12px;
+    background: var(--bg); border-radius: var(--r-control); padding: 11px 13px;
+    font-size: var(--fs-xs); line-height: 1.5; color: var(--ink-soft); }
+  .clubs-note[hidden] { display: none; }
+  .clubs-note .ico { flex: none; font-size: 15px; line-height: 1.2; }
+  .clubs-note b { color: var(--ink); }
+  .clubs-note .hot { color: var(--accent-dark); font-weight: 800; }
+  .clubs-note button { border: none; background: none; padding: 0; cursor: pointer;
+    font: 800 var(--fs-xs) var(--font); color: var(--brand); text-decoration: underline;
+    text-underline-offset: 2px; }
+  .clubs-note button:hover { color: var(--brand-dark); }
+
   /* ---------- Цель месяца ---------- */
   .goal-card { display: grid; grid-template-columns: 1fr 232px; gap: 18px; align-items: center;
     background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
@@ -1394,6 +1407,7 @@
       </span>
     </div>
     <div class="pstats" id="clubsStats"></div>
+    <div class="clubs-note" id="clubsNote" hidden></div>
     <div class="clubs-legend">
       <span><i style="background:var(--green)"></i>идёт набор</span>
       <span><i style="background:var(--amber)"></i>по записи</span>
@@ -2160,6 +2174,8 @@ function setTab(t, remember) {
   watchReveal();
   /* грядка знает ширину окна, а не свою: после показа кадр пересобираем */
   if (t === 'garden' && typeof renderGarden === 'function') renderGarden();
+  /* сравнение с округом нужно на вкладке клубов — тянем реестр при первом заходе */
+  if (t === 'clubs' && typeof loadCaoClubs === 'function') loadCaoClubs();
 }
 document.getElementById('mainTabs').addEventListener('click', e => {
   const b = e.target.closest('button[data-tab]');
@@ -3668,6 +3684,7 @@ function renderClubs() {
 
   document.getElementById('clubsShown').textContent =
     list.length === clubs.length ? '' : 'показано ' + list.length + ' из ' + clubs.length;
+  renderClubsNote();
 }
 
 document.getElementById('clubsDirs').addEventListener('click', e => {
@@ -3731,8 +3748,49 @@ async function loadCaoClubs() {
 }
 
 let caoClubsCache = null;
+/* Доля открытого набора — единственный риск-сигнал, который реестр даёт
+   честно. Сравниваем с округом: без сравнения «15 из 42» ни о чём не говорит. */
+function renderClubsNote() {
+  const box = document.getElementById('clubsNote');
+  if (!box || !clubs.length) return;
+  const open = clubs.filter(c => clubState(c.status) === 'open').length;
+  const off = clubs.filter(c => clubState(c.status) === 'off').length;
+  const share = Math.round(100 * open / clubs.length);
+
+  let txt = 'Набор открыт в <b>' + open + '</b> из <b>' + clubs.length + '</b> клубов — <b>' + share + '%</b>.';
+
+  const cao = typeof caoClubsCache !== 'undefined' && caoClubsCache;
+  if (cao && cao.length > 1) {
+    /* центры на ремонте в рейтинг не берём: у них набор закрыт не по своей воле */
+    const live = cao.filter(c => !c.repair && c.total > 0);
+    const ranked = live.map(c => ({ name: c.name, share: 100 * c.open / c.total }))
+      .sort((a, b) => b.share - a.share);
+    const pos = ranked.findIndex(c => /пресн/i.test(c.name)) + 1;
+    const top = ranked[0];
+    if (pos && top) {
+      txt += ' По этой доле мы <span class="hot">' + pos + '-е из ' + ranked.length + '</span> в округе;' +
+        ' у лидера (' + esc(top.name) + ') — ' + Math.round(top.share) + '%.';
+    }
+  }
+
+  if (off) {
+    txt += ' <button type="button" data-show-off>Показать ' + off + ' ' +
+      plural(off, 'клуб', 'клуба', 'клубов') + ' с приостановленным набором</button>';
+  }
+
+  box.innerHTML = '<span class="ico">🎯</span><div>' + txt + '</div>';
+  box.hidden = false;
+}
+
+document.getElementById('clubsNote').addEventListener('click', e => {
+  if (!e.target.closest('[data-show-off]')) return;
+  clubSt = 'off';
+  renderClubs();
+});
+
 function renderCaoClubs(centers) {
   caoClubsCache = centers;
+  renderClubsNote();
   centers.sort((a, b) => b.total - a.total);
   const total = centers.reduce((a, c) => a + c.total, 0);
   const max = Math.max(...centers.map(c => c.total), 1);
