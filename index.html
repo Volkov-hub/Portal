@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
 <title>ЦМД Пресненский — рабочий портал</title>
-<meta name="theme-color" content="#0f6b4f" id="themeColor">
+<meta name="theme-color" content="#a81d37" id="themeColor">
 <script>
   /* Тему ставим до отрисовки: иначе на долю секунды мигает светлый фон. */
   (function () {
@@ -28,16 +28,25 @@
   :root {
     /* Фирменная палитра «Московского долголетия»: изумрудный — основной,
        малиновый — акцент. Значения сняты с корпоративного портала программы. */
-    --brand: #0f6b4f;        /* основной изумрудный */
-    --brand-dark: #084c39;
-    --brand-deep: #04301f;   /* конец градиента шапки */
-    --brand-soft: #e7f3ef;
-    --brand-soft-2: #d2e8e0;
-    --brand-line: #c3ddd3;
-    --accent: #9a1452;       /* малиновый акцент: наш центр, сегодня, ошибка */
+    --brand: #a81d37;        /* фирменный малиновый */
+    --brand-dark: #7d1030;
+    --brand-deep: #5e0b24;
+    --brand-soft: #fbeef1;
+    --brand-soft-2: #f6dde3;
+    --brand-line: #f0d3da;
+    --accent: #9a1452;       /* акцент данных: наш центр, сегодня, ошибка */
     --accent-dark: #7a0f41;
     --accent-soft: #fbeef3;
     --accent-line: #f0d3e0;
+    /* Герой и плитки: литералы уехали в переменные, чтобы светлая тема
+       осталась малиновой, а тёмная — изумрудной. */
+    --hero-1: #ab0a3d; --hero-2: #a81d37; --hero-3: #6f0d2b;
+    --tile-1: #ab0a3d; --tile-2: #7d1030;
+    --hero-soft: #f6d5dd;    /* подписи поверх героя */
+    --hero-kicker: #ffd6df;
+    --hero-accent: #9df0c0;  /* мятное число на малиновом */
+    --tip-bg: #2b2b2e; --tip-ink: #ffffff; --tip-b: #ffd6df;
+    --deco: .07;             /* яркость спилов по бокам */
     --green: #0f8f5f;        /* рост и успех — ярче основного изумруда */
     --green-dark: #0a6f48;
     --green-soft: #e4f4ec;
@@ -75,7 +84,7 @@
     --ch-axis: #9a9597;
     --ch-off: #e2dedb;
     --ch-off-2: #d9d5d2;
-    --ch-rasp: #9a1452;   /* наш центр — акцент */
+    --ch-rasp: #a81d37;   /* наш центр */
     --ch-pink: #ea6c85;
     --ch-green: #0f8f5f;
     --ch-teal: #2baf96;
@@ -90,7 +99,7 @@
     --radius-xs: 8px;
     --shadow: 0 1px 2px rgba(43,43,46,.04), 0 6px 18px rgba(43,43,46,.06);
     --shadow-md: 0 2px 6px rgba(43,43,46,.06), 0 12px 32px rgba(43,43,46,.09);
-    --shadow-hover: 0 3px 8px rgba(15,107,79,.12), 0 16px 36px rgba(15,107,79,.16);
+    --shadow-hover: 0 3px 8px rgba(168,29,55,.10), 0 16px 36px rgba(168,29,55,.14);
     --ease: cubic-bezier(.2,.7,.2,1);
     --font: 'Circe', 'Manrope', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
     /* Заголовки — антиквой, как на корпоративном портале программы.
@@ -164,7 +173,7 @@
     display: flex; align-items: center; justify-content: center; padding: 20px;
     background: radial-gradient(1200px 600px at 10% -10%, rgba(255,255,255,.14), transparent 60%),
                 radial-gradient(900px 500px at 110% 110%, rgba(3,140,71,.28), transparent 60%),
-                linear-gradient(155deg, #12805e 0%, #0f6b4f 48%, #052f20 100%);
+                linear-gradient(155deg, var(--hero-1) 0%, var(--hero-2) 48%, var(--hero-3) 100%);
     overflow: hidden;
   }
   .gate[hidden] { display: none; }
@@ -246,7 +255,7 @@
     position: relative; overflow: hidden; color: #fff; border-radius: 26px;
     background: radial-gradient(900px 420px at 0% 0%, rgba(255,255,255,.16), transparent 60%),
                 radial-gradient(700px 400px at 100% 100%, rgba(3,140,71,.35), transparent 55%),
-                linear-gradient(140deg, #12805e 0%, #0f6b4f 45%, #052f20 100%);
+                linear-gradient(140deg, var(--hero-1) 0%, var(--hero-2) 45%, var(--hero-3) 100%);
     box-shadow: 0 24px 60px rgba(125,16,48,.28);
     padding: 34px 36px 30px;
     display: grid; grid-template-columns: 1.25fr 1fr; gap: 26px; align-items: center;
@@ -266,13 +275,13 @@
   .hero-mark { position: absolute; right: 3%; bottom: -14%; width: 260px; height: auto;
     opacity: .07; pointer-events: none; user-select: none; }
   @media (max-width: 1000px) { .hero-mark { width: 170px; right: -4%; bottom: -10%; opacity: .05; } }
-  .hero .date { margin-top: 10px; font-size: var(--fs-md); color: #c7e8da; font-weight: 600; }
+  .hero .date { margin-top: 10px; font-size: var(--fs-md); color: var(--hero-soft); font-weight: 600; }
   .hero .daily {
     margin-top: 18px; display: flex; align-items: flex-start; gap: 12px;
     background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18); border-radius: 14px;
     padding: 12px 16px; backdrop-filter: blur(6px);
   }
-  .hero .daily-tag { flex: none; font-size: var(--fs-2xs); font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #bce6d3; padding-top: 2px; }
+  .hero .daily-tag { flex: none; font-size: var(--fs-2xs); font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--hero-kicker); padding-top: 2px; }
   .hero .daily span:last-child { font-size: var(--fs-md); font-weight: 600; line-height: 1.4; }
   .quick { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
   .hero-side { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -283,9 +292,9 @@
   .kpi:hover { background: rgba(255,255,255,.18); transform: translateY(-2px); }
   .kpi .v { font-size: var(--fs-3xl); font-weight: 800; letter-spacing: -.02em; line-height: 1; }
   .kpi .v small { font-size: var(--fs-sm); font-weight: 700; opacity: .8; margin-left: 2px; }
-  .kpi .l { margin-top: 6px; font-size: var(--fs-xs); color: #c7e8da; font-weight: 600; line-height: 1.3; }
+  .kpi .l { margin-top: 6px; font-size: var(--fs-xs); color: var(--hero-soft); font-weight: 600; line-height: 1.3; }
   .kpi.accent { background: rgba(255,255,255,.2); border-color: rgba(255,255,255,.34); }
-  .kpi.accent .v { color: #ffd9a8; }
+  .kpi.accent .v { color: var(--hero-accent); }
 
   /* ---------- Поиск ---------- */
   .search-wrap { max-width: 760px; margin: 22px auto 0; padding: 0 20px; position: relative; z-index: 5; }
@@ -300,10 +309,18 @@
   .search-box kbd { flex: none; font: 700 var(--fs-2xs)/1 var(--font); color: var(--ink-soft); border: 1px solid var(--line); border-radius: 6px; padding: 4px 7px; background: var(--bg); }
 
   /* ---------- Декор для широких экранов ---------- */
-  .side-deco { position: fixed; top: 50%; width: 300px; opacity: .06; pointer-events: none; user-select: none; z-index: 0; display: none; }
-  .side-deco.left { left: -90px; transform: translateY(-60%) rotate(-10deg); }
-  .side-deco.right { right: -90px; transform: translateY(-40%) rotate(14deg); }
-  @media (min-width: 1500px) { .side-deco { display: block; } }
+  /* Спилы по бокам: на светлой теме зелёные, на тёмной бордовые.
+     Картинку из CSS не поменять, поэтому в разметке лежат обе пары,
+     а тема показывает нужную. */
+  .side-deco { position: fixed; top: 50%; width: 330px; opacity: var(--deco);
+    pointer-events: none; user-select: none; z-index: 0; display: none;
+    transition: opacity .3s var(--ease); }
+  .side-deco.left { left: -84px; transform: translateY(-60%) rotate(-10deg); }
+  .side-deco.right { right: -84px; transform: translateY(-40%) rotate(14deg); }
+  @media (min-width: 1280px) {
+    :root[data-theme="light"] .side-deco.light { display: block; }
+    :root[data-theme="dark"] .side-deco.dark { display: block; }
+  }
 
   /* ---------- Контент ---------- */
   main { position: relative; z-index: 1; flex: 1; width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 30px 20px 60px; }
@@ -366,9 +383,9 @@
   .tile .val .down { color: var(--brand); }
   .tile .lbl { margin-top: 5px; font-size: var(--fs-sm); color: var(--ink-soft); line-height: 1.3; }
   .tile .ico { position: absolute; right: 12px; top: 10px; font-size: var(--fs-lg); opacity: .35; }
-  .tile.accent { background: linear-gradient(150deg, #12805e, #084c39); border-color: transparent; box-shadow: 0 12px 28px rgba(8,76,57,.3); }
+  .tile.accent { background: linear-gradient(150deg, var(--tile-1), var(--tile-2)); border-color: transparent; box-shadow: 0 12px 28px rgba(8,76,57,.3); }
   .tile.accent .val { color: #fff; }
-  .tile.accent .lbl { color: #c7e8da; }
+  .tile.accent .lbl { color: var(--hero-soft); }
   .tile.accent .ico { opacity: .5; }
   .cap-spark { width: 100%; height: 26px; display: block; margin-top: 8px; }
   .cap-spark rect:hover { filter: brightness(.85); }
@@ -406,8 +423,8 @@
   .cmp-summary .pill.me { background: var(--accent-soft); color: var(--accent-dark); }
   .cmp-summary .pill.me b { color: var(--accent); }
 
-  .tooltip { position: fixed; display: none; background: var(--ink); color: #fff; font-size: var(--fs-sm); font-weight: 600; border-radius: 10px; padding: 8px 11px; pointer-events: none; z-index: 90; white-space: nowrap; line-height: 1.45; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
-  .tooltip b { color: #9fe3c3; }
+  .tooltip { position: fixed; display: none; background: var(--tip-bg); color: var(--tip-ink); font-size: var(--fs-sm); font-weight: 600; border-radius: 10px; padding: 8px 11px; pointer-events: none; z-index: 90; white-space: nowrap; line-height: 1.45; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
+  .tooltip b { color: var(--tip-b); }
 
   /* ---------- Разделы ---------- */
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
@@ -671,20 +688,63 @@
   /* Карточки проявляются волной, а не все разом: глаз успевает
      заметить, что блок обновился. */
   @keyframes riseIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-  [data-pane].on > * { animation: riseIn .38s var(--ease) both; }
+  [data-pane].on > * { animation: riseIn .38s var(--ease); }
   [data-pane].on > *:nth-child(2) { animation-delay: .05s; }
   [data-pane].on > *:nth-child(3) { animation-delay: .1s; }
   [data-pane].on > *:nth-child(4) { animation-delay: .15s; }
   @media (prefers-reduced-motion: reduce) { [data-pane].on > * { animation: none; } }
+
+  /* ---------- Цель месяца ---------- */
+  .goal-card { display: grid; grid-template-columns: 1fr 232px; gap: 18px; align-items: center;
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 16px 18px; margin-bottom: 16px; }
+  .goal-card[hidden] { display: none; }
+  .goal-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+    font-family: var(--font-head); font-size: var(--fs-lg); font-weight: 700; }
+  .goal-badge { font-family: var(--font); font-size: var(--fs-2xs); font-weight: 800;
+    letter-spacing: .05em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; }
+  .goal-badge.ok { background: var(--green-soft); color: var(--green-dark); }
+  .goal-badge.risk { background: var(--accent-soft); color: var(--accent-dark); }
+  .goal-bar { position: relative; height: 14px; border-radius: 999px; background: var(--bg-2);
+    overflow: visible; margin: 12px 0 8px; }
+  .goal-bar i { display: block; height: 100%; border-radius: 999px;
+    background: linear-gradient(90deg, var(--green), var(--lime)); transition: width .9s var(--ease); }
+  .goal-bar i.risk { background: linear-gradient(90deg, var(--accent), var(--pink)); }
+  /* отметка цели стоит поверх полосы — видно, добрали или нет */
+  .goal-mark { position: absolute; top: -5px; width: 2.5px; height: 24px; border-radius: 2px;
+    background: var(--ink); opacity: .55; }
+  .goal-mark::after { content: attr(data-l); position: absolute; top: -15px; left: 50%;
+    transform: translateX(-50%); font-size: var(--fs-2xs); font-weight: 800;
+    color: var(--ink-soft); white-space: nowrap; }
+  .goal-sub { font-size: var(--fs-xs); color: var(--ink-soft); line-height: 1.45; }
+  .goal-sub b { color: var(--ink); }
+  .goal-need { background: var(--bg); border-radius: var(--r-control); padding: 11px 13px;
+    font-size: var(--fs-xs); line-height: 1.45; color: var(--ink-soft); }
+  .goal-need b { display: block; font-size: var(--fs-2xl); font-weight: 800; color: var(--ink);
+    font-variant-numeric: tabular-nums; line-height: 1.1; margin-bottom: 2px; }
+  .goal-need.done b { color: var(--green-dark); }
+  @media (max-width: 760px) { .goal-card { grid-template-columns: 1fr; gap: 12px; } }
+
+  /* Месяцы внутри карточки потока */
+  .wd-months { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0 12px; }
+  .wd-months button { border: 1px solid var(--line); background: var(--card); color: var(--ink-soft);
+    font: 700 var(--fs-2xs) var(--font); padding: 4px 10px; border-radius: 999px; cursor: pointer;
+    transition: color .15s, border-color .15s, background .15s; }
+  .wd-months button:hover { color: var(--brand); border-color: var(--brand); }
+  .wd-months button.on { background: var(--brand); border-color: var(--brand); color: #fff; }
+  :root[data-theme="dark"] .wd-months button.on { color: var(--on-brand); }
 
   /* Поток по дням недели: строка-день, полоса, число и доля мощности. */
   .wd-rows { display: grid; gap: 7px; margin-top: 4px; }
   .wd-row { display: grid; grid-template-columns: 92px 1fr 104px; align-items: center; gap: 10px; }
   .wd-row .nm { font-size: var(--fs-xs); font-weight: 700; color: var(--ink-soft); }
   .wd-row .track-wrap { background: var(--bg-2); border-radius: 999px; height: 16px; overflow: hidden; }
-  .wd-row .track { height: 100%; border-radius: 999px; background: var(--green);
+  /* Обычные дни — спокойным тоном, выделены только крайние: лучший день
+     зелёным, слабейший акцентом. На светлой теме --brand малиновый и
+     совпадал бы с акцентом, поэтому лучший день красим именно зелёным. */
+  .wd-row .track { height: 100%; border-radius: 999px; background: var(--bar-muted);
     transition: width .8s var(--ease); min-width: 3px; }
-  .wd-row.best .track { background: var(--brand); }
+  .wd-row.best .track { background: var(--green); }
   .wd-row.worst .track { background: var(--accent); }
   .wd-row.off .track { display: none; }
   .wd-row.off .track-wrap { background: repeating-linear-gradient(45deg,
@@ -693,12 +753,56 @@
     font-variant-numeric: tabular-nums; color: var(--ink); }
   .wd-row .num small { font-weight: 700; color: var(--ink-mute); margin-left: 5px; }
   .wd-row.off .num { color: var(--ink-mute); font-weight: 700; }
-  .wd-row.best .nm, .wd-row.best .num { color: var(--brand-dark); }
+  .wd-row.best .nm, .wd-row.best .num { color: var(--green-dark); }
   .wd-row.worst .nm, .wd-row.worst .num { color: var(--accent-dark); }
   .wd-note { margin-top: 12px; font-size: var(--fs-xs); line-height: 1.5; color: var(--ink-soft);
     background: var(--bg); border-radius: var(--r-control); padding: 9px 11px; }
   .wd-note b { color: var(--ink); }
   @media (max-width: 560px) { .wd-row { grid-template-columns: 74px 1fr 88px; gap: 8px; } }
+
+  /* ---------- Талисман ---------- */
+  .mascot { position: fixed; z-index: 70; width: 104px; cursor: pointer;
+    filter: drop-shadow(0 6px 16px rgba(0,0,0,.18)); }
+  .mascot[hidden] { display: none; }
+  .mascot-art { display: block; width: 100%; height: auto; }
+  .mascot .c-head, .mascot .c-ear, .mascot .c-paw { fill: var(--cat-fur); }
+  .mascot .c-ear-in { fill: var(--cat-ear); }
+  .mascot .c-eye { fill: #fff; }
+  .mascot .c-pupil { fill: #241c1f; }
+  .mascot .c-glint { fill: #fff; }
+  .mascot .c-nose { fill: var(--cat-ear); }
+  .mascot .c-mouth, .mascot .c-whisk { fill: none; stroke: #241c1f; stroke-width: 2.4;
+    stroke-linecap: round; opacity: .75; }
+  .mascot .c-whisk { stroke-width: 2; opacity: .4; }
+  :root { --cat-fur: #e8a13c; --cat-ear: #f2bfa0; }
+  :root[data-theme="dark"] { --cat-fur: #d08f33; --cat-ear: #c99478; }
+
+  /* Приезжает из-за края, подрагивает и уезжает обратно. */
+  .mascot.in { animation: catIn .5s var(--ease) both; }
+  .mascot.out { animation: catOut .4s var(--ease) both; }
+  @keyframes catIn { from { opacity: 0; transform: translate(var(--cx,0), var(--cy,40px)) scale(.8); }
+                     to { opacity: 1; transform: none; } }
+  @keyframes catOut { from { opacity: 1; transform: none; }
+                      to { opacity: 0; transform: translate(var(--cx,0), var(--cy,40px)) scale(.8); } }
+  .mascot.in .mascot-body { animation: catWiggle 1.6s ease-in-out .5s 2; transform-origin: 60px 90px; }
+  @keyframes catWiggle { 0%,100% { rotate: 0deg; } 30% { rotate: -5deg; } 65% { rotate: 5deg; } }
+  .mascot.in .mascot-eyes { animation: catBlink 2.8s ease-in-out .9s infinite; transform-origin: center; }
+  @keyframes catBlink { 0%,92%,100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+
+  .mascot-bubble { position: absolute; bottom: 86%; left: 50%; transform: translateX(-50%);
+    background: var(--card); color: var(--ink); border: 1px solid var(--line);
+    border-radius: 12px; padding: 7px 11px; font-size: var(--fs-xs); font-weight: 700;
+    line-height: 1.35; white-space: nowrap; box-shadow: var(--shadow); }
+  .mascot-bubble::after { content: ''; position: absolute; top: 100%; left: 50%;
+    transform: translateX(-50%); border: 6px solid transparent; border-top-color: var(--card); }
+  .mascot.edge-left .mascot-bubble { left: 0; transform: none; }
+  .mascot.edge-left .mascot-bubble::after { left: 22px; }
+  .mascot.edge-right .mascot-bubble { left: auto; right: 0; transform: none; }
+  .mascot.edge-right .mascot-bubble::after { left: auto; right: 22px; }
+  @media (max-width: 560px) { .mascot { width: 76px; } .mascot-bubble { font-size: var(--fs-2xs); } }
+  @media (prefers-reduced-motion: reduce) {
+    .mascot.in, .mascot.out, .mascot.in .mascot-body, .mascot.in .mascot-eyes { animation: none; }
+  }
 
   .tabbar button:hover { color: var(--brand); border-color: var(--brand); transform: translateY(-1px); }
   .tabbar button.on { background: var(--brand); border-color: var(--brand); color: #fff;
@@ -857,6 +961,11 @@
      #038c47 дают на фоне #141318 контраст около 2,5 при норме 4,5.
      ============================================================ */
   :root[data-theme="dark"] {
+    --hero-1: #12805e; --hero-2: #0f6b4f; --hero-3: #052f20;
+    --tile-1: #12805e; --tile-2: #084c39;
+    --hero-soft: #c7e8da; --hero-kicker: #bce6d3; --hero-accent: #ffd9a8;
+    --tip-bg: #2b3a34; --tip-ink: #eef3f1; --tip-b: #9fe3c3;
+    --deco: .16;
     --brand: #3fb98a; --brand-dark: #5fcfa3; --brand-deep: #0b2a20;
     --brand-soft: #16302a; --brand-line: #2b4b40; --brand-soft-2: #1e3b33;
     --accent: #f06a9e; --accent-dark: #f78cb5;
@@ -1062,8 +1171,10 @@
   </div>
 </div>
 
-<img class="side-deco left" src="assets/ring-rasp.png" alt="" aria-hidden="true">
-<img class="side-deco right" src="assets/ring-green.png" alt="" aria-hidden="true">
+<img class="side-deco left light" src="assets/ring-green.png" alt="" aria-hidden="true">
+<img class="side-deco right light" src="assets/ring-green.png" alt="" aria-hidden="true">
+<img class="side-deco left dark" src="assets/ring-rasp.png" alt="" aria-hidden="true">
+<img class="side-deco right dark" src="assets/ring-rasp.png" alt="" aria-hidden="true">
 
 <main>
 <div id="mainView">
@@ -1152,6 +1263,14 @@
         <div class="att-state" id="attState"></div>
       </form>
       <div class="month-chips" id="monthChips"></div>
+      <div class="goal-card" id="goalCard" hidden>
+        <div class="goal-main">
+          <div class="goal-head"><span id="goalTitle"></span><span class="goal-badge" id="goalBadge"></span></div>
+          <div class="goal-bar"><i id="goalFill"></i><span class="goal-mark" id="goalMark"></span></div>
+          <div class="goal-sub" id="goalSub"></div>
+        </div>
+        <div class="goal-need" id="goalNeed"></div>
+      </div>
       <div class="dash-grid">
         <div class="tile accent"><span class="ico">👥</span><div class="val" id="statAvg">—</div><div class="lbl">в среднем за рабочий день</div></div>
         <div class="tile"><span class="ico">🏆</span><div class="val c-green" id="statMax">—</div><div class="lbl" id="statMaxLbl">максимум за день</div></div>
@@ -1177,7 +1296,8 @@
         </div>
         <div class="chart-card">
           <h3>Поток по дням недели</h3>
-          <div class="cap" id="wdCap">Среднее за рабочий день · по всем месяцам таблицы</div>
+          <div class="cap" id="wdCap">Среднее за рабочий день</div>
+          <div class="wd-months" id="wdMonths"></div>
           <div class="wd-rows" id="wdRows"></div>
           <div class="wd-note" id="wdNote"></div>
         </div>
@@ -1372,6 +1492,33 @@
 </footer>
 
 <div class="tooltip" id="tooltip"></div>
+
+<!-- Талисман: выглядывает раз в минуту, кликом прячется -->
+<div class="mascot" id="catMascot" hidden>
+  <div class="mascot-bubble" id="catSay"></div>
+  <svg class="mascot-art" viewBox="0 0 120 96" aria-hidden="true" focusable="false">
+    <g class="mascot-body">
+      <path class="c-ear" d="M24 46 26 20 48 36Z"/>
+      <path class="c-ear" d="M96 46 94 20 72 36Z"/>
+      <path class="c-ear-in" d="M31 41 32 28 43 36Z"/>
+      <path class="c-ear-in" d="M89 41 88 28 77 36Z"/>
+      <ellipse class="c-head" cx="60" cy="58" rx="38" ry="33"/>
+      <g class="mascot-eyes">
+        <ellipse class="c-eye" cx="46" cy="54" rx="11" ry="12"/>
+        <ellipse class="c-eye" cx="75" cy="54" rx="9.5" ry="10.5"/>
+        <circle class="c-pupil" cx="47.5" cy="56" r="5.2"/>
+        <circle class="c-pupil" cx="73.5" cy="55" r="4.4"/>
+        <circle class="c-glint" cx="44.5" cy="51" r="2.1"/>
+        <circle class="c-glint" cx="71" cy="50.5" r="1.7"/>
+      </g>
+      <path class="c-nose" d="M56 68h8l-4 4.6Z"/>
+      <path class="c-mouth" d="M60 73q-4.5 5-9 .6M60 73q4.5 5 9 .6"/>
+      <path class="c-whisk" d="M20 62h16M20 70h16M100 62H84M100 70H84"/>
+      <path class="c-paw" d="M18 96V88a7 7 0 0 1 14 0v8Z"/>
+      <path class="c-paw" d="M88 96v-8a7 7 0 0 1 14 0v8Z"/>
+    </g>
+  </svg>
+</div>
 <div class="toasts" id="toasts"></div>
 
 <dialog id="howtoDlg">
@@ -1503,6 +1650,10 @@ const COMMS_SHEET_NAME = 'Коммуникации';
    Вкладки в ней называются месяцами — новые подхватываются сами. */
 const ATTENDANCE_SHEET = '1AaZjdwpx-oCdiglZxg1Wszod0xqQXOXU0cppJuOguhY';
 const MONTHS_RU = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+
+/* Цель по средней посещаемости за рабочий день. Ключ — название листа.
+   Добавить новый месяц — дописать строку, больше ничего не нужно. */
+const GOALS = { 'Октябрь': 220 };
 
 /* максимальная дневная вместимость ЦМД «Пресненский» */
 const CAPACITY = 401;
@@ -1853,7 +2004,7 @@ function applyTheme(t, repaint) {
     btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
   }
   const meta = document.getElementById('themeColor');
-  if (meta) meta.setAttribute('content', t === 'dark' ? '#101512' : '#0f6b4f');
+  if (meta) meta.setAttribute('content', t === 'dark' ? '#101512' : '#a81d37');
   readPalette();
   if (repaint !== false) repaintThemed();
 }
@@ -1866,6 +2017,89 @@ document.getElementById('themeBtn').addEventListener('click', () => {
   store('presnya-theme', next);
   applyTheme(next);
 });
+
+/* ============================================================
+   ТАЛИСМАН
+   Раз в минуту кот выглядывает из случайного края экрана, говорит
+   глупость и через семь секунд уходит. Клик прячет его сразу.
+   Молчит, когда вкладка в фоне, когда открыт диалог и пока не пройден
+   вход — иначе будет мешать работе, а не развлекать.
+   ============================================================ */
+(function () {
+  const cat = document.getElementById('catMascot');
+  const say = document.getElementById('catSay');
+  if (!cat) return;
+
+  const PHRASES = [
+    'Среда — лучший день, я проверял',
+    'Отчёт сам себя не напишет',
+    'По субботам мы не работаем. И я тоже',
+    '257 мест свободно. Одно занял я',
+    'Пятница слабовата. Исправим?',
+    'Грядку полили?',
+    'Партнёрам давно не звонили',
+    'Мур. Это всё, что я хотел сказать',
+    'Я тоже участник проекта',
+    'Видел, как ты обновил страницу. Дважды',
+    'Мощность 401. Моя — одна рыбка в день',
+    'Тут кто-то хорошо поработал',
+  ];
+
+  let hideTimer = null, idx = Math.floor(Math.random() * PHRASES.length);
+
+  function hide(now) {
+    clearTimeout(hideTimer);
+    if (now) { cat.hidden = true; cat.classList.remove('in', 'out'); return; }
+    cat.classList.remove('in');
+    cat.classList.add('out');
+    hideTimer = setTimeout(() => { cat.hidden = true; cat.classList.remove('out'); }, 400);
+  }
+
+  function show() {
+    if (document.hidden) return;                       /* вкладка в фоне */
+    if (!gateEl.hidden) return;                        /* ещё не вошли */
+    if (document.querySelector('dialog[open]')) return; /* открыт диалог */
+    if (!cat.hidden) return;
+
+    say.textContent = PHRASES[idx % PHRASES.length];
+    idx += 1 + Math.floor(Math.random() * 3);          /* не по кругу подряд */
+
+    /* Край выбираем случайно, но держимся подальше от шапки и панели вкладок */
+    const edges = ['left', 'right', 'bottom'];
+    const edge = edges[Math.floor(Math.random() * edges.length)];
+    cat.classList.remove('edge-left', 'edge-right');
+    cat.style.top = cat.style.bottom = cat.style.left = cat.style.right = '';
+    const w = cat.offsetWidth || 104;
+    const safeTop = 180, safeBottom = 40;
+    const y = safeTop + Math.random() * Math.max(60, window.innerHeight - safeTop - safeBottom - 140);
+
+    if (edge === 'left') {
+      cat.classList.add('edge-left');
+      cat.style.left = '8px'; cat.style.top = Math.round(y) + 'px';
+      cat.style.setProperty('--cx', '-' + (w + 16) + 'px'); cat.style.setProperty('--cy', '0px');
+    } else if (edge === 'right') {
+      cat.classList.add('edge-right');
+      cat.style.right = '8px'; cat.style.top = Math.round(y) + 'px';
+      cat.style.setProperty('--cx', (w + 16) + 'px'); cat.style.setProperty('--cy', '0px');
+    } else {
+      const x = 24 + Math.random() * Math.max(40, window.innerWidth - w - 48);
+      if (x < window.innerWidth / 2) cat.classList.add('edge-left'); else cat.classList.add('edge-right');
+      cat.style.left = Math.round(x) + 'px'; cat.style.bottom = '8px';
+      cat.style.setProperty('--cx', '0px'); cat.style.setProperty('--cy', '120px');
+    }
+
+    cat.hidden = false;
+    cat.classList.remove('out');
+    void cat.offsetWidth;                              /* перезапуск анимации */
+    cat.classList.add('in');
+    hideTimer = setTimeout(() => hide(), 7000);
+  }
+
+  cat.addEventListener('click', () => hide());
+  document.addEventListener('visibilitychange', () => { if (document.hidden) hide(true); });
+  setTimeout(show, 12000);        /* первый выход — когда портал уже загрузился */
+  setInterval(show, 60000);
+})();
 
 const gateEl = document.getElementById('gate');
 function showGate() { gateEl.hidden = false; document.getElementById('gateLogin').focus(); }
@@ -2238,6 +2472,7 @@ function renderDashboard(centers, live, monthName) {
   ).join('');
 
   renderWeekdayFlow();
+  renderGoal(monthName);
   renderCmpChart(me, centers, rank, roll.length);
   renderCaoChart(me, centers);
 }
@@ -2331,11 +2566,16 @@ function yearForMonth(mi) {
   return mi > now.getMonth() ? now.getFullYear() - 1 : now.getFullYear();
 }
 
-function weekdayFlow() {
+/* Разрез можно смотреть и по всем месяцам сразу, и по одному: сезон
+   заметно двигает картину, и усреднение за полгода это прячет. */
+let wdMonth = '';            /* '' — все месяцы */
+
+function weekdayFlow(only) {
   const acc = WD_NAMES.map(() => ({ sum: 0, days: 0, off: 0, zero: 0, miss: 0 }));
   const today = midnight(new Date());
   let months = 0;
   MONTHS_RU.forEach((mName, mi) => {
+    if (only && mName !== only) return;
     const centers = monthData[mName];
     if (!centers) return;
     const me = centers.find(c => /пресн/i.test(c.name));
@@ -2357,33 +2597,53 @@ function weekdayFlow() {
   });
   return {
     months,
-    rows: acc.map((a, w) => ({
+    rows: acc.map((x, w) => ({
       w, name: WD_NAMES[w],
-      avg: a.days ? a.sum / a.days : 0,
-      days: a.days, off: a.off, zero: a.zero, miss: a.miss,
+      avg: x.days ? x.sum / x.days : 0,
+      days: x.days, off: x.off, zero: x.zero, miss: x.miss,
     })),
   };
+}
+
+function renderWdMonths() {
+  const box = document.getElementById('wdMonths');
+  if (!box) return;
+  const have = MONTHS_RU.filter(m => monthData[m]);
+  if (have.length < 2) { box.style.display = 'none'; return; }
+  box.style.display = '';
+  if (wdMonth && !monthData[wdMonth]) wdMonth = '';
+  box.innerHTML = [''].concat(have).map(m =>
+    '<button type="button" data-m="' + esc(m) + '"' + (m === wdMonth ? ' class="on"' : '') + '>' +
+    (m || 'Все месяцы') + '</button>').join('');
 }
 
 function renderWeekdayFlow() {
   const box = document.getElementById('wdRows');
   if (!box) return;
-  const { rows, months } = weekdayFlow();
+  renderWdMonths();
+  const { rows, months } = weekdayFlow(wdMonth);
   const working = rows.filter(r => r.days > 0);
-  if (!working.length) { box.innerHTML = '<div class="task-empty">Пока нет данных для разреза.</div>'; return; }
+
+  document.getElementById('wdCap').textContent = wdMonth
+    ? 'Среднее за рабочий день · ' + wdMonth.toLowerCase()
+    : 'Среднее за рабочий день · ' + months + ' ' + plural(months, 'месяц', 'месяца', 'месяцев') + ' таблицы';
+
+  if (!working.length) {
+    box.innerHTML = '<div class="task-empty">За этот месяц ещё нет посещений.</div>';
+    document.getElementById('wdNote').innerHTML = '';
+    return;
+  }
 
   const max = Math.max(...working.map(r => r.avg));
-  const best = working.reduce((a, b) => b.avg > a.avg ? b : a);
-  const worst = working.reduce((a, b) => b.avg < a.avg ? b : a);
+  const best = working.reduce((x, y) => y.avg > x.avg ? y : x);
+  const worst = working.reduce((x, y) => y.avg < x.avg ? y : x);
 
   box.innerHTML = rows.map(r => {
     if (!r.days) {
-      /* День без единого посещения. Ноль и прочерк значат «центр закрыт»,
-         пустая ячейка — что данных просто нет. Это разные вещи. */
+      /* Ноль и прочерк значат «центр закрыт», пустая ячейка — что данных
+         просто нет. Это разные вещи, и раньше портал их путал. */
       const closed = r.off + r.zero;
-      const why = closed && !r.miss ? 'не работаем'
-        : closed ? 'не работаем'
-        : r.miss ? 'нет данных' : '—';
+      const why = closed ? 'не работаем' : r.miss ? 'нет данных' : '—';
       const tip = r.name + ': посещений не было. ' +
         (closed ? closed + ' ' + plural(closed, 'день отмечен', 'дня отмечены', 'дней отмечены') + ' как нерабочие. ' : '') +
         (r.miss ? r.miss + ' ' + plural(r.miss, 'день', 'дня', 'дней') + ' — пустая ячейка.' : '');
@@ -2391,7 +2651,7 @@ function renderWeekdayFlow() {
         '<div class="track-wrap"><div class="track" style="width:0"></div></div>' +
         '<span class="num">' + why + '</span></div>';
     }
-    const cls = r === best ? ' best' : r === worst ? ' worst' : '';
+    const cls = working.length > 1 ? (r === best ? ' best' : r === worst ? ' worst' : '') : '';
     const pct = 100 * r.avg / CAPACITY;
     const tip = r.name + ': ' + pct1(r.avg) + ' чел. в среднем за ' +
       r.days + ' ' + plural(r.days, 'день', 'дня', 'дней') +
@@ -2403,16 +2663,100 @@ function renderWeekdayFlow() {
       '<span class="num">' + pct1(r.avg) + '<small>' + pct1(pct) + '%</small></span></div>';
   }).join('');
 
-  document.getElementById('wdCap').textContent =
-    'Среднее за рабочий день · ' + months + ' ' + plural(months, 'месяц', 'месяца', 'месяцев') + ' таблицы';
-
   const gap = worst.avg > 0 ? Math.round(100 * (best.avg - worst.avg) / worst.avg) : 0;
-  const missTotal = rows.reduce((s, r) => s + r.miss, 0);
+  const missTotal = rows.reduce((x, r) => x + r.miss, 0);
+  /* На коротком месяце на каждый день недели приходится один-два замера,
+     и «разрыв» превращается в шум. Вывод делаем только с трёх дней. */
+  const solid = Math.min(best.days, worst.days) >= 3;
   let txt = 'Сильнее всего <b>' + best.name.toLowerCase() + '</b> — ' + pct1(best.avg) +
     ' чел., слабее всего <b>' + worst.name.toLowerCase() + '</b> — ' + pct1(worst.avg) + '.';
-  if (gap > 0) txt += ' Разрыв <b>' + gap + '%</b> — это и есть управляемый резерв.';
-  if (missTotal) txt += ' Пустых ячеек в таблице: <b>' + missTotal + '</b> — день прошёл, цифры нет.';
+  if (gap > 0 && solid) txt += ' Разрыв <b>' + gap + '%</b> — это и есть управляемый резерв.';
+  else if (gap > 0) txt += ' Данных пока мало — по ' + Math.min(best.days, worst.days) +
+    ' ' + plural(Math.min(best.days, worst.days), 'дню', 'дня', 'дням') + ' на день недели, выводы делать рано.';
+  if (missTotal) txt += ' Пустых ячеек: <b>' + missTotal + '</b> — день прошёл, цифры нет.';
   document.getElementById('wdNote').innerHTML = txt;
+}
+
+document.getElementById('wdMonths').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-m]');
+  if (!btn) return;
+  wdMonth = btn.dataset.m;
+  renderWeekdayFlow();
+});
+
+/* ============================================================
+   ЦЕЛЬ МЕСЯЦА
+   Средняя за месяц складывается из уже отработанных дней и тех, что
+   впереди. Поэтому мало показать, где мы сейчас, — нужно сказать,
+   сколько держать в оставшиеся дни, чтобы месяц закрылся по цели.
+   ============================================================ */
+function renderGoal(monthName) {
+  const card = document.getElementById('goalCard');
+  if (!card) return;
+  const goal = GOALS[monthName];
+  const centers = monthData[monthName];
+  const me = centers && centers.find(c => /пресн/i.test(c.name));
+  if (!goal || !me) { card.hidden = true; return; }
+  card.hidden = false;
+
+  const mi = MONTHS_RU.indexOf(monthName);
+  const year = yearForMonth(mi);
+  const dim = new Date(year, mi + 1, 0).getDate();
+  const today = midnight(new Date());
+  const byDay = {};
+  me.days.forEach(d => { const n = parseInt(d.day, 10); if (n) byDay[n] = d; });
+
+  let sum = 0, done = 0, ahead = 0, missed = 0;
+  for (let n = 1; n <= dim; n++) {
+    const d = byDay[n];
+    const date = midnight(new Date(year, mi, n));
+    const sat = new Date(year, mi, n).getDay() === 6;   /* суббота — нерабочая */
+    if (d && d.v > 0) { sum += d.v; done++; continue; }
+    const raw = d ? (d.r || '').trim() : null;
+    if (raw === '-' || (raw !== null && raw !== '' && Number(raw) === 0)) continue;  /* закрыто */
+    if (date >= today) { if (!sat) ahead++; continue; }
+    if (!sat) missed++;
+  }
+
+  const avg = done ? sum / done : 0;
+  const planDays = done + ahead;
+  const need = ahead > 0 ? Math.max(0, (goal * planDays - sum) / ahead) : 0;
+  const ok = avg >= goal;
+
+  document.getElementById('goalTitle').textContent =
+    'Цель на ' + monthName.toLowerCase() + ': ' + goal + ' человек в среднем за день';
+  const badge = document.getElementById('goalBadge');
+  badge.textContent = ok ? 'идём с опережением' : 'ниже цели';
+  badge.className = 'goal-badge ' + (ok ? 'ok' : 'risk');
+
+  /* Шкала до 125% цели: так видно и недобор, и запас. */
+  const scale = goal * 1.25;
+  const fill = document.getElementById('goalFill');
+  fill.style.width = Math.min(100, 100 * avg / scale).toFixed(1) + '%';
+  fill.className = ok ? '' : 'risk';
+  const mark = document.getElementById('goalMark');
+  mark.style.left = (100 * goal / scale).toFixed(1) + '%';
+  mark.setAttribute('data-l', 'цель ' + goal);
+
+  const diff = Math.round(avg - goal);
+  document.getElementById('goalSub').innerHTML =
+    'Сейчас <b>' + pct1(avg) + '</b> за ' + done + ' ' + plural(done, 'рабочий день', 'рабочих дня', 'рабочих дней') +
+    ' — это <b>' + (diff >= 0 ? '+' : '') + diff + '</b> к цели.' +
+    (ahead ? ' Впереди ещё ' + ahead + ' ' + plural(ahead, 'рабочий день', 'рабочих дня', 'рабочих дней') + '.' : ' Месяц закрыт.') +
+    (missed ? ' Не заполнено: ' + missed + '.' : '');
+
+  const needBox = document.getElementById('goalNeed');
+  if (!ahead) {
+    needBox.className = 'goal-need' + (ok ? ' done' : '');
+    needBox.innerHTML = '<b>' + pct1(avg) + '</b>' + (ok ? 'итог месяца — цель взята' : 'итог месяца — цели не хватило');
+  } else if (need <= 0) {
+    needBox.className = 'goal-need done';
+    needBox.innerHTML = '<b>0</b>цель уже обеспечена: даже пустые оставшиеся дни её не уронят';
+  } else {
+    needBox.className = 'goal-need' + (need <= CAPACITY ? '' : ' risk');
+    needBox.innerHTML = '<b>' + Math.ceil(need) + '</b>нужно в среднем в оставшиеся ' +
+      ahead + ' ' + plural(ahead, 'день', 'дня', 'дней') + ', чтобы закрыть месяц по цели';
+  }
 }
 
 function renderCmpChart(me, centers, rank, total) {
