@@ -109,17 +109,17 @@
     --font-head: 'PT Serif', Georgia, 'Times New Roman', serif;
     --maxw: 1180px;       /* ширина рабочей области, растёт на широких экранах */
     /* типографическая шкала: 8 ступеней вместо 22 произвольных размеров */
-    --fs-2xs: 11px;   /* легенды, микроподписи */
-    --fs-xs:  12px;   /* подписи, мета */
-    --fs-sm:  13px;   /* основной текст интерфейса */
-    --fs-md:  15px;   /* поля ввода, акцентный текст */
-    --fs-lg:  17px;   /* заголовки карточек */
-    --fs-xl:  20px;   /* заголовки диалогов */
-    --fs-2xl: 24px;   /* заголовки секций */
-    --fs-3xl: 28px;   /* числа-показатели */
+    --fs-2xs: 12px;   /* легенды, микроподписи */
+    --fs-xs:  13px;   /* подписи, мета */
+    --fs-sm:  14px;   /* основной текст интерфейса */
+    --fs-md:  16px;   /* поля ввода, акцентный текст */
+    --fs-lg:  18px;   /* заголовки карточек */
+    --fs-xl:  22px;   /* заголовки диалогов */
+    --fs-2xl: 26px;   /* заголовки секций */
+    --fs-3xl: 31px;   /* числа-показатели */
     /* элементы управления: единая высота и радиус */
-    --control-h: 42px;
-    --r-control: 10px;
+    --control-h: 46px;
+    --r-control: 11px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
@@ -311,6 +311,19 @@
   .search-box kbd { flex: none; font: 700 var(--fs-2xs)/1 var(--font); color: var(--ink-soft); border: 1px solid var(--line); border-radius: 6px; padding: 4px 7px; background: var(--bg); }
 
   /* ---------- Декор для широких экранов ---------- */
+  /* Каннелюры — вертикальные желобки колонны. Отзвук портика из знака
+     центра: по краям экрана, едва заметно, растворяются сверху и снизу. */
+  .edge-flute { position: fixed; top: 0; bottom: 0; width: 46px; z-index: 0;
+    pointer-events: none; user-select: none; display: none;
+    background: repeating-linear-gradient(90deg,
+      var(--brand) 0 1.5px, transparent 1.5px 11px);
+    opacity: .13;
+    -webkit-mask-image: linear-gradient(180deg, transparent, #000 22%, #000 78%, transparent);
+    mask-image: linear-gradient(180deg, transparent, #000 22%, #000 78%, transparent); }
+  .edge-flute.left { left: 0; }
+  .edge-flute.right { right: 0; transform: scaleX(-1); }
+  @media (min-width: 1280px) { .edge-flute { display: block; } }
+
   /* Спилы по бокам: на светлой теме зелёные, на тёмной бордовые.
      Картинку из CSS не поменять, поэтому в разметке лежат обе пары,
      а тема показывает нужную. */
@@ -502,6 +515,7 @@
   .bday-row .when { flex: none; width: 64px; text-align: center; font-size: var(--fs-xs); font-weight: 800; border-radius: 999px; padding: 3px 0; background: var(--accent-soft); color: var(--accent-dark); }
   .bday-row.today .when { background: var(--accent); color: #fff; }
   .bday-row .nm { flex: 1; font-weight: 600; }
+  .bday-row .nm { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .bday-row .role { font-size: var(--fs-2xs); font-weight: 800; color: var(--green-dark); background: var(--green-soft); border-radius: 6px; padding: 2px 6px; }
   .bday-row .in { flex: none; font-size: var(--fs-xs); color: var(--ink-soft); }
 
@@ -680,7 +694,8 @@
      Шесть секций подряд превращали главную в бесконечную ленту. Теперь
      на экране один блок, между ними переключаются здесь. Выбор помнится
      между визитами: сотрудник возвращается туда, где работал. */
-  .tabbar { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none;
+  .tabbar { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; min-width: 0;
+    width: 100%; box-sizing: border-box;
     max-width: var(--maxw); margin: 18px auto 0; padding: 0 20px; }
   .tabbar::-webkit-scrollbar { display: none; }
   .tabbar button { flex: none; border: 1px solid var(--line); background: var(--card);
@@ -753,6 +768,28 @@
   .wd-months button.on { background: var(--brand); border-color: var(--brand); color: #fff; }
   :root[data-theme="dark"] .wd-months button.on { color: var(--on-brand); }
 
+  .sheet-links { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; }
+
+  /* ---------- Статистика клубов ---------- */
+  .club-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0 18px; }
+  @media (max-width: 900px) { .club-stats { grid-template-columns: 1fr; } }
+  .cs-rows { display: grid; gap: 8px; margin-top: 6px; }
+  .cs-row { display: grid; grid-template-columns: 124px 1fr 54px; align-items: center; gap: 10px; }
+  .cs-row .nm { font-size: var(--fs-xs); font-weight: 700; color: var(--ink-soft);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cs-row.me .nm { color: var(--accent-dark); font-weight: 800; }
+  /* Полоса составная: доли статусов складываются в общую длину клубов. */
+  .cs-bar { display: flex; height: 17px; border-radius: 999px; overflow: hidden; background: var(--bg-2); }
+  .cs-bar i { display: block; height: 100%; transition: width .8s var(--ease); }
+  .cs-bar i.s-open { background: var(--green); }
+  .cs-bar i.s-rec { background: var(--amber); }
+  .cs-bar i.s-off { background: var(--bar-muted); }
+  .cs-row .num { font-size: var(--fs-xs); font-weight: 800; text-align: right;
+    font-variant-numeric: tabular-nums; color: var(--ink); }
+  .cs-row.me .num { color: var(--accent-dark); }
+  .cs-row.dim .nm, .cs-row.dim .num { color: var(--ink-mute); font-weight: 700; }
+  @media (max-width: 560px) { .cs-row { grid-template-columns: 96px 1fr 46px; gap: 8px; } }
+
   /* Поток по дням недели: строка-день, полоса, число и доля мощности. */
   .wd-rows { display: grid; gap: 7px; margin-top: 4px; }
   .wd-row { display: grid; grid-template-columns: 92px 1fr 104px; align-items: center; gap: 10px; }
@@ -780,47 +817,35 @@
   @media (max-width: 560px) { .wd-row { grid-template-columns: 74px 1fr 88px; gap: 8px; } }
 
   /* ---------- Талисман ---------- */
-  .mascot { position: fixed; z-index: 70; width: 104px; cursor: pointer;
-    filter: drop-shadow(0 6px 16px rgba(0,0,0,.18)); }
+  .mascot { position: fixed; z-index: 70; width: 118px; cursor: pointer;
+    filter: drop-shadow(0 8px 20px rgba(0,0,0,.26)); }
   .mascot[hidden] { display: none; }
   .mascot-art { display: block; width: 100%; height: auto; }
-  .mascot .c-head, .mascot .c-ear, .mascot .c-paw { fill: var(--cat-fur); }
-  .mascot .c-ear-in { fill: var(--cat-ear); }
-  .mascot .c-eye { fill: #fff; }
-  .mascot .c-pupil { fill: #241c1f; }
-  .mascot .c-glint { fill: #fff; }
-  .mascot .c-nose { fill: var(--cat-ear); }
-  .mascot .c-mouth, .mascot .c-whisk { fill: none; stroke: #241c1f; stroke-width: 2.4;
-    stroke-linecap: round; opacity: .75; }
-  .mascot .c-whisk { stroke-width: 2; opacity: .4; }
-  :root { --cat-fur: #e8a13c; --cat-ear: #f2bfa0; }
-  :root[data-theme="dark"] { --cat-fur: #d08f33; --cat-ear: #c99478; }
 
-  /* Приезжает из-за края, подрагивает и уезжает обратно. */
-  .mascot.in { animation: catIn .5s var(--ease) both; }
+  /* Приезжает из-за края, слегка покачивается и уезжает обратно. */
+  .mascot.in { animation: catIn .45s var(--ease) both; }
   .mascot.out { animation: catOut .4s var(--ease) both; }
-  @keyframes catIn { from { opacity: 0; transform: translate(var(--cx,0), var(--cy,40px)) scale(.8); }
+  @keyframes catIn { from { opacity: 0; transform: translate(var(--cx,0), var(--cy,40px)) scale(.82); }
                      to { opacity: 1; transform: none; } }
   @keyframes catOut { from { opacity: 1; transform: none; }
-                      to { opacity: 0; transform: translate(var(--cx,0), var(--cy,40px)) scale(.8); } }
-  .mascot.in .mascot-body { animation: catWiggle 1.6s ease-in-out .5s 2; transform-origin: 60px 90px; }
-  @keyframes catWiggle { 0%,100% { rotate: 0deg; } 30% { rotate: -5deg; } 65% { rotate: 5deg; } }
-  .mascot.in .mascot-eyes { animation: catBlink 2.8s ease-in-out .9s infinite; transform-origin: center; }
-  @keyframes catBlink { 0%,92%,100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+                      to { opacity: 0; transform: translate(var(--cx,0), var(--cy,40px)) scale(.82); } }
+  .mascot.in .mascot-art { animation: catWiggle 2.2s ease-in-out .45s 3; transform-origin: 50% 90%; }
+  @keyframes catWiggle { 0%,100% { rotate: 0deg; } 30% { rotate: -3.5deg; } 65% { rotate: 3.5deg; } }
 
-  .mascot-bubble { position: absolute; bottom: 86%; left: 50%; transform: translateX(-50%);
+  .mascot-bubble { position: absolute; bottom: 88%; left: 50%; transform: translateX(-50%);
     background: var(--card); color: var(--ink); border: 1px solid var(--line);
-    border-radius: 12px; padding: 7px 11px; font-size: var(--fs-xs); font-weight: 700;
-    line-height: 1.35; white-space: nowrap; box-shadow: var(--shadow); }
+    border-radius: 13px; padding: 8px 12px; font-size: var(--fs-xs); font-weight: 700;
+    line-height: 1.35; white-space: normal; width: max-content;
+    max-width: min(250px, calc(100vw - 36px)); box-shadow: var(--shadow-md); }
   .mascot-bubble::after { content: ''; position: absolute; top: 100%; left: 50%;
-    transform: translateX(-50%); border: 6px solid transparent; border-top-color: var(--card); }
+    transform: translateX(-50%); border: 7px solid transparent; border-top-color: var(--card); }
   .mascot.edge-left .mascot-bubble { left: 0; transform: none; }
-  .mascot.edge-left .mascot-bubble::after { left: 22px; }
+  .mascot.edge-left .mascot-bubble::after { left: 26px; }
   .mascot.edge-right .mascot-bubble { left: auto; right: 0; transform: none; }
-  .mascot.edge-right .mascot-bubble::after { left: auto; right: 22px; }
-  @media (max-width: 560px) { .mascot { width: 76px; } .mascot-bubble { font-size: var(--fs-2xs); } }
+  .mascot.edge-right .mascot-bubble::after { left: auto; right: 26px; }
+  @media (max-width: 560px) { .mascot { width: 88px; } .mascot-bubble { font-size: var(--fs-2xs); max-width: min(190px, calc(100vw - 28px)); } }
   @media (prefers-reduced-motion: reduce) {
-    .mascot.in, .mascot.out, .mascot.in .mascot-body, .mascot.in .mascot-eyes { animation: none; }
+    .mascot.in, .mascot.out, .mascot.in .mascot-art { animation: none; }
   }
 
   .tabbar button:hover { color: var(--brand); border-color: var(--brand); transform: translateY(-1px); }
@@ -914,8 +939,8 @@
 
   /* ---------- Задачи: панель поиска/фильтров, приоритеты ---------- */
   .task-tools { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
-  .task-tools .pf-search { flex: 1; min-width: 180px; padding: 7px 10px; }
-  .task-tools select { font: 500 var(--fs-sm) var(--font); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; color: var(--ink); background: var(--card); }
+  .task-tools .pf-search { flex: 1 1 160px; min-width: 0; padding: 7px 10px; }
+  .task-tools select { font: 500 var(--fs-sm) var(--font); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; color: var(--ink); background: var(--card); min-width: 0; max-width: 100%; }
   .task-tools select:focus { outline: none; border-color: var(--brand); }
   .task-row .prio { flex: none; font-size: var(--fs-2xs); font-weight: 800; border-radius: 6px; padding: 2px 6px; }
   .task-row .prio.high { color: var(--brand); background: var(--brand-soft); }
@@ -1059,7 +1084,7 @@
     .dash-grid { grid-template-columns: 1fr 1fr; }
     .dash-cards { grid-template-columns: 1fr; }
     .dash-tools { flex-basis: 100%; margin-left: 0; }
-    .task-wrap { grid-template-columns: 1fr; }
+    .task-wrap { grid-template-columns: minmax(0, 1fr); }
     #partnersMap { height: 360px; }
     .pm-grid { grid-template-columns: 1fr; }
     .rank-row { grid-template-columns: 20px 92px 1fr 36px; }
@@ -1089,7 +1114,16 @@
     .hero .btn-light { padding: 8px 11px; font-size: var(--fs-sm); }
     .nav a.hide-sm { display: none; }
     .topbar .btn-green span.t { display: none; }
+    .sync .t { display: none; }
+    .topbar-inner { padding: 0 10px; gap: 6px; }
+    .topbar-tools { gap: 4px; }
     .topbar .btn-green { padding: 8px 10px; }
+  }
+  @media (max-width: 420px) {
+    .grid { grid-template-columns: minmax(0, 1fr); }
+    .task-wrap, .task-side { grid-template-columns: minmax(0, 1fr); }
+    .task-wrap > *, .task-side > * { min-width: 0; }
+    .task-tools { gap: 6px; }
   }
 </style>
 </head>
@@ -1191,6 +1225,8 @@
   </div>
 </div>
 
+<div class="edge-flute left" aria-hidden="true"></div>
+<div class="edge-flute right" aria-hidden="true"></div>
 <img class="side-deco left light" src="assets/ring-green.png" alt="" aria-hidden="true">
 <img class="side-deco right light" src="assets/ring-green.png" alt="" aria-hidden="true">
 <img class="side-deco left dark" src="assets/ring-rasp.png" alt="" aria-hidden="true">
@@ -1282,6 +1318,10 @@
         <button type="submit" class="btn btn-primary" id="attSubmit">Сохранить</button>
         <div class="att-state" id="attState"></div>
       </form>
+      <div class="sheet-links">
+        <a class="btn btn-soft btn-sm" id="linkAtt" target="_blank" rel="noopener">📊 Посещаемость ЦАО</a>
+        <a class="btn btn-soft btn-sm" id="linkSurvey" target="_blank" rel="noopener" hidden>📝 Откуда узнали о проекте</a>
+      </div>
       <div class="month-chips" id="monthChips"></div>
       <div class="goal-card" id="goalCard" hidden>
         <div class="goal-main">
@@ -1417,6 +1457,23 @@
     </div>
     <div class="pstats" id="clubsStats"></div>
     <div class="clubs-note" id="clubsNote" hidden></div>
+    <div class="club-stats" id="clubStats">
+      <div class="chart-card">
+        <h3>Направления и набор</h3>
+        <div class="cap">Сколько клубов в каждом направлении и что с набором</div>
+        <div class="legend">
+          <span class="li"><span class="sw box" style="background:var(--green)"></span>идёт набор</span>
+          <span class="li"><span class="sw box" style="background:var(--amber)"></span>по записи</span>
+          <span class="li"><span class="sw box" style="background:var(--bar-muted)"></span>приостановлен</span>
+        </div>
+        <div class="cs-rows" id="clubDirRows"></div>
+      </div>
+      <div class="chart-card">
+        <h3>Открытый набор по округу</h3>
+        <div class="cap" id="clubCaoCap">Доля клубов, куда можно записаться</div>
+        <div class="cs-rows" id="clubCaoRows"><div class="task-empty">Загружаю реестр округа…</div></div>
+      </div>
+    </div>
     <div class="clubs-legend">
       <span><i style="background:var(--green)"></i>идёт набор</span>
       <span><i style="background:var(--amber)"></i>по записи</span>
@@ -1519,28 +1576,7 @@
 <!-- Талисман: выглядывает раз в минуту, кликом прячется -->
 <div class="mascot" id="catMascot" hidden>
   <div class="mascot-bubble" id="catSay"></div>
-  <svg class="mascot-art" viewBox="0 0 120 96" aria-hidden="true" focusable="false">
-    <g class="mascot-body">
-      <path class="c-ear" d="M24 46 26 20 48 36Z"/>
-      <path class="c-ear" d="M96 46 94 20 72 36Z"/>
-      <path class="c-ear-in" d="M31 41 32 28 43 36Z"/>
-      <path class="c-ear-in" d="M89 41 88 28 77 36Z"/>
-      <ellipse class="c-head" cx="60" cy="58" rx="38" ry="33"/>
-      <g class="mascot-eyes">
-        <ellipse class="c-eye" cx="46" cy="54" rx="11" ry="12"/>
-        <ellipse class="c-eye" cx="75" cy="54" rx="9.5" ry="10.5"/>
-        <circle class="c-pupil" cx="47.5" cy="56" r="5.2"/>
-        <circle class="c-pupil" cx="73.5" cy="55" r="4.4"/>
-        <circle class="c-glint" cx="44.5" cy="51" r="2.1"/>
-        <circle class="c-glint" cx="71" cy="50.5" r="1.7"/>
-      </g>
-      <path class="c-nose" d="M56 68h8l-4 4.6Z"/>
-      <path class="c-mouth" d="M60 73q-4.5 5-9 .6M60 73q4.5 5 9 .6"/>
-      <path class="c-whisk" d="M20 62h16M20 70h16M100 62H84M100 70H84"/>
-      <path class="c-paw" d="M18 96V88a7 7 0 0 1 14 0v8Z"/>
-      <path class="c-paw" d="M88 96v-8a7 7 0 0 1 14 0v8Z"/>
-    </g>
-  </svg>
+  <img class="mascot-art" id="catArt" alt="" aria-hidden="true">
 </div>
 <div class="toasts" id="toasts"></div>
 
@@ -1672,6 +1708,20 @@ const COMMS_SHEET_NAME = 'Коммуникации';
 /* Дашборд читает таблицу «Посещаемость ЦАО» ТОЛЬКО на чтение.
    Вкладки в ней называются месяцами — новые подхватываются сами. */
 const ATTENDANCE_SHEET = '1AaZjdwpx-oCdiglZxg1Wszod0xqQXOXU0cppJuOguhY';
+/* Таблица опроса «Откуда узнали о проекте». Пока не задана: вписать сюда
+   идентификатор из адреса таблицы — кнопка появится сама. */
+const SURVEY_SHEET = '';
+
+/* Ссылки на исходные таблицы — там, где смотрят цифры, а не в общем списке. */
+(function () {
+  const att = document.getElementById('linkAtt');
+  if (att) att.href = 'https://docs.google.com/spreadsheets/d/' + ATTENDANCE_SHEET + '/edit';
+  const sv = document.getElementById('linkSurvey');
+  if (sv && SURVEY_SHEET) {
+    sv.href = 'https://docs.google.com/spreadsheets/d/' + SURVEY_SHEET + '/edit';
+    sv.hidden = false;
+  }
+})();
 const MONTHS_RU = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
 /* Цель по средней посещаемости за рабочий день. Ключ — название листа.
@@ -2045,32 +2095,40 @@ document.getElementById('themeBtn').addEventListener('click', () => {
 
 /* ============================================================
    ТАЛИСМАН
-   Раз в минуту кот выглядывает из случайного края экрана, говорит
-   глупость и через семь секунд уходит. Клик прячет его сразу.
-   Молчит, когда вкладка в фоне, когда открыт диалог и пока не пройден
-   вход — иначе будет мешать работе, а не развлекать.
+   Набор мемных котов, присланный командой. Каждые полминуты один из них
+   выглядывает из случайного края, говорит свою реплику и через десять
+   секунд уходит. Клик прячет сразу.
+   Молчит, когда вкладка в фоне, открыт диалог и пока не пройден вход —
+   иначе мешал бы работе, а не развлекал.
    ============================================================ */
 (function () {
   const cat = document.getElementById('catMascot');
   const say = document.getElementById('catSay');
+  const art = document.getElementById('catArt');
   if (!cat) return;
 
-  const PHRASES = [
-    'Среда — лучший день, я проверял',
-    'Отчёт сам себя не напишет',
-    'По субботам мы не работаем. И я тоже',
-    '257 мест свободно. Одно занял я',
-    'Пятница слабовата. Исправим?',
-    'Грядку полили?',
-    'Партнёрам давно не звонили',
-    'Мур. Это всё, что я хотел сказать',
-    'Я тоже участник проекта',
-    'Видел, как ты обновил страницу. Дважды',
-    'Мощность 401. Моя — одна рыбка в день',
-    'Тут кто-то хорошо поработал',
+  /* Реплика подобрана под морду: прищур знает, кто не заполнил,
+     улитка не торопится, а тот, что орёт, требует анкеты. */
+  const CATS = [
+    ['cat-00.webp', 'Я видел, кто вчера не заполнил'],
+    ['cat-01.webp', 'Начальство на месте. Это я'],
+    ['cat-02.webp', 'Прилетел проверить посещаемость'],
+    ['cat-03.webp', 'Среда! Лучший день недели!'],
+    ['cat-04.webp', 'Пятница опять просела…'],
+    ['cat-05.webp', '220 в среднем? Ну-ну'],
+    ['cat-06.webp', 'Ой. Я нажал не ту кнопку'],
+    ['cat-07.webp', 'Кто трогал мою таблицу?'],
+    ['cat-08.webp', 'Сегодня славно поработали'],
+    ['cat-09.webp', 'АНКЕТЫ! ЗАПОЛНИТЕ АНКЕТЫ!'],
+    ['cat-10.webp', 'Отчёт готовится. Не торопите'],
+    ['cat-11.webp', 'Обед. Вернусь через 15 минут'],
+    ['cat-12.webp', 'Я тут полежу, вы работайте'],
+    ['cat-13.webp', 'Партнёрам так и не позвонили'],
+    ['cat-14.webp', 'Встал напомнить про грядку'],
+    ['cat-15.webp', 'Принёс помидор. Больше нечего'],
   ];
 
-  let hideTimer = null, idx = Math.floor(Math.random() * PHRASES.length);
+  let hideTimer = null, idx = Math.floor(Math.random() * CATS.length);
 
   function hide(now) {
     clearTimeout(hideTimer);
@@ -2081,49 +2139,51 @@ document.getElementById('themeBtn').addEventListener('click', () => {
   }
 
   function show() {
-    if (document.hidden) return;                       /* вкладка в фоне */
-    if (!gateEl.hidden) return;                        /* ещё не вошли */
-    if (document.querySelector('dialog[open]')) return; /* открыт диалог */
+    if (document.hidden) return;                        /* вкладка в фоне */
+    if (!gateEl.hidden) return;                         /* ещё не вошли */
+    if (document.querySelector('dialog[open]')) return;  /* открыт диалог */
     if (!cat.hidden) return;
 
-    say.textContent = PHRASES[idx % PHRASES.length];
-    idx += 1 + Math.floor(Math.random() * 3);          /* не по кругу подряд */
+    const pick = CATS[idx % CATS.length];
+    idx += 1 + Math.floor(Math.random() * 3);           /* не по кругу подряд */
+    art.src = 'assets/cats/' + pick[0];
+    say.textContent = pick[1];
 
-    /* Край выбираем случайно, но держимся подальше от шапки и панели вкладок */
+    /* Край случайный, но держимся ниже шапки и панели вкладок. */
     const edges = ['left', 'right', 'bottom'];
     const edge = edges[Math.floor(Math.random() * edges.length)];
     cat.classList.remove('edge-left', 'edge-right');
     cat.style.top = cat.style.bottom = cat.style.left = cat.style.right = '';
-    const w = cat.offsetWidth || 104;
-    const safeTop = 180, safeBottom = 40;
-    const y = safeTop + Math.random() * Math.max(60, window.innerHeight - safeTop - safeBottom - 140);
+    const w = cat.offsetWidth || 118;
+    const safeTop = 190, safeBottom = 40;
+    const y = safeTop + Math.random() * Math.max(60, window.innerHeight - safeTop - safeBottom - 160);
 
     if (edge === 'left') {
       cat.classList.add('edge-left');
-      cat.style.left = '8px'; cat.style.top = Math.round(y) + 'px';
-      cat.style.setProperty('--cx', '-' + (w + 16) + 'px'); cat.style.setProperty('--cy', '0px');
+      cat.style.left = '10px'; cat.style.top = Math.round(y) + 'px';
+      cat.style.setProperty('--cx', '-' + (w + 18) + 'px'); cat.style.setProperty('--cy', '0px');
     } else if (edge === 'right') {
       cat.classList.add('edge-right');
-      cat.style.right = '8px'; cat.style.top = Math.round(y) + 'px';
-      cat.style.setProperty('--cx', (w + 16) + 'px'); cat.style.setProperty('--cy', '0px');
+      cat.style.right = '10px'; cat.style.top = Math.round(y) + 'px';
+      cat.style.setProperty('--cx', (w + 18) + 'px'); cat.style.setProperty('--cy', '0px');
     } else {
       const x = 24 + Math.random() * Math.max(40, window.innerWidth - w - 48);
-      if (x < window.innerWidth / 2) cat.classList.add('edge-left'); else cat.classList.add('edge-right');
-      cat.style.left = Math.round(x) + 'px'; cat.style.bottom = '8px';
-      cat.style.setProperty('--cx', '0px'); cat.style.setProperty('--cy', '120px');
+      cat.classList.add(x < window.innerWidth / 2 ? 'edge-left' : 'edge-right');
+      cat.style.left = Math.round(x) + 'px'; cat.style.bottom = '10px';
+      cat.style.setProperty('--cx', '0px'); cat.style.setProperty('--cy', '130px');
     }
 
     cat.hidden = false;
     cat.classList.remove('out');
-    void cat.offsetWidth;                              /* перезапуск анимации */
+    void cat.offsetWidth;                               /* перезапуск анимации */
     cat.classList.add('in');
-    hideTimer = setTimeout(() => hide(), 7000);
+    hideTimer = setTimeout(() => hide(), 10000);        /* десять секунд на экране */
   }
 
   cat.addEventListener('click', () => hide());
   document.addEventListener('visibilitychange', () => { if (document.hidden) hide(true); });
-  setTimeout(show, 12000);        /* первый выход — когда портал уже загрузился */
-  setInterval(show, 60000);
+  setTimeout(show, 12000);         /* первый выход — когда портал загрузился */
+  setInterval(show, 60000);        /* дальше раз в минуту */
 })();
 
 const gateEl = document.getElementById('gate');
@@ -3870,6 +3930,7 @@ function renderClubs() {
   document.getElementById('clubsShown').textContent =
     list.length === clubs.length ? '' : 'показано ' + list.length + ' из ' + clubs.length;
   renderClubsNote();
+  renderClubDirs();
 }
 
 document.getElementById('clubsDirs').addEventListener('click', e => {
@@ -3933,6 +3994,59 @@ async function loadCaoClubs() {
 }
 
 let caoClubsCache = null;
+/* Направления в разрезе набора: видно, где клубы есть, но попасть в них
+   нельзя. Строка — направление, полоса сложена из трёх статусов. */
+function renderClubDirs() {
+  const box = document.getElementById('clubDirRows');
+  if (!box || !clubs.length) return;
+  const by = {};
+  clubs.forEach(c => {
+    const d = c.dir || '—';
+    if (!by[d]) by[d] = { open: 0, rec: 0, off: 0, total: 0 };
+    by[d][clubState(c.status)]++; by[d].total++;
+  });
+  const rows = Object.keys(by).map(d => ({ dir: d, ...by[d] })).sort((a, b) => b.total - a.total);
+  const max = Math.max(...rows.map(r => r.total));
+  box.innerHTML = rows.map(r => {
+    const w = 100 * r.total / max;
+    const part = n => (n / r.total * 100).toFixed(1) + '%';
+    const tip = r.dir + ': всего ' + r.total + ', набор открыт ' + r.open +
+      ', по записи ' + r.rec + ', приостановлен ' + r.off;
+    return '<div class="cs-row' + (r.open === 0 ? ' dim' : '') + '" title="' + esc(tip) + '">' +
+      '<span class="nm">' + esc(r.dir) + '</span>' +
+      '<div class="cs-bar" style="width:' + w.toFixed(1) + '%">' +
+        (r.open ? '<i class="s-open" style="width:' + part(r.open) + '"></i>' : '') +
+        (r.rec ? '<i class="s-rec" style="width:' + part(r.rec) + '"></i>' : '') +
+        (r.off ? '<i class="s-off" style="width:' + part(r.off) + '"></i>' : '') +
+      '</div><span class="num">' + r.total + '</span></div>';
+  }).join('');
+}
+
+/* Доля открытого набора по центрам округа: «15 из 42» само по себе
+   ни о чём не говорит, пока рядом нет соседей. */
+function renderClubCao() {
+  const box = document.getElementById('clubCaoRows');
+  if (!box) return;
+  const cao = typeof caoClubsCache !== 'undefined' && caoClubsCache;
+  if (!cao || !cao.length) return;
+  const live = cao.filter(c => !c.repair && c.total > 0)
+    .map(c => ({ name: c.name, total: c.total, open: c.open, share: 100 * c.open / c.total }))
+    .sort((a, b) => b.share - a.share);
+  box.innerHTML = live.map(c => {
+    const me = /пресн/i.test(c.name);
+    const tip = c.name + ': открыт набор в ' + c.open + ' из ' + c.total + ' клубов';
+    return '<div class="cs-row' + (me ? ' me' : '') + '" title="' + esc(tip) + '">' +
+      '<span class="nm">' + esc(c.name) + '</span>' +
+      '<div class="cs-bar"><i class="' + (me ? '' : 's-open') + '" style="width:' + c.share.toFixed(1) +
+        '%' + (me ? ';background:var(--accent)' : '') + '"></i></div>' +
+      '<span class="num">' + Math.round(c.share) + '%</span></div>';
+  }).join('');
+  const repaired = cao.filter(c => c.repair).length;
+  document.getElementById('clubCaoCap').textContent =
+    'Доля клубов, куда можно записаться · ' + live.length + ' центров' +
+    (repaired ? ' (' + repaired + ' на ремонте не в счёт)' : '');
+}
+
 /* Доля открытого набора — единственный риск-сигнал, который реестр даёт
    честно. Сравниваем с округом: без сравнения «15 из 42» ни о чём не говорит. */
 function renderClubsNote() {
@@ -3976,6 +4090,7 @@ document.getElementById('clubsNote').addEventListener('click', e => {
 function renderCaoClubs(centers) {
   caoClubsCache = centers;
   renderClubsNote();
+  renderClubCao();
   centers.sort((a, b) => b.total - a.total);
   const total = centers.reduce((a, c) => a + c.total, 0);
   const max = Math.max(...centers.map(c => c.total), 1);
