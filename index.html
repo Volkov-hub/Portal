@@ -909,6 +909,11 @@
     animation: headturn 14s ease-in-out infinite alternate; }
   @keyframes headturn { from { rotate: -6deg; } to { rotate: 6deg; } }
 
+  /* капелька пота медленно набухает — движение на грани заметности */
+  .garden-scene .g-sweat { animation: sweat 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 0; }
+  .garden-scene .g-whip { animation: whip 4.5s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 0 100%; }
+  @keyframes whip { from { rotate: -4deg; } to { rotate: 5deg; } }
+  @keyframes sweat { 0%, 60%, 100% { transform: scaleY(1); opacity: .9; } 80% { transform: scaleY(1.35); opacity: 1; } }
   .garden-scene .g-glow { animation: breathe 6s ease-in-out infinite alternate; }
   @keyframes breathe { from { opacity: .12; } to { opacity: .26; } }
 
@@ -964,7 +969,8 @@
   }
   @media (prefers-reduced-motion: reduce) {
     .garden-scene .g-plant, .garden-scene .g-head, .garden-scene .g-glow,
-    .garden-scene .g-fly, .farmer.king .g-crown { animation: none; }
+    .garden-scene .g-fly, .farmer.king .g-crown,
+    .garden-scene .g-sweat, .garden-scene .g-whip { animation: none; }
     .garden-scene .g-fly { opacity: 0; }
     .garden-bar i { transition: none; }
   }
@@ -3642,50 +3648,64 @@ function farmerSVG(x, baseY, sc, shirt, crown, title, mood) {
   const n = (v) => +(v * sc).toFixed(2);          /* то же число, но для арифметики */
   const hy = baseY - n(30);
   const cy = hy + n(6);                           /* центр головы */
-  const ink = '#5b4636';
   const m = mood || 'ok';
 
-  /* глаза */
-  const ex = n(2.5), ey = cy - n(0.8), ew = n(1.7), eh = n(1.9);
-  const lw = Math.max(0.7, n(0.95));
-  const arc = (cx) => '<path d="M' + (cx - ew).toFixed(1) + ' ' + ey.toFixed(1) +
-    ' q' + ew.toFixed(1) + ' ' + (-eh).toFixed(1) + ' ' + (2 * ew).toFixed(1) + ' 0" stroke="' + ink +
-    '" stroke-width="' + lw.toFixed(1) + '" fill="none" stroke-linecap="round"/>';
-  const dot = (cx, r) => '<circle cx="' + cx.toFixed(1) + '" cy="' + ey.toFixed(1) +
-    '" r="' + r.toFixed(2) + '" fill="' + ink + '"/>';
+  /* Глаза крупные и мультяшные: белок, тёмный зрачок и блик. Мелкие
+     точки на аватарке в 46 px превращались в пыль. */
+  const ex = n(2.8), ey = cy - n(1), ink = '#4a3a2c';
+  const er = n(2.9), pr = n(1.55), hr = n(0.62);
+  const lw = Math.max(0.8, n(1.05));
+
+  const open = (cx, look) => {
+    const px = cx + n(look || 0);
+    return '<ellipse cx="' + cx.toFixed(1) + '" cy="' + ey.toFixed(1) + '" rx="' + er.toFixed(2) +
+      '" ry="' + (er * 1.08).toFixed(2) + '" fill="#fff" stroke="' + ink +
+      '" stroke-width="' + (lw * 0.75).toFixed(2) + '"/>' +
+      '<circle cx="' + px.toFixed(1) + '" cy="' + (ey + n(0.3)).toFixed(1) + '" r="' + pr.toFixed(2) +
+      '" fill="' + ink + '"/>' +
+      '<circle cx="' + (px - n(0.7)).toFixed(1) + '" cy="' + (ey - n(0.6)).toFixed(1) + '" r="' + hr.toFixed(2) +
+      '" fill="#fff"/>';
+  };
+  const happy = (cx) => '<path d="M' + (cx - er).toFixed(1) + ' ' + (ey + n(0.6)).toFixed(1) +
+    ' q' + er.toFixed(1) + ' ' + (-er * 1.5).toFixed(1) + ' ' + (2 * er).toFixed(1) + ' 0" stroke="' + ink +
+    '" stroke-width="' + (lw * 1.3).toFixed(2) + '" fill="none" stroke-linecap="round"/>';
+  const brow = (cx, tilt) => '<path d="M' + (cx - n(2.4)).toFixed(1) + ' ' + (ey - er - n(1.4)).toFixed(1) +
+    ' q' + n(2.4).toFixed(1) + ' ' + (-n(1.5)).toFixed(1) + ' ' + n(4.8).toFixed(1) + ' ' + n(tilt).toFixed(1) +
+    '" stroke="' + ink + '" stroke-width="' + lw.toFixed(2) + '" fill="none" stroke-linecap="round" opacity=".8"/>';
 
   let eyes;
-  if (m === 'king') eyes = arc(-ex) + arc(ex);                       /* зажмурился от счастья */
-  else if (m === 'good') eyes = arc(-ex) + dot(ex, n(1.05));         /* подмигивает */
-  else if (m === 'meh') eyes = dot(-ex, n(1.35)) + dot(ex, n(1.35)) +
-    '<path d="M' + (-ex - n(1.8)).toFixed(1) + ' ' + (ey - n(2.6)).toFixed(1) +
-    ' q' + n(1.8).toFixed(1) + ' ' + (-n(1.1)).toFixed(1) + ' ' + n(3.6).toFixed(1) + ' ' + n(0.3).toFixed(1) +
-    '" stroke="' + ink + '" stroke-width="' + lw.toFixed(1) + '" fill="none" stroke-linecap="round" opacity=".7"/>' +
-    '<path d="M' + (ex - n(1.8)).toFixed(1) + ' ' + (ey - n(2.3)).toFixed(1) +
-    ' q' + n(1.8).toFixed(1) + ' ' + (-n(1.1)).toFixed(1) + ' ' + n(3.6).toFixed(1) + ' ' + (-n(0.3)).toFixed(1) +
-    '" stroke="' + ink + '" stroke-width="' + lw.toFixed(1) + '" fill="none" stroke-linecap="round" opacity=".7"/>';
-  else eyes = dot(-ex, n(1.05)) + dot(ex, n(1.05));                  /* спокойный взгляд */
+  if (m === 'king') eyes = happy(-ex) + happy(ex);              /* зажмурился от счастья */
+  else if (m === 'good') eyes = happy(-ex) + open(ex, 0.3);     /* подмигивает */
+  else if (m === 'meh') eyes = open(-ex, -0.5) + open(ex, -0.5) + brow(-ex, 0.9) + brow(ex, 0.9);
+  else eyes = open(-ex, 0) + open(ex, 0);                       /* спокойный взгляд */
 
   /* рот */
-  const my = cy + n(2.4), mw = n(2.2);
+  const my = cy + n(3.4), mw = n(2.4);
   let mouth;
-  if (m === 'meh') mouth = '<ellipse cx="0" cy="' + (my + n(0.3)).toFixed(1) + '" rx="' + n(1).toFixed(2) +
-    '" ry="' + n(1.25).toFixed(2) + '" fill="' + ink + '" opacity=".75"/>';
+  if (m === 'meh') mouth = '<ellipse cx="0" cy="' + my.toFixed(1) + '" rx="' + n(1.1).toFixed(2) +
+    '" ry="' + n(1.4).toFixed(2) + '" fill="' + ink + '" opacity=".8"/>';
   else {
-    const deep = m === 'king' ? n(2.4) : m === 'good' ? n(1.9) : n(1.4);
+    const deep = m === 'king' ? n(2.6) : m === 'good' ? n(2) : n(1.5);
     mouth = '<path d="M' + (-mw).toFixed(1) + ' ' + my.toFixed(1) + ' q' + mw.toFixed(1) + ' ' +
       deep.toFixed(1) + ' ' + (2 * mw).toFixed(1) + ' 0" stroke="' + ink + '" stroke-width="' +
-      lw.toFixed(1) + '" fill="none" stroke-linecap="round"/>';
+      (lw * 1.15).toFixed(2) + '" fill="none" stroke-linecap="round"/>';
   }
+
+  /* капелька пота у того, кто пока ничего не закрыл */
+  const sweat = m === 'meh'
+    ? '<path class="g-sweat" d="M' + n(6.4).toFixed(1) + ' ' + (cy - n(4.6)).toFixed(1) +
+      ' q' + n(1.9).toFixed(1) + ' ' + n(2.6).toFixed(1) + ' 0 ' + n(4).toFixed(1) +
+      ' q' + (-n(1.9)).toFixed(1) + ' ' + (-n(1.4)).toFixed(1) + ' 0 ' + (-n(4)).toFixed(1) +
+      'Z" fill="#6ec6f0" opacity=".9"/>'
+    : '';
 
   /* румянец — только у довольных, иначе лицо выглядит воспалённым */
   const blush = (m === 'king' || m === 'good')
-    ? '<ellipse cx="' + (-n(4.2)).toFixed(1) + '" cy="' + (cy + n(1.6)).toFixed(1) + '" rx="' + n(1.5).toFixed(2) +
-      '" ry="' + n(0.95).toFixed(2) + '" fill="#e8859b" opacity=".45"/>' +
-      '<ellipse cx="' + n(4.2).toFixed(1) + '" cy="' + (cy + n(1.6)).toFixed(1) + '" rx="' + n(1.5).toFixed(2) +
-      '" ry="' + n(0.95).toFixed(2) + '" fill="#e8859b" opacity=".45"/>'
+    ? '<ellipse cx="' + (-n(5)).toFixed(1) + '" cy="' + (cy + n(2.4)).toFixed(1) + '" rx="' + n(1.7).toFixed(2) +
+      '" ry="' + n(1.05).toFixed(2) + '" fill="#e8859b" opacity=".45"/>' +
+      '<ellipse cx="' + n(5).toFixed(1) + '" cy="' + (cy + n(2.4)).toFixed(1) + '" rx="' + n(1.7).toFixed(2) +
+      '" ry="' + n(1.05).toFixed(2) + '" fill="#e8859b" opacity=".45"/>'
     : '';
-
   return '<g class="g-farmer" transform="translate(' + x + ' 0)">' +
     '<title>' + esc(title) + '</title>' +
     '<ellipse cx="0" cy="' + baseY + '" rx="' + g(11) + '" ry="' + g(2.6) + '" fill="#000" opacity=".12"/>' +
@@ -3695,8 +3715,8 @@ function farmerSVG(x, baseY, sc, shirt, crown, title, mood) {
     '" stroke="' + shirt + '" stroke-width="' + g(2.8) + '" fill="none" stroke-linecap="round"/>' +
     '<path d="M' + g(6) + ' ' + (baseY - n(15)) + ' q' + g(5) + ' ' + g(5) + ' ' + g(3) + ' ' + g(10) +
     '" stroke="' + shirt + '" stroke-width="' + g(2.8) + '" fill="none" stroke-linecap="round"/>' +
-    '<circle cx="0" cy="' + cy.toFixed(1) + '" r="' + g(6.4) + '" fill="#f0c9a4"/>' +
-    blush + eyes + mouth +
+    '<circle cx="0" cy="' + cy.toFixed(1) + '" r="' + g(7.4) + '" fill="#f0c9a4"/>' +
+    blush + eyes + mouth + sweat +
     (crown
       ? '<path class="g-crown" d="M' + -g(7) + ' ' + (hy - n(1)) + ' L' + -g(7) + ' ' + (hy - n(7)) +
         ' L' + -g(3.5) + ' ' + (hy - n(3.5)) + ' L0 ' + (hy - n(9)) + ' L' + g(3.5) + ' ' + (hy - n(3.5)) +
@@ -3794,6 +3814,59 @@ function renderGardenGoal() {
   note.innerHTML = txt;
 }
 
+/* Руководитель на краю грядки: подпись РВ и кнут — командная шутка
+   про «кнут и пряник». Рисуем добродушно: улыбка, кнут занесён вверх
+   и ни на кого не направлен. */
+function bossSVG(x, baseY, sc) {
+  const n = (v) => +(v * sc).toFixed(2);
+  const f = (v) => n(v).toFixed(1);
+  const hy = baseY - n(32), cy = hy + n(6), ink = '#4a3a2c';
+  const suit = '#3a3f55', skin = '#f0c9a4';
+  const lw = Math.max(0.8, n(1.05));
+  const ex = n(2.8), ey = cy - n(1), er = n(2.9);
+  const eye = (cx) => '<ellipse cx="' + cx.toFixed(1) + '" cy="' + ey.toFixed(1) + '" rx="' + er.toFixed(2) +
+    '" ry="' + (er * 1.08).toFixed(2) + '" fill="#fff" stroke="' + ink + '" stroke-width="' + (lw * .75).toFixed(2) + '"/>' +
+    '<circle cx="' + (cx + n(0.4)).toFixed(1) + '" cy="' + (ey + n(0.3)).toFixed(1) + '" r="' + n(1.55).toFixed(2) + '" fill="' + ink + '"/>' +
+    '<circle cx="' + (cx - n(0.3)).toFixed(1) + '" cy="' + (ey - n(0.6)).toFixed(1) + '" r="' + n(0.62).toFixed(2) + '" fill="#fff"/>';
+  return '<g class="g-boss">' +
+    '<title>Руководитель · РВ</title>' +
+    '<g transform="translate(' + x + ' 0)">' +
+    '<ellipse cx="0" cy="' + baseY + '" rx="' + f(12) + '" ry="' + f(2.8) + '" fill="#000" opacity=".12"/>' +
+    /* корпус */
+    '<path d="M' + f(-9) + ' ' + baseY + ' L' + f(-7) + ' ' + (baseY - n(19)) + ' L' + f(7) + ' ' +
+      (baseY - n(19)) + ' L' + f(9) + ' ' + baseY + ' Z" fill="' + suit + '"/>' +
+    /* галстук и подпись на груди */
+    '<path d="M0 ' + (baseY - n(18)) + ' l' + f(1.6) + ' ' + f(2.4) + ' l' + f(-1.6) + ' ' + f(7) +
+      ' l' + f(-1.6) + ' ' + f(-7) + ' Z" fill="#c0392b"/>' +
+    '<text x="0" y="' + (baseY - n(4)).toFixed(1) + '" text-anchor="middle" font-size="' + f(6.4) +
+      '" font-weight="800" fill="#fff" font-family="var(--font)" opacity=".92">РВ</text>' +
+    /* левая рука опущена, правая занесла кнут */
+    '<path d="M' + f(-7) + ' ' + (baseY - n(16)) + ' q' + f(-5) + ' ' + f(6) + ' ' + f(-3) + ' ' + f(11) +
+      '" stroke="' + suit + '" stroke-width="' + f(3) + '" fill="none" stroke-linecap="round"/>' +
+    '<path d="M' + f(7) + ' ' + (baseY - n(16)) + ' q' + f(7) + ' ' + f(-3) + ' ' + f(9) + ' ' + f(-9) +
+      '" stroke="' + suit + '" stroke-width="' + f(3) + '" fill="none" stroke-linecap="round"/>' +
+    '<circle cx="' + f(16) + '" cy="' + (baseY - n(25)).toFixed(1) + '" r="' + f(1.9) + '" fill="' + skin + '"/>' +
+    /* кнут: рукоять и длинный хлыст вверх, ни на кого не направлен */
+    '<path d="M' + f(15) + ' ' + (baseY - n(24)) + ' l' + f(4.5) + ' ' + f(-4.5) +
+      '" stroke="#6b4a2f" stroke-width="' + f(1.9) + '" stroke-linecap="round"/>' +
+    '<path class="g-whip" d="M' + f(19) + ' ' + (baseY - n(28)) + ' q' + f(12) + ' ' + f(-9) + ' ' + f(17) + ' ' + f(2) +
+      ' q' + f(4) + ' ' + f(7) + ' ' + f(-3) + ' ' + f(9) + '" stroke="#6b4a2f" stroke-width="' + f(1.4) +
+      '" fill="none" stroke-linecap="round"/>' +
+    /* голова: доволен собой, одна бровь приподнята */
+    '<circle cx="0" cy="' + cy.toFixed(1) + '" r="' + f(7.6) + '" fill="' + skin + '"/>' +
+    eye(-ex) + eye(ex) +
+    '<path d="M' + (-ex - n(2.4)).toFixed(1) + ' ' + (ey - er - n(2.2)).toFixed(1) + ' q' + f(2.4) + ' ' +
+      f(-1.6) + ' ' + f(4.8) + ' ' + f(0.2) + '" stroke="' + ink + '" stroke-width="' + lw.toFixed(2) +
+      '" fill="none" stroke-linecap="round" opacity=".85"/>' +
+    '<path d="M' + (ex - n(2.4)).toFixed(1) + ' ' + (ey - er - n(0.9)).toFixed(1) + ' q' + f(2.4) + ' ' +
+      f(-2.2) + ' ' + f(4.8) + ' ' + f(-0.6) + '" stroke="' + ink + '" stroke-width="' + lw.toFixed(2) +
+      '" fill="none" stroke-linecap="round" opacity=".85"/>' +
+    '<path d="M' + f(-2.6) + ' ' + (cy + n(3.4)).toFixed(1) + ' q' + f(2.6) + ' ' + f(2.2) + ' ' + f(5.2) + ' ' + f(-0.6) +
+      '" stroke="' + ink + '" stroke-width="' + (lw * 1.15).toFixed(2) + '" fill="none" stroke-linecap="round"/>' +
+    '<path d="M' + f(-8) + ' ' + (cy - n(3.6)).toFixed(1) + ' q' + f(8) + ' ' + f(-6) + ' ' + f(16) + ' 0 Z" fill="#5d4a39"/>' +
+    '</g></g>';
+}
+
 function renderGarden() {
   const scene = document.getElementById('gardenScene');
   if (!scene) return;
@@ -3855,13 +3928,16 @@ function renderGarden() {
   const best = staff.length ? Math.max(...staff.map(s => s.dealt)) : 0;
   let people = '';
   staff.slice(0, 5).forEach((s, i) => {
-    const x = staff.length === 1 ? W * .5 : (W * 0.16) + (W * 0.68) * (i / Math.max(1, Math.min(5, staff.length) - 1));
+    const x = staff.length === 1 ? W * .4 : (W * 0.14) + (W * 0.56) * (i / Math.max(1, Math.min(5, staff.length) - 1));
     const king = s.dealt === best && best > 0;
     people += farmerSVG(+x.toFixed(1), GROUND + 33, narrow ? .85 : 1.15, shirts[i % shirts.length],
       king,
       s.name + ' — отработано ' + s.dealt + (s.returned ? ', вернулись ' + s.returned : ''),
       farmerMood(s, king));
   });
+
+  /* руководитель стоит с краю, за спинами — на своём месте */
+  people += bossSVG(W - (narrow ? 44 : 62), GROUND + 33, narrow ? .8 : 1.1);
 
   const soil = 'M0 ' + (GROUND + 4) +
     ' C' + (W * .18) + ' ' + (GROUND - 4) + ' ' + (W * .34) + ' ' + (GROUND + 5) + ' ' + (W * .5) + ' ' + (GROUND + 1) +
@@ -3955,7 +4031,7 @@ function renderFarmers(staff, best, shirts) {
     for (let k = 0; k < n; k++) mini += plantSVG(k + i * 50, 16 + k * 26, 74, k < bl);
 
     return '<article class="farmer' + (king ? ' king' : '') + '">' +
-      '<svg class="f-ava" viewBox="-20 0 40 46" aria-hidden="true">' +
+      '<svg class="f-ava" viewBox="-22 -9 44 56" aria-hidden="true">' +
         farmerSVG(0, 42, 1.25, shirts[i % shirts.length], king, s.name, farmerMood(s, king)) + '</svg>' +
       '<div class="f-main">' +
         '<div class="f-name">' + (king ? '<span class="f-crown" title="первый по отработке">👑</span> ' : '') +
