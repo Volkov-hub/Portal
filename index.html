@@ -409,7 +409,7 @@
   .chart-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px 18px 12px; min-width: 0; }
   .chart-card h3 { font-family: var(--font-head); font-size: var(--fs-lg); font-weight: 700; display: flex; align-items: center; gap: 8px; }
   .chart-card .cap { font-size: var(--fs-sm); color: var(--ink-soft); margin-top: 3px; margin-bottom: 12px; }
-  .chart-card .badge { font-size: var(--fs-2xs); font-weight: 800; border-radius: 6px; padding: 2px 8px; background: var(--green-soft); color: var(--green); margin-left: auto; }
+  .chart-card .badge { font-size: var(--fs-2xs); font-weight: 800; border-radius: 6px; padding: 2px 8px; background: var(--green-soft); color: var(--green-dark); margin-left: auto; }
   .chart-card svg { width: 100%; height: auto; display: block; }
   .chart-card svg text { font-family: var(--font); }
   .chart-card svg rect.bar { transition: filter .15s; }
@@ -449,7 +449,7 @@
   .card:hover::after { opacity: 1; transform: none; color: var(--brand); }
   .card .row { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
   .card .type { flex: none; font-size: var(--fs-2xs); font-weight: 800; border-radius: 6px; padding: 3px 8px; white-space: nowrap; }
-  .type-sheet { background: var(--green-soft); color: var(--green); }
+  .type-sheet { background: var(--green-soft); color: var(--green-dark); }
   .type-doc   { background: var(--green-soft); color: var(--green); }
   .type-disk  { background: var(--chip-bg); color: var(--ink-soft); }
   .type-mail  { background: var(--brand-soft); color: var(--brand); }
@@ -519,6 +519,33 @@
   .bday-row .role { font-size: var(--fs-2xs); font-weight: 800; color: var(--green-dark); background: var(--green-soft); border-radius: 6px; padding: 2px 6px; }
   .bday-row .in { flex: none; font-size: var(--fs-xs); color: var(--ink-soft); }
 
+  .bday-row .age { flex: none; font-size: var(--fs-2xs); font-weight: 700; color: var(--ink-mute); }
+  .bday-row .role.activist { color: var(--teal-ink); background: var(--teal-soft); }
+  .pbday-foot { margin-top: 8px; font-size: var(--fs-2xs); color: var(--ink-mute); line-height: 1.4; }
+
+  /* ---------- Цель грядки ---------- */
+  .ggoal { margin-top: 16px; background: var(--bg); border: 1px solid var(--line);
+    border-radius: var(--radius-sm); padding: 14px 16px; }
+  .ggoal[hidden] { display: none; }
+  .gg-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+    font-family: var(--font-head); font-size: var(--fs-lg); font-weight: 700; }
+  .gg-badge { font-family: var(--font); font-size: var(--fs-2xs); font-weight: 800;
+    letter-spacing: .05em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; }
+  .gg-badge.ok { background: var(--green-soft); color: var(--green-dark); }
+  .gg-badge.risk { background: var(--accent-soft); color: var(--accent-dark); }
+  .gg-nums { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; margin: 12px 0 10px; }
+  .gg-big { flex: none; }
+  .gg-big b { display: block; font-size: var(--fs-3xl); font-weight: 800; line-height: 1;
+    color: var(--green-dark); font-variant-numeric: tabular-nums; }
+  .gg-big span { display: block; font-size: var(--fs-2xs); color: var(--ink-soft);
+    font-weight: 700; margin-top: 3px; max-width: 140px; line-height: 1.3; }
+  .gg-side { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: var(--fs-xs); color: var(--ink-soft); }
+  .gg-side b { display: block; font-size: var(--fs-lg); font-weight: 800; color: var(--ink);
+    font-variant-numeric: tabular-nums; line-height: 1.15; }
+  .gg-note { font-size: var(--fs-xs); line-height: 1.45; color: var(--ink-soft); }
+  .gg-note b { color: var(--ink); }
+  @media (max-width: 560px) { .gg-nums { grid-template-columns: 1fr; gap: 10px; } }
+
   /* ---------- Быстрый доступ ---------- */
   .links-card { padding: 14px 16px; }
   .links-table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
@@ -562,7 +589,7 @@
   .pf-chips button { padding: 6px 13px; font-size: var(--fs-sm); display: flex; align-items: center; gap: 6px; }
   .pf-chips button .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
   .pf-chips button:hover { border-color: var(--brand); color: var(--brand); }
-  .pf-chips button.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .pf-chips button.on { background: var(--ink); border-color: var(--ink); color: var(--card); }
   .pf-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
   .pf-filters[hidden] { display: none; }   /* display:flex перебивает атрибут hidden — нужно явно */
   .pf-filters select { font: 500 var(--fs-sm) var(--font); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; color: var(--ink); background: var(--card); }
@@ -854,7 +881,12 @@
   body.view-partners .tabbar { display: none; }
   [data-pane] { display: none; }
   [data-pane].on { display: block; }
-  @media (max-width: 760px) { .tabbar { padding: 0 14px; } }
+  @media (max-width: 760px) {
+    .tabbar { padding: 0 14px; }
+    .topbar .btn-green span.t { display: none; }
+    .topbar .btn-green { padding: 9px 12px; }
+    .nav a.hide-sm { display: none; }
+  }
 
   /* ---------- Грядка долголетия ---------- */
   .garden-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
@@ -1277,8 +1309,15 @@
       </div>
       <div class="task-side">
         <div class="task-card bday-card">
-          <div class="side-head">🎂 Ближайшие дни рождения</div>
+          <div class="side-head">🎂 Дни рождения команды</div>
           <div id="bdayRows"></div>
+        </div>
+        <div class="task-card bday-card">
+          <div class="side-head">🎈 Дни рождения участников
+            <span class="tools"><a id="pbdayLink" href="#" target="_blank" rel="noopener" title="Открыть таблицу">таблица ↗</a></span>
+          </div>
+          <div id="pbdayRows"><div class="task-empty">Загружаю список…</div></div>
+          <div class="pbday-foot" id="pbdayFoot"></div>
         </div>
       </div>
     </div>
@@ -1439,6 +1478,14 @@
         <div class="garden-bar"><i id="gardenBar" style="width:0"></i></div>
         <div class="garden-bar-lbl" id="gardenBarLbl"></div>
         <div class="pstats" id="gardenStats"></div>
+        <div class="ggoal" id="gardenGoal" hidden>
+          <div class="gg-head"><span id="ggTitle"></span><span class="gg-badge" id="ggBadge"></span></div>
+          <div class="gg-nums">
+            <div class="gg-big"><b id="ggPerDay">—</b><span id="ggPerDayLbl"></span></div>
+            <div class="gg-side" id="ggSide"></div>
+          </div>
+          <div class="gg-note" id="ggNote"></div>
+        </div>
         <div class="side-head" style="margin-top:16px">🏅 Кто отрабатывает список</div>
         <div class="garden-staff" id="gardenStaff"></div>
       </div>
@@ -3445,6 +3492,7 @@ function renderLinks(live) {
    ============================================================ */
 const GARDEN_SHEET_ID = '1nUn-HFGA9-dwysu9wsVHA4BDI-Uv_yTLqWh1b_D1MEs';
 const GARDEN_GID = '1963113636';
+const PBDAY_GID = '147047501';     /* лист дней рождения участников */
 const GARDEN_RETURNED = /зачислен|придет очно|придёт очно/i;
 
 let garden = null;
@@ -3600,6 +3648,95 @@ function farmerSVG(x, baseY, sc, shirt, crown, title) {
     '</g>';
 }
 
+/* ============================================================
+   ЦЕЛЬ ГРЯДКИ
+   Список нужно закрыть к сроку. Норму считаем не впритык, а с запасом:
+   планируем финиш на несколько рабочих дней раньше, чтобы болезнь,
+   праздник или тяжёлый день не срывали срок. Норма пересчитывается
+   каждый день от фактического остатка — отстали, она сама подрастёт.
+   Суббота нерабочая, в расчёт не идёт.
+   ============================================================ */
+const GARDEN_GOAL = {
+  deadline: '23.10.2026',   /* к этому дню список должен быть закрыт */
+  startDate: '08.10.2026',  /* день постановки цели */
+  startDealt: 213,          /* отработано на старте — по нему считаем график */
+  buffer: 3,                /* рабочих дней запаса: финишируем раньше срока */
+};
+
+/* Рабочие дни между датами включительно: всё, кроме субботы. */
+function workDays(from, to) {
+  let n = 0;
+  const d = new Date(from);
+  while (d <= to) { if (d.getDay() !== 6) n++; d.setDate(d.getDate() + 1); }
+  return n;
+}
+
+function gardenGoal() {
+  if (!garden) return null;
+  const deadline = parseTaskDate(GARDEN_GOAL.deadline);
+  const start = parseTaskDate(GARDEN_GOAL.startDate);
+  if (!deadline || !start) return null;
+  const today = midnight(new Date());
+  const left = Math.max(0, garden.total - garden.dealt);
+  const daysLeft = today > deadline ? 0 : workDays(today, deadline);
+  /* Планируем закрыть список раньше срока — запас на непредвиденное. */
+  const planDays = Math.max(1, daysLeft - GARDEN_GOAL.buffer);
+  const perDay = daysLeft ? Math.ceil(left / planDays) : left;
+  const tight = daysLeft ? Math.ceil(left / daysLeft) : left;
+
+  /* Где следовало быть сегодня: равномерный путь от старта к финишу. */
+  const planTotal = Math.max(1, workDays(start, deadline) - GARDEN_GOAL.buffer);
+  const gone = Math.min(planTotal, workDays(start, today > deadline ? deadline : today) - 1);
+  const plan = Math.round(GARDEN_GOAL.startDealt +
+    (garden.total - GARDEN_GOAL.startDealt) * Math.max(0, gone) / planTotal);
+  const diff = garden.dealt - plan;
+
+  return { left, daysLeft, planDays, perDay, tight, plan, diff,
+    done: left === 0, over: daysLeft === 0 && left > 0, deadline };
+}
+
+function renderGardenGoal() {
+  const box = document.getElementById('gardenGoal');
+  if (!box) return;
+  const g = gardenGoal();
+  if (!g) { box.hidden = true; return; }
+  box.hidden = false;
+
+  const d = g.deadline;
+  const dateTxt = d.getDate() + ' ' + ['января','февраля','марта','апреля','мая','июня',
+    'июля','августа','сентября','октября','ноября','декабря'][d.getMonth()];
+  document.getElementById('ggTitle').textContent = 'Цель: закрыть весь список до ' + dateTxt;
+
+  const badge = document.getElementById('ggBadge');
+  if (g.done) { badge.textContent = 'список закрыт'; badge.className = 'gg-badge ok'; }
+  else if (g.over) { badge.textContent = 'срок вышел'; badge.className = 'gg-badge risk'; }
+  else { badge.textContent = g.diff >= 0 ? 'идём по графику' : 'отстаём от графика';
+    badge.className = 'gg-badge ' + (g.diff >= 0 ? 'ok' : 'risk'); }
+
+  const big = document.getElementById('ggPerDay');
+  const bigLbl = document.getElementById('ggPerDayLbl');
+  if (g.done) { big.textContent = '✓'; bigLbl.textContent = 'весь список отработан'; }
+  else { big.textContent = g.perDay.toLocaleString('ru-RU');
+    bigLbl.textContent = g.over ? 'осталось отработать' : 'дел в день, чтобы закрыть с запасом'; }
+
+  document.getElementById('ggSide').innerHTML = g.done ? '' :
+    '<span><b>' + g.left.toLocaleString('ru-RU') + '</b>осталось в списке</span>' +
+    '<span><b>' + g.daysLeft + '</b>' + plural(g.daysLeft, 'рабочий день', 'рабочих дня', 'рабочих дней') + ' до срока</span>' +
+    (g.over ? '' : '<span><b>' + g.tight.toLocaleString('ru-RU') + '</b>если впритык, без запаса</span>');
+
+  const note = document.getElementById('ggNote');
+  if (g.done) { note.innerHTML = 'Список закрыт полностью. Такое надо отмечать.'; return; }
+  if (g.over) { note.innerHTML = 'Срок прошёл, в списке осталось <b>' + g.left.toLocaleString('ru-RU') +'</b>. Нужен новый срок.'; return; }
+  let txt = 'Норма взята с запасом: план закрыть список за <b>' + g.planDays + ' ' +
+    plural(g.planDays, 'рабочий день', 'рабочих дня', 'рабочих дней') + '</b>, а не за все ' + g.daysLeft +
+    ' — тогда болезнь или тяжёлый день не срывают срок.';
+  txt += g.diff >= 0
+    ? ' Сегодня по графику нужно <b>' + g.plan.toLocaleString('ru-RU') + '</b>, сделано <b>' + garden.dealt.toLocaleString('ru-RU') + '</b> — опережение на ' + g.diff + '.'
+    : ' Сегодня по графику нужно <b>' + g.plan.toLocaleString('ru-RU') + '</b>, сделано <b>' + garden.dealt.toLocaleString('ru-RU') + '</b> — отставание на ' + Math.abs(g.diff) + '.';
+  if (garden.inWork) txt += ' Ещё <b>' + garden.inWork + '</b> уже у кого-то в работе.';
+  note.innerHTML = txt;
+}
+
 function renderGarden() {
   const scene = document.getElementById('gardenScene');
   if (!scene) return;
@@ -3725,6 +3862,7 @@ function renderGarden() {
     (mom ? tile('📆', (mom.dealt > 0 ? '+' : '') + mom.dealt, 'за две недели', mom.dealt > 0 ? 'c-green' : 'c-mute') : '');
 
   renderFarmers(staff, best, shirts);
+  renderGardenGoal();
 }
 
 /* Карточка фермера: его доля грядки, цифры и искра по накопленным снимкам */
@@ -4227,6 +4365,96 @@ const BIRTHDAYS = [
   { d: 10, m: 9, name: 'Даниил Анисимов' },
   { d: 8, m: 12, name: 'Денис Терещенко' },
 ];
+/* ============================================================
+   ДНИ РОЖДЕНИЯ УЧАСТНИКОВ
+   Лист в таблице подбора, его продолжают заполнять. Поэтому ничего
+   не зашиваем: колонки ищем по заголовку, а не по номеру, строки без
+   разобранной даты молча пропускаем — одна кривая ячейка не должна
+   гасить весь блок. Новые участники появятся сами.
+   ============================================================ */
+let pbdays = [], pbdaysNoDate = 0;
+
+function parsePbdayRows(rows) {
+  if (!rows.length) return [];
+  const head = rows[0].map(h => (h || '').trim().toLowerCase());
+  const col = re => head.findIndex(h => re.test(h));
+  const iName = col(/фио|имя|участник/), iDate = col(/рожден|дата|др/),
+        iAge = col(/возраст|лет/), iRole = col(/статус|роль/);
+  if (iName < 0 || iDate < 0) return [];
+  const out = [];
+  pbdaysNoDate = 0;
+  rows.slice(1).forEach(r => {
+    const name = (r[iName] || '').trim();
+    const d = parseTaskDate(r[iDate]);
+    if (!name) return;
+    /* участник есть, а даты нет — такого в календарь не поставить,
+       но и терять молча нельзя: скажем об этом в подвале карточки */
+    if (!d) { pbdaysNoDate++; return; }
+    out.push({
+      name,
+      m: d.getMonth() + 1,
+      d: d.getDate(),
+      age: iAge >= 0 ? (r[iAge] || '').trim() : '',
+      role: iRole >= 0 ? (r[iRole] || '').trim() : '',
+    });
+  });
+  return out;
+}
+
+async function loadPbdays() {
+  try {
+    const url = 'https://docs.google.com/spreadsheets/d/' + GARDEN_SHEET_ID +
+      '/gviz/tq?tqx=out:csv&gid=' + PBDAY_GID + '&_=' + Date.now();
+    pbdays = parsePbdayRows(parseCSV(await getCSV(url)));
+  } catch (e) { pbdays = []; }
+  renderPbdays();
+}
+
+function renderPbdays() {
+  const box = document.getElementById('pbdayRows');
+  const foot = document.getElementById('pbdayFoot');
+  if (!box) return;
+  const link = document.getElementById('pbdayLink');
+  if (link) link.href = 'https://docs.google.com/spreadsheets/d/' + GARDEN_SHEET_ID +
+    '/edit?gid=' + PBDAY_GID + '#gid=' + PBDAY_GID;
+
+  if (!pbdays.length) {
+    box.innerHTML = '<div class="task-empty">Список пока пуст или лист недоступен.</div>';
+    if (foot) foot.textContent = '';
+    return;
+  }
+
+  const today = midnight(new Date());
+  const up = pbdays.map(b => {
+    let next = new Date(today.getFullYear(), b.m - 1, b.d);
+    if (next < today) next = new Date(today.getFullYear() + 1, b.m - 1, b.d);
+    return { ...b, next, diff: Math.round((next - today) / dayMs) };
+  }).sort((a, b) => a.diff - b.diff);
+
+  const fmt = d => String(d.getDate()).padStart(2, '0') + '.' + String(d.getMonth() + 1).padStart(2, '0');
+  /* показываем ближайшую пятёрку: карточка рядом с задачами, ей нельзя разрастаться */
+  const shown = up.slice(0, 5);
+  box.innerHTML = shown.map(b => {
+    const activist = /активист/i.test(b.role);
+    return '<div class="bday-row' + (b.diff === 0 ? ' today' : '') + '">' +
+      '<span class="when">' + (b.diff === 0 ? '🎉' : fmt(b.next)) + '</span>' +
+      '<span class="nm" title="' + esc(b.name) + '">' + esc(b.name) + '</span>' +
+      (b.age ? '<span class="age">' + esc(b.age) + '</span>' : '') +
+      (b.role ? '<span class="role' + (activist ? ' activist' : '') + '">' + esc(b.role) + '</span>' : '') +
+      '<span class="in">' + (b.diff === 0 ? 'сегодня!' : b.diff === 1 ? 'завтра' :' через ' + b.diff + ' дн.') + '</span>' +
+      '</div>';
+  }).join('');
+
+  if (foot) {
+    const rest = up.length - shown.length;
+    const todayN = up.filter(b => b.diff === 0).length;
+    foot.textContent = (todayN ? 'Сегодня празднуют: ' + todayN + '. ' : '') +
+      'Всего в списке ' + up.length + ' ' + plural(up.length, 'участник', 'участника', 'участников') +
+      (rest > 0 ? ', показаны ближайшие ' + shown.length + '.' : '.') +
+      (pbdaysNoDate ? ' У ' + pbdaysNoDate + ' — не указана дата рождения.' : '');
+  }
+}
+
 function renderBirthdays() {
   const today = midnight(new Date());
   const up = BIRTHDAYS.map(b => {
@@ -4875,6 +5103,7 @@ async function refreshAll(manual) {
   loadLinks();
   loadClubs();
   loadGarden();
+  loadPbdays();
   const failed = res.filter(r => r.status === 'rejected' || r.value === false).length;
   setSync(failed ? 'err' : 'ok', failed ? 'частично: ' + nowHM() : 'обновлено в ' + nowHM());
   btn.innerHTML = '⟳';
