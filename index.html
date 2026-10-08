@@ -3627,24 +3627,81 @@ function plantSVG(i, x, baseY, bloom) {
 }
 
 /* Фермер: сотрудник, который разбирает список. Корона — у первого по отработке. */
-function farmerSVG(x, baseY, sc, shirt, crown, title) {
+/* Настроение фермера по его же цифрам: корона — довольна собой,
+   высокая конверсия — подмигивает, пустой результат — растерян.
+   Лицо не украшение: по ряду карточек видно, у кого что идёт. */
+function farmerMood(st, king) {
+  if (king) return 'king';
+  if (!st || !st.dealt) return 'meh';
+  const conv = st.dealt ? st.returned / st.dealt : 0;
+  return conv >= 0.4 ? 'good' : 'ok';
+}
+
+function farmerSVG(x, baseY, sc, shirt, crown, title, mood) {
   const g = (v) => (v * sc).toFixed(1);
-  const hy = baseY - +g(30);
+  const n = (v) => +(v * sc).toFixed(2);          /* то же число, но для арифметики */
+  const hy = baseY - n(30);
+  const cy = hy + n(6);                           /* центр головы */
+  const ink = '#5b4636';
+  const m = mood || 'ok';
+
+  /* глаза */
+  const ex = n(2.5), ey = cy - n(0.8), ew = n(1.7), eh = n(1.9);
+  const lw = Math.max(0.7, n(0.95));
+  const arc = (cx) => '<path d="M' + (cx - ew).toFixed(1) + ' ' + ey.toFixed(1) +
+    ' q' + ew.toFixed(1) + ' ' + (-eh).toFixed(1) + ' ' + (2 * ew).toFixed(1) + ' 0" stroke="' + ink +
+    '" stroke-width="' + lw.toFixed(1) + '" fill="none" stroke-linecap="round"/>';
+  const dot = (cx, r) => '<circle cx="' + cx.toFixed(1) + '" cy="' + ey.toFixed(1) +
+    '" r="' + r.toFixed(2) + '" fill="' + ink + '"/>';
+
+  let eyes;
+  if (m === 'king') eyes = arc(-ex) + arc(ex);                       /* зажмурился от счастья */
+  else if (m === 'good') eyes = arc(-ex) + dot(ex, n(1.05));         /* подмигивает */
+  else if (m === 'meh') eyes = dot(-ex, n(1.35)) + dot(ex, n(1.35)) +
+    '<path d="M' + (-ex - n(1.8)).toFixed(1) + ' ' + (ey - n(2.6)).toFixed(1) +
+    ' q' + n(1.8).toFixed(1) + ' ' + (-n(1.1)).toFixed(1) + ' ' + n(3.6).toFixed(1) + ' ' + n(0.3).toFixed(1) +
+    '" stroke="' + ink + '" stroke-width="' + lw.toFixed(1) + '" fill="none" stroke-linecap="round" opacity=".7"/>' +
+    '<path d="M' + (ex - n(1.8)).toFixed(1) + ' ' + (ey - n(2.3)).toFixed(1) +
+    ' q' + n(1.8).toFixed(1) + ' ' + (-n(1.1)).toFixed(1) + ' ' + n(3.6).toFixed(1) + ' ' + (-n(0.3)).toFixed(1) +
+    '" stroke="' + ink + '" stroke-width="' + lw.toFixed(1) + '" fill="none" stroke-linecap="round" opacity=".7"/>';
+  else eyes = dot(-ex, n(1.05)) + dot(ex, n(1.05));                  /* спокойный взгляд */
+
+  /* рот */
+  const my = cy + n(2.4), mw = n(2.2);
+  let mouth;
+  if (m === 'meh') mouth = '<ellipse cx="0" cy="' + (my + n(0.3)).toFixed(1) + '" rx="' + n(1).toFixed(2) +
+    '" ry="' + n(1.25).toFixed(2) + '" fill="' + ink + '" opacity=".75"/>';
+  else {
+    const deep = m === 'king' ? n(2.4) : m === 'good' ? n(1.9) : n(1.4);
+    mouth = '<path d="M' + (-mw).toFixed(1) + ' ' + my.toFixed(1) + ' q' + mw.toFixed(1) + ' ' +
+      deep.toFixed(1) + ' ' + (2 * mw).toFixed(1) + ' 0" stroke="' + ink + '" stroke-width="' +
+      lw.toFixed(1) + '" fill="none" stroke-linecap="round"/>';
+  }
+
+  /* румянец — только у довольных, иначе лицо выглядит воспалённым */
+  const blush = (m === 'king' || m === 'good')
+    ? '<ellipse cx="' + (-n(4.2)).toFixed(1) + '" cy="' + (cy + n(1.6)).toFixed(1) + '" rx="' + n(1.5).toFixed(2) +
+      '" ry="' + n(0.95).toFixed(2) + '" fill="#e8859b" opacity=".45"/>' +
+      '<ellipse cx="' + n(4.2).toFixed(1) + '" cy="' + (cy + n(1.6)).toFixed(1) + '" rx="' + n(1.5).toFixed(2) +
+      '" ry="' + n(0.95).toFixed(2) + '" fill="#e8859b" opacity=".45"/>'
+    : '';
+
   return '<g class="g-farmer" transform="translate(' + x + ' 0)">' +
     '<title>' + esc(title) + '</title>' +
     '<ellipse cx="0" cy="' + baseY + '" rx="' + g(11) + '" ry="' + g(2.6) + '" fill="#000" opacity=".12"/>' +
-    '<path d="M' + -g(8) + ' ' + baseY + ' L' + -g(6.2) + ' ' + (baseY - +g(17)) +
-    ' L' + g(6.2) + ' ' + (baseY - +g(17)) + ' L' + g(8) + ' ' + baseY + ' Z" fill="' + shirt + '"/>' +
-    '<path d="M' + -g(6) + ' ' + (baseY - +g(15)) + ' q' + -g(5) + ' ' + g(5) + ' ' + -g(3) + ' ' + g(10) +
+    '<path d="M' + -g(8) + ' ' + baseY + ' L' + -g(6.2) + ' ' + (baseY - n(17)) +
+    ' L' + g(6.2) + ' ' + (baseY - n(17)) + ' L' + g(8) + ' ' + baseY + ' Z" fill="' + shirt + '"/>' +
+    '<path d="M' + -g(6) + ' ' + (baseY - n(15)) + ' q' + -g(5) + ' ' + g(5) + ' ' + -g(3) + ' ' + g(10) +
     '" stroke="' + shirt + '" stroke-width="' + g(2.8) + '" fill="none" stroke-linecap="round"/>' +
-    '<path d="M' + g(6) + ' ' + (baseY - +g(15)) + ' q' + g(5) + ' ' + g(5) + ' ' + g(3) + ' ' + g(10) +
+    '<path d="M' + g(6) + ' ' + (baseY - n(15)) + ' q' + g(5) + ' ' + g(5) + ' ' + g(3) + ' ' + g(10) +
     '" stroke="' + shirt + '" stroke-width="' + g(2.8) + '" fill="none" stroke-linecap="round"/>' +
-    '<circle cx="0" cy="' + (hy + +g(6)) + '" r="' + g(6.4) + '" fill="#f0c9a4"/>' +
+    '<circle cx="0" cy="' + cy.toFixed(1) + '" r="' + g(6.4) + '" fill="#f0c9a4"/>' +
+    blush + eyes + mouth +
     (crown
-      ? '<path class="g-crown" d="M' + -g(7) + ' ' + (hy - +g(1)) + ' L' + -g(7) + ' ' + (hy - +g(7)) +
-        ' L' + -g(3.5) + ' ' + (hy - +g(3.5)) + ' L0 ' + (hy - +g(9)) + ' L' + g(3.5) + ' ' + (hy - +g(3.5)) +
-        ' L' + g(7) + ' ' + (hy - +g(7)) + ' L' + g(7) + ' ' + (hy - +g(1)) + ' Z" fill="#f2b826"/>'
-      : '<path d="M' + -g(7.5) + ' ' + (hy + +g(1)) + ' q' + g(7.5) + ' ' + -g(5) + ' ' + g(15) + ' 0 Z" fill="#c98f4e"/>') +
+      ? '<path class="g-crown" d="M' + -g(7) + ' ' + (hy - n(1)) + ' L' + -g(7) + ' ' + (hy - n(7)) +
+        ' L' + -g(3.5) + ' ' + (hy - n(3.5)) + ' L0 ' + (hy - n(9)) + ' L' + g(3.5) + ' ' + (hy - n(3.5)) +
+        ' L' + g(7) + ' ' + (hy - n(7)) + ' L' + g(7) + ' ' + (hy - n(1)) + ' Z" fill="#f2b826"/>'
+      : '<path d="M' + -g(7.5) + ' ' + (hy + n(1)) + ' q' + g(7.5) + ' ' + -g(5) + ' ' + g(15) + ' 0 Z" fill="#c98f4e"/>') +
     '</g>';
 }
 
@@ -3799,9 +3856,11 @@ function renderGarden() {
   let people = '';
   staff.slice(0, 5).forEach((s, i) => {
     const x = staff.length === 1 ? W * .5 : (W * 0.16) + (W * 0.68) * (i / Math.max(1, Math.min(5, staff.length) - 1));
+    const king = s.dealt === best && best > 0;
     people += farmerSVG(+x.toFixed(1), GROUND + 33, narrow ? .85 : 1.15, shirts[i % shirts.length],
-      s.dealt === best && best > 0,
-      s.name + ' — отработано ' + s.dealt + (s.returned ? ', вернулись ' + s.returned : ''));
+      king,
+      s.name + ' — отработано ' + s.dealt + (s.returned ? ', вернулись ' + s.returned : ''),
+      farmerMood(s, king));
   });
 
   const soil = 'M0 ' + (GROUND + 4) +
@@ -3897,7 +3956,7 @@ function renderFarmers(staff, best, shirts) {
 
     return '<article class="farmer' + (king ? ' king' : '') + '">' +
       '<svg class="f-ava" viewBox="-20 0 40 46" aria-hidden="true">' +
-        farmerSVG(0, 42, 1.25, shirts[i % shirts.length], king, s.name) + '</svg>' +
+        farmerSVG(0, 42, 1.25, shirts[i % shirts.length], king, s.name, farmerMood(s, king)) + '</svg>' +
       '<div class="f-main">' +
         '<div class="f-name">' + (king ? '<span class="f-crown" title="первый по отработке">👑</span> ' : '') +
           esc(s.name) + '</div>' +
