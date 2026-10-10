@@ -89,6 +89,7 @@
     --ch-miss-bg: #fbeef1;   /* штриховка пропуска */
     --ch-pink: #ea6c85;
     --ch-green: #0f8f5f;
+    --ch-amber: #d9820c;   /* внимание: слабое место, недогруз */
     --ch-teal: #2baf96;
     /* грядка */
     --gd-sky-1: #dceeff;
@@ -120,8 +121,12 @@
     /* элементы управления: единая высота и радиус */
     --control-h: 46px;
     --r-control: 11px;
+    --topbar-h: 60px;     /* под неё подвешена липкая панель вкладок */
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  /* Любое display: в наших правилах сильнее браузерного [hidden]. Пока
+     этого правила не было, скрытая кнопка оставалась на экране. */
+  [hidden] { display: none !important; }
   html { scroll-behavior: smooth; }
   body {
     font-family: var(--font);
@@ -220,7 +225,7 @@
     border-bottom: 1px solid var(--line);
   }
   .topbar-inner {
-    max-width: var(--maxw); margin: 0 auto; padding: 0 20px; height: 60px;
+    max-width: var(--maxw); margin: 0 auto; padding: 0 20px; height: var(--topbar-h);
     display: flex; align-items: center; gap: 14px;
   }
   .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
@@ -258,44 +263,60 @@
     background: radial-gradient(900px 420px at 0% 0%, rgba(255,255,255,.16), transparent 60%),
                 radial-gradient(700px 400px at 100% 100%, rgba(3,140,71,.35), transparent 55%),
                 linear-gradient(140deg, var(--hero-1) 0%, var(--hero-2) 45%, var(--hero-3) 100%);
-    box-shadow: 0 24px 60px rgba(125,16,48,.28);
-    padding: 34px 36px 30px;
+    box-shadow: 0 18px 44px rgba(125,16,48,.20);
+    padding: 28px 32px 26px;
     display: grid; grid-template-columns: 1.25fr 1fr; gap: 26px; align-items: center;
   }
   .hero .ring { position: absolute; opacity: .13; pointer-events: none; user-select: none; }
   .hero .ring.left { width: 320px; left: -110px; bottom: -130px; transform: rotate(-14deg); }
   .hero .ring.right { width: 380px; right: -120px; top: -150px; transform: rotate(26deg); opacity: .10; }
-  .hero-main { position: relative; z-index: 1; }
+  /* Горизонтальная лента кнопок внутри грид-ячейки растягивала её по
+     max-content: на телефоне герой уезжал за правый край экрана. */
+  .hero > * { min-width: 0; }
+  .hero-main { position: relative; z-index: 1; min-width: 0; }
   .hero .kicker {
     display: inline-flex; align-items: center; gap: 8px; font-size: var(--fs-xs); font-weight: 800; letter-spacing: .08em;
     text-transform: uppercase; background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.18);
     border-radius: 999px; padding: 6px 12px; margin-bottom: 14px; backdrop-filter: blur(6px);
   }
-  .hero h1 { font-family: var(--font-head); font-size: clamp(30px, 4.2vw, 46px); font-weight: 700; letter-spacing: -.01em; line-height: 1.08; }
+  .hero h1 { font-family: var(--font-head); font-size: clamp(27px, 3.6vw, 40px); font-weight: 700; letter-spacing: -.01em; line-height: 1.08; }
   .hero h1 .cat-ico { font-size: .75em; margin-left: 6px; }
   /* Портик проступает за текстом: знак центра, а не случайная картинка. */
   .hero-mark { position: absolute; right: 3%; bottom: -14%; width: 260px; height: auto;
     opacity: .07; pointer-events: none; user-select: none; }
   @media (max-width: 1000px) { .hero-mark { width: 170px; right: -4%; bottom: -10%; opacity: .05; } }
-  .hero .date { margin-top: 10px; font-size: var(--fs-md); color: var(--hero-soft); font-weight: 600; }
+  .hero .date { margin-top: 8px; font-size: var(--fs-md); color: var(--hero-soft); font-weight: 600; }
   .hero .daily {
-    margin-top: 18px; display: flex; align-items: flex-start; gap: 12px;
+    margin-top: 14px; display: flex; align-items: flex-start; gap: 12px;
     background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18); border-radius: 14px;
     padding: 12px 16px; backdrop-filter: blur(6px);
   }
   .hero .daily-tag { flex: none; font-size: var(--fs-2xs); font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--hero-kicker); padding-top: 2px; }
   .hero .daily span:last-child { font-size: var(--fs-md); font-weight: 600; line-height: 1.4; }
-  .quick { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
-  .hero-side { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .quick { display: grid; grid-template-columns: repeat(auto-fit, minmax(146px, 1fr));
+    gap: 8px; margin-top: 14px; }
+  .quick > .btn { width: 100%; justify-content: flex-start; }
+  /* На телефоне шесть кнопок занимали три рваные строки. Один ряд с
+     прокруткой и подсказкой справа читается спокойнее. */
+  @media (max-width: 760px) {
+    .quick { display: flex; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none;
+      scroll-snap-type: x proximity; padding-bottom: 2px;
+      -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent);
+      mask-image: linear-gradient(90deg, #000 88%, transparent); }
+    .quick::-webkit-scrollbar { display: none; }
+    .quick > .btn { width: auto; flex: none; scroll-snap-align: start; }
+  }
+  .hero-side { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; min-width: 0; }
   .kpi {
-    background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18); border-radius: 16px;
+    background: rgba(255,255,255,.17); border: 1px solid rgba(255,255,255,.27); border-radius: 16px;
     padding: 14px 16px; backdrop-filter: blur(8px); transition: background .2s, transform .2s var(--ease);
   }
   .kpi:hover { background: rgba(255,255,255,.18); transform: translateY(-2px); }
-  .kpi .v { font-size: var(--fs-3xl); font-weight: 800; letter-spacing: -.02em; line-height: 1; }
+  .kpi .v { font-size: var(--fs-3xl); font-weight: 800; letter-spacing: -.02em; line-height: 1;
+    font-variant-numeric: tabular-nums; }
   .kpi .v small { font-size: var(--fs-sm); font-weight: 700; opacity: .8; margin-left: 2px; }
-  .kpi .l { margin-top: 6px; font-size: var(--fs-xs); color: var(--hero-soft); font-weight: 600; line-height: 1.3; }
-  .kpi.accent { background: rgba(255,255,255,.2); border-color: rgba(255,255,255,.34); }
+  .kpi .l { margin-top: 6px; font-size: var(--fs-xs); color: rgba(255,255,255,.88); font-weight: 600; line-height: 1.3; }
+  .kpi.accent { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.42); }
   .kpi.accent .v { color: var(--hero-accent); }
 
   /* ---------- Поиск ---------- */
@@ -313,11 +334,13 @@
   /* ---------- Декор для широких экранов ---------- */
   /* Каннелюры — вертикальные желобки колонны. Отзвук портика из знака
      центра: по краям экрана, едва заметно, растворяются сверху и снизу. */
-  .edge-flute { position: fixed; top: 0; bottom: 0; width: 46px; z-index: 0;
+  /* Было 1,5 px через 11 px при непрозрачности .13 — на светлом фоне это
+     читалось не как каннелюры, а как полосы от сбоя отрисовки. */
+  .edge-flute { position: fixed; top: 0; bottom: 0; width: 38px; z-index: 0;
     pointer-events: none; user-select: none; display: none;
     background: repeating-linear-gradient(90deg,
-      var(--brand) 0 1.5px, transparent 1.5px 11px);
-    opacity: .13;
+      var(--brand) 0 1px, transparent 1px 15px);
+    opacity: .07;
     -webkit-mask-image: linear-gradient(180deg, transparent, #000 22%, #000 78%, transparent);
     mask-image: linear-gradient(180deg, transparent, #000 22%, #000 78%, transparent); }
   .edge-flute.left { left: 0; }
@@ -386,14 +409,17 @@
   }
   .month-chips button:hover { border-color: var(--brand); color: var(--brand); transform: translateY(-1px); }
   .month-chips button.on { background: var(--brand); border-color: var(--brand); color: #fff; box-shadow: 0 6px 14px rgba(15,107,79,.24); }
-  .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 14px; }
+  .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(172px, 1fr)); gap: 12px; margin-bottom: 14px; }
   .tile { position: relative; overflow: hidden; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px 18px 14px; transition: transform .2s var(--ease), box-shadow .2s var(--ease); }
   .tile:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-  .tile .val { font-size: var(--fs-3xl); font-weight: 800; color: var(--brand); line-height: 1.1; letter-spacing: -.02em; }
+  .tile .val { font-size: var(--fs-3xl); font-weight: 800; color: var(--brand); line-height: 1.1; letter-spacing: -.02em;
+    font-variant-numeric: tabular-nums; }
   .tile .val small { font-size: var(--fs-md); font-weight: 700; color: var(--ink-soft); }
-  .tile .val.c-green { color: var(--green); }
+  /* --green на белом даёт 4,11 при норме 4,5 — число берём на тон темнее. */
+  .tile .val.c-green { color: var(--green-dark); }
   .tile .val.c-teal { color: var(--teal-ink); }
   .tile .val.c-pink { color: var(--pink-ink); }
+  .tile .val.c-amber { color: var(--amber-ink); }
   .tile .val .up { color: var(--green); }
   .tile .val .down { color: var(--brand); }
   .tile .lbl { margin-top: 5px; font-size: var(--fs-sm); color: var(--ink-soft); line-height: 1.3; }
@@ -444,6 +470,14 @@
   /* ---------- Разделы ---------- */
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
   .card { position: relative; display: flex; flex-direction: column; gap: 6px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 16px 14px; text-decoration: none; color: var(--ink); box-shadow: var(--shadow); transition: transform .18s var(--ease), box-shadow .18s var(--ease), border-color .18s; }
+  /* Кромка повторяет цвет бейджа: таблицы, документы, диск, почта и
+     сервисы различаются до того, как человек начал читать названия. */
+  .card { border-left-width: 3px; }
+  .card.k-sheet { border-left-color: var(--green); }
+  .card.k-doc   { border-left-color: var(--teal); }
+  .card.k-disk  { border-left-color: var(--bar-muted); }
+  .card.k-mail  { border-left-color: var(--brand); }
+  .card.k-web   { border-left-color: var(--amber); }
   .card::after { content: '↗'; position: absolute; right: 14px; bottom: 12px; font-size: var(--fs-sm); font-weight: 800; color: var(--ink-mute); opacity: 0; transition: opacity .15s, transform .15s; transform: translate(-3px, 3px); }
   .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); border-color: var(--brand); }
   .card:hover::after { opacity: 1; transform: none; color: var(--brand); }
@@ -456,7 +490,8 @@
   .type-web   { background: var(--teal-soft); color: var(--teal-ink); }
   .card h3 { font-size: var(--fs-md); font-weight: 700; line-height: 1.3; padding-right: 26px; }
   .card p { font-size: var(--fs-sm); line-height: 1.45; color: var(--ink-soft); }
-  .card .star { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border: none; background: transparent; border-radius: 8px; cursor: pointer; font-size: var(--fs-lg); line-height: 1; color: var(--bar-muted); transition: background .12s, color .12s, transform .12s; }
+  /* На тёмной теме звезда цвета --bar-muted почти сливалась с карточкой (1,7). */
+  .card .star { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border: none; background: transparent; border-radius: 8px; cursor: pointer; font-size: var(--fs-lg); line-height: 1; color: var(--ink-mute); transition: background .12s, color .12s, transform .12s; }
   .card .star:hover { background: var(--brand-soft); color: var(--brand); transform: scale(1.1); }
   .card .star.on { color: var(--brand); }
   .empty { display: none; text-align: center; color: var(--ink-soft); padding: 50px 0; font-size: var(--fs-md); }
@@ -468,7 +503,10 @@
   .task-wrap { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 14px; align-items: start; }
   #taskRows { min-height: 240px; }
   .links-card { margin-top: 14px; }
-  .task-side { display: grid; gap: 14px; }
+  .task-wrap > * { min-width: 0; }
+  .task-side { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; min-width: 0; }
+  .task-side > * { min-width: 0; }
+  .bday-row > * { min-width: 0; }
   .task-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 8px 16px; }
   .task-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; font-size: var(--fs-md); animation: rowIn .35s var(--ease) both; }
   @keyframes rowIn { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: none; } }
@@ -537,6 +575,9 @@
   .gg-big { flex: none; }
   .gg-big b { display: block; font-size: var(--fs-3xl); font-weight: 800; line-height: 1;
     color: var(--green-dark); font-variant-numeric: tabular-nums; }
+  /* Норма — не всегда повод для зелёного: когда отстаём, число тревожное. */
+  .ggoal.risk { border-color: var(--accent-line); background: var(--accent-soft); }
+  .ggoal.risk .gg-big b { color: var(--accent-dark); }
   .gg-big span { display: block; font-size: var(--fs-2xs); color: var(--ink-soft);
     font-weight: 700; margin-top: 3px; max-width: 140px; line-height: 1.3; }
   .gg-side { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: var(--fs-xs); color: var(--ink-soft); }
@@ -550,10 +591,20 @@
   .links-card { padding: 14px 16px; }
   .links-table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
   .links-table th { text-align: left; font-size: var(--fs-2xs); font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-mute); padding: 6px 0; border-bottom: 1px solid var(--line); }
-  .links-table td { padding: 8px 0; border-bottom: 1px solid var(--line-soft); vertical-align: middle; }
+  .links-table td { padding: 9px 8px; border-bottom: 1px solid var(--line-soft); vertical-align: middle; }
+  .links-table td:first-child { padding-left: 0; }
+  .links-table tbody tr { transition: background .12s; }
+  .links-table tbody tr:hover { background: var(--bg); }
   .links-table tr:last-child td { border-bottom: none; }
   .links-table .g { font-weight: 600; }
-  .links-table a.idlink { display: inline-block; font-weight: 800; color: var(--brand); text-decoration: none; background: var(--brand-soft); border-radius: 8px; padding: 3px 10px; font-variant-numeric: tabular-nums; transition: background .15s, transform .15s; }
+  /* Номер группы — справочная величина, а не главное на странице.
+     Он подсвечивается, когда до него доводят курсор. */
+  .links-table a.idlink { display: inline-block; font-weight: 700; color: var(--ink-soft);
+    text-decoration: none; background: var(--bg-2); border: 1px solid transparent;
+    border-radius: 8px; padding: 3px 10px; font-variant-numeric: tabular-nums;
+    transition: background .15s, color .15s, border-color .15s, transform .15s; }
+  .links-table tr:hover a.idlink { color: var(--brand); border-color: var(--brand-line);
+    background: var(--brand-soft); }
   .links-table a.idlink:hover { background: var(--brand); color: #fff; transform: translateY(-1px); }
   .links-table .acts { text-align: right; white-space: nowrap; }
   .links-table .acts button { border: 1px solid var(--line); background: var(--card); border-radius: 7px; width: 26px; height: 26px; font-size: var(--fs-xs); cursor: pointer; color: var(--ink-soft); }
@@ -681,20 +732,27 @@
   /* ---------- Клубы центра ----------
      Плитка клуба — это ссылка на список участников группы в smd.mos.ru.
      Точка слева кодирует статус набора теми же цветами, что и сводка выше. */
-  .clubs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(248px, 1fr)); gap: 10px; }
-  .club { display: flex; align-items: flex-start; gap: 10px; padding: 11px 13px; min-width: 0;
+  .clubs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(262px, 1fr)); gap: 10px; }
+  .club { position: relative; display: flex; align-items: flex-start; gap: 11px;
+    padding: 11px 13px 11px 15px; min-width: 0; overflow: hidden;
     background: var(--card); border: 1px solid var(--line); border-radius: var(--r-control);
     text-decoration: none; color: var(--ink);
     transition: border-color .15s, box-shadow .15s, transform .15s var(--ease); }
   .club:hover { border-color: var(--brand); box-shadow: var(--shadow); transform: translateY(-1px); }
-  .club .st { width: 8px; height: 8px; border-radius: 50%; flex: none; margin-top: 5px; }
+  /* Статус набора — полоса во всю высоту слева: видно боковым зрением,
+     не надо выцеливать точку в восемь пикселей. */
+  .club .st { position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    border-radius: 4px 0 0 4px; flex: none; }
   .club .st.open { background: var(--green); }
   .club .st.rec { background: var(--amber); }
   .club .st.off { background: var(--bar-muted); }
-  .club-body { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-  .club-name { font-size: var(--fs-sm); font-weight: 700; line-height: 1.25; }
+  .club-body { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .club-name { font-size: var(--fs-md); font-weight: 700; line-height: 1.3; }
   .club-desc { font-size: var(--fs-xs); color: var(--ink-soft); line-height: 1.35; }
-  .club-meta { font-size: var(--fs-2xs); color: var(--ink-mute); font-weight: 700; letter-spacing: .02em; }
+  .club-meta { display: flex; align-items: baseline; gap: 7px; font-size: var(--fs-2xs);
+    color: var(--ink-mute); font-weight: 700; letter-spacing: .02em; }
+  .club-meta .dir { color: var(--ink-soft); background: var(--bg); border-radius: 5px;
+    padding: 2px 7px; letter-spacing: .04em; }
   .clubs-legend { display: flex; flex-wrap: wrap; gap: 14px; margin: 0 0 10px;
     font-size: var(--fs-xs); color: var(--ink-soft); }
   .clubs-legend span { display: flex; align-items: center; gap: 6px; }
@@ -703,7 +761,8 @@
   .pstats button.tile { cursor: pointer; font-family: var(--font); text-align: left; }
   .pstats button.tile:hover { border-color: var(--brand); }
   .pstats button.tile.on { border-color: var(--brand); box-shadow: 0 0 0 2px rgba(168,29,55,.12); }
-  .pstats .tile .val.c-amber { color: var(--amber); }
+  /* --amber на белом давал 2,68: цифру было видно хуже подписи под ней. */
+  .pstats .tile .val.c-amber { color: var(--amber-ink); }
   .pstats .tile .val.c-mute { color: var(--ink-mute); }
   .clubs-shown { font-size: var(--fs-xs); color: var(--ink-mute); font-weight: 600; }
 
@@ -721,9 +780,21 @@
      Шесть секций подряд превращали главную в бесконечную ленту. Теперь
      на экране один блок, между ними переключаются здесь. Выбор помнится
      между визитами: сотрудник возвращается туда, где работал. */
+  /* Нулевая метка перед панелью: у прилипшего элемента offsetTop врёт,
+     а метка остаётся в потоке и помнит настоящее место. */
+  #tabbarAnchor { height: 0; }
+  /* Панель прилипает под шапкой: переключиться между «Задачами» и
+     «Посещаемостью» можно из любой точки страницы, не уезжая наверх. */
+  .tabbar-wrap { position: sticky; top: var(--topbar-h); z-index: 50;
+    background: var(--bg); padding: 14px 0 12px;
+    border-bottom: 1px solid transparent;
+    transition: border-color .2s, box-shadow .2s, background .2s; }
+  .tabbar-wrap.stuck { border-bottom-color: var(--line);
+    background: var(--topbar-bg); backdrop-filter: blur(12px) saturate(1.2);
+    box-shadow: 0 8px 20px rgba(43,43,46,.06); }
   .tabbar { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; min-width: 0;
     width: 100%; box-sizing: border-box;
-    max-width: var(--maxw); margin: 18px auto 0; padding: 0 20px; }
+    max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
   .tabbar::-webkit-scrollbar { display: none; }
   .tabbar button { flex: none; border: 1px solid var(--line); background: var(--card);
     color: var(--ink-soft); font: 700 var(--fs-sm) var(--font); padding: 9px 16px;
@@ -828,7 +899,7 @@
   .wd-row .track { height: 100%; border-radius: 999px; background: var(--bar-muted);
     transition: width .8s var(--ease); min-width: 3px; }
   .wd-row.best .track { background: var(--green); }
-  .wd-row.worst .track { background: var(--accent); }
+  .wd-row.worst .track { background: var(--amber); }
   .wd-row.off .track { display: none; }
   .wd-row.off .track-wrap { background: repeating-linear-gradient(45deg,
     var(--bg-2) 0 5px, var(--line) 5px 10px); }
@@ -837,14 +908,14 @@
   .wd-row .num small { font-weight: 700; color: var(--ink-mute); margin-left: 5px; }
   .wd-row.off .num { color: var(--ink-mute); font-weight: 700; }
   .wd-row.best .nm, .wd-row.best .num { color: var(--green-dark); }
-  .wd-row.worst .nm, .wd-row.worst .num { color: var(--accent-dark); }
+  .wd-row.worst .nm, .wd-row.worst .num { color: var(--amber-ink); }
   .wd-note { margin-top: 12px; font-size: var(--fs-xs); line-height: 1.5; color: var(--ink-soft);
     background: var(--bg); border-radius: var(--r-control); padding: 9px 11px; }
   .wd-note b { color: var(--ink); }
   @media (max-width: 560px) { .wd-row { grid-template-columns: 74px 1fr 88px; gap: 8px; } }
 
   /* ---------- Талисман ---------- */
-  .mascot { position: fixed; z-index: 70; width: 118px; cursor: pointer;
+  .mascot { position: fixed; z-index: 70; width: 104px; cursor: pointer;
     filter: drop-shadow(0 8px 20px rgba(0,0,0,.26)); }
   .mascot[hidden] { display: none; }
   .mascot-art { display: block; width: 100%; height: auto; }
@@ -878,7 +949,7 @@
   .tabbar button:hover { color: var(--brand); border-color: var(--brand); transform: translateY(-1px); }
   .tabbar button.on { background: var(--brand); border-color: var(--brand); color: #fff;
     box-shadow: 0 4px 12px rgba(15,107,79,.22); }
-  body.view-partners .tabbar { display: none; }
+  body.view-partners .tabbar-wrap { display: none; }
   [data-pane] { display: none; }
   [data-pane].on { display: block; }
   @media (max-width: 760px) {
@@ -941,8 +1012,9 @@
   .garden-bar-lbl { font-size: var(--fs-xs); color: var(--ink-mute); font-weight: 700; margin-bottom: 14px; }
 
   /* ---------- карточки фермеров ---------- */
-  .garden-staff { display: grid; gap: 10px; margin-top: 8px; }
-  .farmer { display: grid; grid-template-columns: 46px 1fr 96px; align-items: center; gap: 14px;
+  .garden-staff { display: grid; gap: 10px; margin-top: 8px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  .farmer { display: grid; grid-template-columns: 46px minmax(0, 1fr) 84px; align-items: center; gap: 12px;
     padding: 12px 14px; background: var(--card); border: 1px solid var(--line);
     border-radius: var(--r-control); transition: border-color .18s, box-shadow .18s, transform .18s var(--ease); }
   .farmer:hover { border-color: var(--brand); box-shadow: var(--shadow); transform: translateY(-1px); }
@@ -956,7 +1028,7 @@
     font-size: var(--fs-xs); color: var(--ink-soft); }
   .f-nums b { color: var(--ink); font-weight: 800; font-variant-numeric: tabular-nums; }
   .f-nums .f-dim { color: var(--ink-mute); }
-  .f-mini { display: block; height: 46px; width: 100%; max-width: 230px; margin-top: 6px; overflow: hidden; }
+  .f-mini { display: block; height: 46px; width: 100%; max-width: 100%; margin-top: 6px; overflow: hidden; }
   .f-mini .g-plant { animation: none; }
   .f-hist { text-align: right; }
   .f-spark { width: 78px; height: 22px; }
@@ -1047,7 +1119,7 @@
     --tile-1: #12805e; --tile-2: #084c39;
     --hero-soft: #c7e8da; --hero-kicker: #bce6d3; --hero-accent: #ffd9a8;
     --tip-bg: #2b3a34; --tip-ink: #eef3f1; --tip-b: #9fe3c3;
-    --deco: .16;
+    --deco: .10;
     --brand: #3fb98a; --brand-dark: #5fcfa3; --brand-deep: #0b2a20;
     --brand-soft: #16302a; --brand-line: #2b4b40; --brand-soft-2: #1e3b33;
     --accent: #f06a9e; --accent-dark: #f78cb5;
@@ -1074,7 +1146,7 @@
     --ch-off: #322f3a; --ch-off-2: #3b3744;
     --ch-rasp: #f06a9e; --ch-pink: #f7a6c4;
     --ch-off-band: #1b231e; --ch-miss-bg: #2c2028;
-    --ch-green: #44d98a; --ch-teal: #35c8ab;
+    --ch-green: #44d98a; --ch-teal: #35c8ab; --ch-amber: #f0a73a;
     --gd-sky-1: #15242f; --gd-sky-2: #18272a; --gd-sky-3: #26241d;
     --gd-soil-1: #4b3626; --gd-soil-2: #2d2017;
   }
@@ -1092,7 +1164,7 @@
   :root[data-theme="dark"] .gate-card button[type=submit],
   :root[data-theme="dark"] .links-table a.idlink:hover { color: var(--on-brand); }
   /* герой остаётся малиновым, но вечером не должен слепить */
-  :root[data-theme="dark"] .hero, :root[data-theme="dark"] .gate { filter: saturate(.9) brightness(.78); }
+  :root[data-theme="dark"] .hero, :root[data-theme="dark"] .gate { filter: saturate(.95) brightness(.86); }
   :root[data-theme="dark"] .garden-scene .g-cloud { opacity: .24; }
   :root[data-theme="dark"] .garden-scene .g-empty { fill: #6f6258; }
   /* карта светлая по своей природе — приглушаем, чтобы не резала глаз */
@@ -1103,6 +1175,14 @@
   @media (min-width: 2000px) { :root { --maxw: 1560px; } }
 
   /* ---------- Адаптив ---------- */
+  /* На 820 пикселях шапка не влезала: «Искренний сервис» уезжал за край и
+     страница ехала вбок. Текст синхронизации и дубль «Задачи» уходят раньше. */
+  @media (max-width: 920px) {
+    .sync .t { display: none; }
+    .nav a.hide-sm { display: none; }
+  }
+  .topbar-inner, .topbar-tools, .brand { min-width: 0; }
+
   @media (max-width: 1000px) {
     .hero { grid-template-columns: 1fr; padding: 28px 24px 24px; }
     .hero-side { grid-template-columns: repeat(4, 1fr); }
@@ -1110,15 +1190,19 @@
     .partners-teaser { grid-template-columns: 1fr; }
   }
   @media (max-width: 760px) {
-    .topbar-inner { height: 56px; gap: 8px; }
+    :root { --topbar-h: 56px; }   /* липкая панель вкладок встаёт вплотную */
+    .topbar-inner { gap: 8px; }
     .brand small { display: none; }
     .nav a { padding: 7px 9px; font-size: var(--fs-sm); }
     .sync span.t { display: none; }
-    .hero { padding: 22px 18px 20px; border-radius: 20px; }
-    .hero .daily { flex-direction: column; gap: 6px; }
-    .hero .daily span:last-child { font-size: var(--fs-md); }
-    .hero-side { grid-template-columns: 1fr 1fr; }
-    .kpi .v { font-size: var(--fs-2xl); }
+    .hero { padding: 18px 16px 16px; border-radius: 20px; gap: 16px; }
+    .hero .kicker { margin-bottom: 10px; padding: 5px 11px; font-size: var(--fs-2xs); }
+    .hero .daily { flex-direction: column; gap: 4px; padding: 10px 13px; margin-top: 12px; }
+    .hero .daily span:last-child { font-size: var(--fs-sm); line-height: 1.35; }
+    .hero-side { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .kpi { padding: 11px 13px; border-radius: 13px; }
+    .kpi .v { font-size: var(--fs-xl); }
+    .kpi .l { margin-top: 3px; font-size: var(--fs-2xs); }
     .dash-grid { grid-template-columns: 1fr 1fr; }
     .dash-cards { grid-template-columns: 1fr; }
     .dash-tools { flex-basis: 100%; margin-left: 0; }
@@ -1142,8 +1226,8 @@
   @media (max-width: 480px) {
     .hero-wrap { margin-top: 14px; padding: 0 12px; }
     main, .search-wrap { padding-left: 12px; padding-right: 12px; }
-    .hero h1 { font-size: var(--fs-3xl); }
-    .hero-side { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .hero h1 { font-size: 27px; }
+    .hero .date { font-size: var(--fs-sm); }
     .grid { grid-template-columns: 1fr 1fr; }
     .card h3 { font-size: var(--fs-md); }
     .card p { display: none; }
@@ -1223,7 +1307,7 @@
         </g>
       </svg>
       <span class="kicker">✦ Команда мечты · ЦМД</span>
-      <h1>ЦМД Пресненский<span class="cat-ico" title="талисман команды">🐱</span></h1>
+      <h1>ЦМД Пресненский</h1>
       <div class="date" id="heroDate"></div>
       <div class="daily" id="daily">
         <span class="daily-tag">✨ Комплимент дня</span>
@@ -1247,6 +1331,8 @@
   </div>
 </div>
 
+<div id="tabbarAnchor" aria-hidden="true"></div>
+<div class="tabbar-wrap" id="tabbarWrap">
 <nav class="tabbar" id="mainTabs" aria-label="Разделы портала">
   <button type="button" data-tab="tasks" class="on" aria-selected="true">📅 Задачи</button>
   <button type="button" data-tab="att" aria-selected="false">📊 Посещаемость</button>
@@ -1254,11 +1340,13 @@
   <button type="button" data-tab="clubs" aria-selected="false">🎭 Клубы</button>
   <button type="button" data-tab="sections" aria-selected="false">🗂 Все разделы</button>
 </nav>
+</div>
 
 <div class="search-wrap" data-pane="sections">
   <div class="search-box">
     <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-    <input id="search" type="text" placeholder="Найти раздел: график, поставщики, почта…" autocomplete="off">
+    <input id="search" type="text" placeholder="Найти раздел: график, поставщики, почта…"
+      data-ph-short="Найти раздел…" data-ph-long="Найти раздел: график, поставщики, почта…" autocomplete="off">
     <kbd>/</kbd>
   </div>
 </div>
@@ -1267,8 +1355,8 @@
 <div class="edge-flute right" aria-hidden="true"></div>
 <img class="side-deco left light" src="assets/ring-green.png" alt="" aria-hidden="true">
 <img class="side-deco right light" src="assets/ring-green.png" alt="" aria-hidden="true">
-<img class="side-deco left dark" src="assets/ring-rasp.png" alt="" aria-hidden="true">
-<img class="side-deco right dark" src="assets/ring-rasp.png" alt="" aria-hidden="true">
+<img class="side-deco left dark" src="assets/ring-green.png" alt="" aria-hidden="true">
+<img class="side-deco right dark" src="assets/ring-green.png" alt="" aria-hidden="true">
 
 <main>
 <div id="mainView">
@@ -1404,6 +1492,10 @@
         <div class="chart-card">
             <h3>Поток по дням недели</h3>
             <div class="cap" id="wdCap">Среднее за рабочий день</div>
+            <div class="legend">
+              <span class="li"><span class="sw box" style="background:var(--green)"></span>сильнейший день</span>
+              <span class="li"><span class="sw box" style="background:var(--amber)"></span>слабейший</span>
+            </div>
             <div class="wd-months" id="wdMonths"></div>
             <div class="wd-rows" id="wdRows"></div>
             <div class="wd-note" id="wdNote"></div>
@@ -1418,9 +1510,9 @@
         <div class="chart-card">
           <h3>Мощность центра по дням <span class="badge">401 чел./день = 100%</span></h3>
           <div class="legend">
-            <span class="li"><span class="sw box" style="background:var(--ch-teal)"></span>до 50%</span>
-            <span class="li"><span class="sw box" style="background:var(--ch-pink)"></span>50–85%</span>
-            <span class="li"><span class="sw box" style="background:var(--ch-rasp)"></span>выше 85%</span>
+            <span class="li"><span class="sw box" style="background:var(--ch-amber)"></span>до 50% — недогруз</span>
+            <span class="li"><span class="sw box" style="background:var(--ch-green)"></span>50–85% — норма</span>
+            <span class="li"><span class="sw box" style="background:var(--ch-rasp)"></span>выше 85% — пик</span>
             <span class="li"><span class="sw" style="background:var(--ch-green)"></span>средняя загрузка</span>
           </div>
           <svg id="capChart" viewBox="0 0 720 230" role="img" aria-label="Загрузка мощности центра по дням"></svg>
@@ -1627,7 +1719,7 @@
 <div class="tooltip" id="tooltip"></div>
 
 <!-- Талисман: выглядывает раз в минуту, кликом прячется -->
-<div class="mascot" id="catMascot" hidden>
+<div class="mascot" id="catMascot" hidden title="Нажмите, чтобы убрать">
   <div class="mascot-bubble" id="catSay"></div>
   <img class="mascot-art" id="catArt" alt="" aria-hidden="true">
 </div>
@@ -1761,9 +1853,8 @@ const COMMS_SHEET_NAME = 'Коммуникации';
 /* Дашборд читает таблицу «Посещаемость ЦАО» ТОЛЬКО на чтение.
    Вкладки в ней называются месяцами — новые подхватываются сами. */
 const ATTENDANCE_SHEET = '1AaZjdwpx-oCdiglZxg1Wszod0xqQXOXU0cppJuOguhY';
-/* Таблица опроса «Откуда узнали о проекте». Пока не задана: вписать сюда
-   идентификатор из адреса таблицы — кнопка появится сама. */
-const SURVEY_SHEET = '';
+/* Таблица опроса «Откуда узнали о проекте» — та же, что в «Быстром доступе». */
+const SURVEY_SHEET = '1e6ERnmiVm-vEDR69RjyGFUfzoA3WsNwKe6_aLCbm1vk';
 
 /* Ссылки на исходные таблицы — там, где смотрят цифры, а не в общем списке. */
 (function () {
@@ -2110,7 +2201,7 @@ function readPalette() {
   CH.rasp = g('--ch-rasp'); CH.pink = g('--ch-pink');
   CH.offBand = g('--ch-off-band'); CH.missBg = g('--ch-miss-bg');
   CH.label = g('--ink-soft'); CH.greenSoft = g('--green-soft'); CH.greenInk = g('--green-dark');
-  CH.green = g('--ch-green'); CH.teal = g('--ch-teal');
+  CH.green = g('--ch-green'); CH.teal = g('--ch-teal'); CH.amber = g('--ch-amber');
   CH.sky1 = g('--gd-sky-1'); CH.sky2 = g('--gd-sky-2'); CH.sky3 = g('--gd-sky-3');
   CH.soil1 = g('--gd-soil-1'); CH.soil2 = g('--gd-soil-2');
 }
@@ -2166,8 +2257,8 @@ document.getElementById('themeBtn').addEventListener('click', () => {
     ['cat-00.webp', 'Я видел, кто вчера не заполнил'],
     ['cat-01.webp', 'Начальство на месте. Это я'],
     ['cat-02.webp', 'Прилетел проверить посещаемость'],
-    ['cat-03.webp', 'Среда! Лучший день недели!'],
-    ['cat-04.webp', 'Пятница опять просела…'],
+    ['cat-03.webp', 'Среда! Лучший день недели!', 3],
+    ['cat-04.webp', 'Пятница опять просела…', 5],
     ['cat-05.webp', '220 в среднем? Ну-ну'],
     ['cat-06.webp', 'Ой. Я нажал не ту кнопку'],
     ['cat-07.webp', 'Кто трогал мою таблицу?'],
@@ -2197,34 +2288,29 @@ document.getElementById('themeBtn').addEventListener('click', () => {
     if (document.querySelector('dialog[open]')) return;  /* открыт диалог */
     if (!cat.hidden) return;
 
+    /* «Среда! Лучший день недели!» в пятницу выглядит поломкой, поэтому
+       реплики с днём недели ждут своего дня. */
+    const wd = new Date().getDay();
+    let guard = 0;
+    while (guard++ < CATS.length && CATS[idx % CATS.length][2] != null &&
+           CATS[idx % CATS.length][2] !== wd) idx++;
     const pick = CATS[idx % CATS.length];
     idx += 1 + Math.floor(Math.random() * 3);           /* не по кругу подряд */
     art.src = 'assets/cats/' + pick[0];
     say.textContent = pick[1];
 
-    /* Край случайный, но держимся ниже шапки и панели вкладок. */
-    const edges = ['left', 'right', 'bottom'];
-    const edge = edges[Math.floor(Math.random() * edges.length)];
+    /* Кот ходит только по нижней кромке окна. Раньше он выходил в
+       случайной точке по вертикали и закрывал собой то график, то
+       цифру, которую человек в этот момент читал. */
     cat.classList.remove('edge-left', 'edge-right');
     cat.style.top = cat.style.bottom = cat.style.left = cat.style.right = '';
     const w = cat.offsetWidth || 118;
-    const safeTop = 190, safeBottom = 40;
-    const y = safeTop + Math.random() * Math.max(60, window.innerHeight - safeTop - safeBottom - 160);
-
-    if (edge === 'left') {
-      cat.classList.add('edge-left');
-      cat.style.left = '10px'; cat.style.top = Math.round(y) + 'px';
-      cat.style.setProperty('--cx', '-' + (w + 18) + 'px'); cat.style.setProperty('--cy', '0px');
-    } else if (edge === 'right') {
-      cat.classList.add('edge-right');
-      cat.style.right = '10px'; cat.style.top = Math.round(y) + 'px';
-      cat.style.setProperty('--cx', (w + 18) + 'px'); cat.style.setProperty('--cy', '0px');
-    } else {
-      const x = 24 + Math.random() * Math.max(40, window.innerWidth - w - 48);
-      cat.classList.add(x < window.innerWidth / 2 ? 'edge-left' : 'edge-right');
-      cat.style.left = Math.round(x) + 'px'; cat.style.bottom = '10px';
-      cat.style.setProperty('--cx', '0px'); cat.style.setProperty('--cy', '130px');
-    }
+    const left = Math.random() < 0.5;
+    cat.classList.add(left ? 'edge-left' : 'edge-right');
+    if (left) cat.style.left = '12px'; else cat.style.right = '12px';
+    cat.style.bottom = '12px';
+    cat.style.setProperty('--cx', (left ? -(w + 18) : (w + 18)) + 'px');
+    cat.style.setProperty('--cy', '30px');
 
     cat.hidden = false;
     cat.classList.remove('out');
@@ -2304,10 +2390,36 @@ function setTab(t, remember) {
 document.getElementById('mainTabs').addEventListener('click', e => {
   const b = e.target.closest('button[data-tab]');
   if (!b) return;
+  const wrap = document.getElementById('tabbarWrap');
+  /* Если панель уже прилипла, человек сравнивает вкладки — не выдёргиваем
+     его наверх, оставляем на том же месте. Иначе уводим к началу. */
+  const stuck = wrap && wrap.classList.contains('stuck');
   setView('main');
   setTab(b.dataset.tab);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  /* Если панель прилипла, человек сравнивает вкладки. Возвращаем его не
+     наверх страницы, а ровно к панели: новая вкладка начинается под ней.
+     Иначе — к самому началу, вместе с героем. */
+  window.scrollTo({ top: stuck ? tabbarTop() : 0, behavior: 'smooth' });
 });
+
+/* Координата, на которой панель вкладок встаёт под шапку. */
+function tabbarTop() {
+  const a = document.getElementById('tabbarAnchor');
+  const wrap = document.getElementById('tabbarWrap');
+  if (!a || !wrap) return 0;
+  const gap = parseFloat(getComputedStyle(wrap).top) || 0;
+  return Math.max(0, Math.round(a.getBoundingClientRect().top + window.scrollY - gap));
+}
+
+/* Панель вкладок отделяется от страницы только когда прилипла. */
+(function () {
+  const wrap = document.getElementById('tabbarWrap');
+  if (!wrap) return;
+  const mark = () => wrap.classList.toggle('stuck', window.scrollY >= tabbarTop() - 1);
+  addEventListener('scroll', mark, { passive: true });
+  addEventListener('resize', mark);
+  mark();
+})();
 
 function setView(view, push) {
   const partners = view === 'partners';
@@ -2339,6 +2451,18 @@ document.addEventListener('click', e => {
   }
 });
 if (location.hash === '#partners') setView('partners', false);
+
+/* Длинная подсказка в поиске обрезалась на полуслове — на узком экране
+   показываем короткую. */
+(function () {
+  const inp = document.getElementById('search');
+  if (!inp) return;
+  const fit = () => {
+    inp.placeholder = innerWidth < 560 ? inp.dataset.phShort : inp.dataset.phLong;
+  };
+  addEventListener('resize', fit);
+  fit();
+})();
 
 /* дата в шапке */
 (function () {
@@ -2389,7 +2513,7 @@ async function loadData() {
 function cardHTML(it) {
   const on = favs.has(it.id);
   const [label, cls] = typeOf(it.url);
-  return '<a class="card" href="' + esc(it.url) + '" target="_blank" rel="noopener" data-id="' + encodeURIComponent(it.id) + '">' +
+  return '<a class="card k-' + cls.slice(5) + '" href="' + esc(it.url) + '" target="_blank" rel="noopener" data-id="' + encodeURIComponent(it.id) + '">' +
     '<button class="star' + (on ? ' on' : '') + '" title="' + (on ? 'Убрать из избранного' : 'В избранное') + '" aria-label="Избранное">' + (on ? '★' : '☆') + '</button>' +
     '<h3>' + esc(it.name) + '</h3>' +
     (it.desc ? '<p>' + esc(it.desc) + '</p>' : '') +
@@ -2618,7 +2742,7 @@ function renderCapacitySpark(me) {
     const x = i * (bw + gap);
     const pct = Math.min(1, d.v / CAPACITY);
     const h = Math.round(H * pct);
-    const fill = d.v === 0 ? CH.off : pct > 0.85 ? CH.rasp : pct > 0.5 ? CH.pink : CH.teal;
+    const fill = d.v === 0 ? CH.off : pct > 0.85 ? CH.rasp : pct >= 0.5 ? CH.green : CH.amber;
     out += '<rect x="' + x.toFixed(1) + '" y="' + (d.v === 0 ? H - 1 : H - h) + '" width="' + bw.toFixed(1) + '" height="' + (d.v === 0 ? 1 : Math.max(1, h)) + '" rx="1" fill="' + fill + '" data-tip="' + esc('<b>' + d.day + '-е</b><br>Посещаемость: ' + d.v + '<br>Мощность: ' + CAPACITY + '<br>Загрузка: ' + pct1(100 * d.v / CAPACITY) + '%') + '"/>';
   });
   svg.innerHTML = out;
@@ -3050,7 +3174,7 @@ function renderCapacityChart(me, monthName) {
     ticks: [0.25, 0.5, 0.75, 1].map(p => ({ v: CAPACITY * p, label: Math.round(p * 100) + '%', strong: p === 1 })),
     valueOf: g => g.d.v,
     labelOf: g => Math.round(100 * g.d.v / CAPACITY),
-    colorOf: g => { const p = g.d.v / CAPACITY; return p > 0.85 ? CH.rasp : p > 0.5 ? CH.pink : CH.teal; },
+    colorOf: g => { const p = g.d.v / CAPACITY; return p > 0.85 ? CH.rasp : p >= 0.5 ? CH.green : CH.amber; },
     tipOf: g => tipFor(g, me),
     topRight: 'мощность ' + CAPACITY + ' чел./день',
     topRightAt: CAPACITY,
@@ -3789,6 +3913,7 @@ function renderGardenGoal() {
   else if (g.over) { badge.textContent = 'срок вышел'; badge.className = 'gg-badge risk'; }
   else { badge.textContent = g.diff >= 0 ? 'идём по графику' : 'отстаём от графика';
     badge.className = 'gg-badge ' + (g.diff >= 0 ? 'ok' : 'risk'); }
+  box.classList.toggle('risk', !g.done && (g.over || g.diff < 0));
 
   const big = document.getElementById('ggPerDay');
   const bigLbl = document.getElementById('ggPerDayLbl');
@@ -4196,7 +4321,7 @@ function renderClubs() {
       '<span class="st ' + clubState(c.status) + '"></span>' +
       '<span class="club-body">' +
         '<span class="club-name">' + esc(c.name) + '</span>' +
-        '<span class="club-meta">' + esc(c.dir) + ' · ' + esc(c.num) + '</span>' +
+        '<span class="club-meta"><span class="dir">' + esc(c.dir) + '</span>' + esc(c.num) + '</span>' +
       '</span></a>').join('') ||
     '<div class="task-empty">Под этот выбор клубов нет.</div>';
 
