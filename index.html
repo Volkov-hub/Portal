@@ -97,12 +97,17 @@
     --gd-sky-3: #fcf3df;
     --gd-soil-1: #8a6243;
     --gd-soil-2: #5d3f2b;
-    --radius: 18px;
-    --radius-sm: 12px;
-    --radius-xs: 8px;
-    --shadow: 0 1px 2px rgba(43,43,46,.04), 0 6px 18px rgba(43,43,46,.06);
-    --shadow-md: 0 2px 6px rgba(43,43,46,.06), 0 12px 32px rgba(43,43,46,.09);
-    --shadow-hover: 0 3px 8px rgba(168,29,55,.10), 0 16px 36px rgba(168,29,55,.14);
+    /* Три радиуса вместо пяти: карточка, поле, чип. Крупные скругления
+       на плотной таблице читались как детская аппликация. */
+    --radius: 12px;
+    --radius-sm: 9px;
+    --radius-xs: 6px;
+    /* Границу видно всегда, тень — только у того, что действительно
+       висит над страницей: подсказки, модалки, кот. Плоские карточки
+       на светлом фоне держит линия, а не размытое пятно. */
+    --shadow: 0 1px 1px rgba(43,43,46,.03);
+    --shadow-md: 0 1px 2px rgba(43,43,46,.04), 0 4px 10px rgba(43,43,46,.05);
+    --shadow-hover: 0 2px 6px rgba(168,29,55,.09);
     --ease: cubic-bezier(.2,.7,.2,1);
     --font: 'Circe', 'Manrope', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
     /* Заголовки — антиквой, как на корпоративном портале программы.
@@ -122,6 +127,7 @@
     --control-h: 46px;
     --r-control: 11px;
     --topbar-h: 60px;     /* под неё подвешена липкая панель вкладок */
+    --tabbar-h: 65px;     /* а под панель — липкая шапка таблицы групп */
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   /* Любое display: в наших правилах сильнее браузерного [hidden]. Пока
@@ -168,7 +174,13 @@
   .btn-soft:hover { background: var(--brand-soft-2); }
   .btn-light { background: rgba(255,255,255,.14); color: #fff; border-color: rgba(255,255,255,.22); backdrop-filter: blur(6px); }
   .btn-light:hover { background: rgba(255,255,255,.24); transform: translateY(-1px); }
-  .btn-sm { padding: 7px 12px; font-size: var(--fs-sm); border-radius: 10px; }
+  /* Один набор штриховых иконок вместо разнокалиберных эмодзи: они
+     наследуют цвет текста, одинаково весят и не зависят от того,
+     какой шрифт эмодзи стоит в системе. */
+  .i { width: 16px; height: 16px; flex: none; vertical-align: -3px; }
+  .i.sm { width: 14px; height: 14px; vertical-align: -2px; }
+  .i.lg { width: 18px; height: 18px; vertical-align: -4px; }
+  .btn-sm { padding: 7px 12px; font-size: var(--fs-sm); border-radius: var(--radius-xs); }
   .btn-icon { width: 34px; height: 34px; padding: 0; border-radius: 10px; font-size: var(--fs-md); }
   .btn[disabled] { opacity: .55; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
   .btn .spin { display: inline-block; animation: spin 1s linear infinite; }
@@ -258,41 +270,42 @@
 
   /* ---------- Hero ---------- */
   .hero-wrap { max-width: var(--maxw); margin: 22px auto 0; padding: 0 20px; }
+  /* Шапка страницы, а не плакат. Фирменный цвет остался акцентом —
+     полосой слева и в числах; заливка во весь экран забирала внимание
+     у того, ради чего портал открывают: задач, цифр, реестра. */
   .hero {
-    position: relative; overflow: hidden; color: #fff; border-radius: 26px;
-    background: radial-gradient(900px 420px at 0% 0%, rgba(255,255,255,.16), transparent 60%),
-                radial-gradient(700px 400px at 100% 100%, rgba(3,140,71,.35), transparent 55%),
-                linear-gradient(140deg, var(--hero-1) 0%, var(--hero-2) 45%, var(--hero-3) 100%);
-    box-shadow: 0 18px 44px rgba(125,16,48,.20);
-    padding: 28px 32px 26px;
-    display: grid; grid-template-columns: 1.25fr 1fr; gap: 26px; align-items: center;
+    position: relative; overflow: hidden; color: var(--ink); border-radius: var(--radius);
+    background: var(--card); border: 1px solid var(--line);
+    padding: 22px 26px 20px;
+    display: grid; grid-template-columns: 1.3fr 1fr; gap: 24px; align-items: center;
   }
-  .hero .ring { position: absolute; opacity: .13; pointer-events: none; user-select: none; }
-  .hero .ring.left { width: 320px; left: -110px; bottom: -130px; transform: rotate(-14deg); }
-  .hero .ring.right { width: 380px; right: -120px; top: -150px; transform: rotate(26deg); opacity: .10; }
+  .hero::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: var(--brand); }
+  .hero .ring { display: none; }        /* кольца были рассчитаны на тёмную заливку */
   /* Горизонтальная лента кнопок внутри грид-ячейки растягивала её по
      max-content: на телефоне герой уезжал за правый край экрана. */
   .hero > * { min-width: 0; }
   .hero-main { position: relative; z-index: 1; min-width: 0; }
   .hero .kicker {
-    display: inline-flex; align-items: center; gap: 8px; font-size: var(--fs-xs); font-weight: 800; letter-spacing: .08em;
-    text-transform: uppercase; background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.18);
-    border-radius: 999px; padding: 6px 12px; margin-bottom: 14px; backdrop-filter: blur(6px);
+    display: inline-flex; align-items: center; gap: 8px; font-size: var(--fs-2xs); font-weight: 800; letter-spacing: .08em;
+    text-transform: uppercase; background: var(--brand-soft); border: 1px solid var(--brand-line);
+    color: var(--brand); border-radius: 999px; padding: 5px 11px; margin-bottom: 12px;
   }
-  .hero h1 { font-family: var(--font-head); font-size: clamp(27px, 3.6vw, 40px); font-weight: 700; letter-spacing: -.01em; line-height: 1.08; }
+  .hero h1 { font-family: var(--font-head); font-size: clamp(25px, 3vw, 34px); font-weight: 700; letter-spacing: -.015em; line-height: 1.1; color: var(--ink); }
   .hero h1 .cat-ico { font-size: .75em; margin-left: 6px; }
   /* Портик проступает за текстом: знак центра, а не случайная картинка. */
-  .hero-mark { position: absolute; right: 3%; bottom: -14%; width: 260px; height: auto;
-    opacity: .07; pointer-events: none; user-select: none; }
+  .hero-mark { position: absolute; right: 3%; bottom: -14%; width: 210px; height: auto;
+    opacity: .05; color: var(--ink); pointer-events: none; user-select: none; }
   @media (max-width: 1000px) { .hero-mark { width: 170px; right: -4%; bottom: -10%; opacity: .05; } }
-  .hero .date { margin-top: 8px; font-size: var(--fs-md); color: var(--hero-soft); font-weight: 600; }
+  .hero .date { margin-top: 6px; font-size: var(--fs-sm); color: var(--ink-mute); font-weight: 600; }
+  /* Комплимент остался, но стал строкой, а не плашкой: он приятный,
+     но не главный на экране. */
   .hero .daily {
-    margin-top: 14px; display: flex; align-items: flex-start; gap: 12px;
-    background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18); border-radius: 14px;
-    padding: 12px 16px; backdrop-filter: blur(6px);
+    margin-top: 12px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+    border-left: 2px solid var(--brand-line); padding: 1px 0 1px 12px;
   }
-  .hero .daily-tag { flex: none; font-size: var(--fs-2xs); font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--hero-kicker); padding-top: 2px; }
-  .hero .daily span:last-child { font-size: var(--fs-md); font-weight: 600; line-height: 1.4; }
+  .hero .daily-tag { flex: none; font-size: var(--fs-2xs); font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--brand); }
+  .hero .daily span:last-child { font-size: var(--fs-sm); font-weight: 600; line-height: 1.45; color: var(--ink-soft); }
   .quick { display: grid; grid-template-columns: repeat(auto-fit, minmax(146px, 1fr));
     gap: 8px; margin-top: 14px; }
   .quick > .btn { width: 100%; justify-content: flex-start; }
@@ -308,16 +321,19 @@
   }
   .hero-side { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; min-width: 0; }
   .kpi {
-    background: rgba(255,255,255,.17); border: 1px solid rgba(255,255,255,.27); border-radius: 16px;
-    padding: 14px 16px; backdrop-filter: blur(8px); transition: background .2s, transform .2s var(--ease);
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-sm);
+    padding: 13px 15px; transition: border-color .2s;
   }
-  .kpi:hover { background: rgba(255,255,255,.18); transform: translateY(-2px); }
+  .kpi:hover { border-color: var(--bar-muted); }
   .kpi .v { font-size: var(--fs-3xl); font-weight: 800; letter-spacing: -.02em; line-height: 1;
     font-variant-numeric: tabular-nums; }
   .kpi .v small { font-size: var(--fs-sm); font-weight: 700; opacity: .8; margin-left: 2px; }
-  .kpi .l { margin-top: 6px; font-size: var(--fs-xs); color: rgba(255,255,255,.88); font-weight: 600; line-height: 1.3; }
-  .kpi.accent { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.42); }
-  .kpi.accent .v { color: var(--hero-accent); }
+  .kpi .l { margin-top: 5px; font-size: var(--fs-2xs); color: var(--ink-mute); font-weight: 600; line-height: 1.3; }
+  .kpi.accent { background: var(--brand-soft); border-color: var(--brand-line); }
+  .kpi.accent .v { color: var(--brand); }
+  /* Кнопки быстрого доступа внутри светлой шапки — обычные, с границей. */
+  .hero .quick .btn-light { background: var(--card); color: var(--ink-soft); border-color: var(--line); backdrop-filter: none; }
+  .hero .quick .btn-light:hover { background: var(--bg-3); color: var(--brand); border-color: var(--brand-line); transform: none; }
 
   /* ---------- Поиск ---------- */
   .search-wrap { max-width: 760px; margin: 22px auto 0; padding: 0 20px; position: relative; z-index: 5; }
@@ -792,18 +808,22 @@
   .tabbar-wrap.stuck { border-bottom-color: var(--line);
     background: var(--topbar-bg); backdrop-filter: blur(12px) saturate(1.2);
     box-shadow: 0 8px 20px rgba(43,43,46,.06); }
-  .tabbar { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; min-width: 0;
+  /* Вкладки подчёркиванием: семь таблеток в ряд спорили за внимание
+     с фирменной кнопкой в шапке. Подчёркивание показывает место,
+     не добавляя на экран ещё один заливной прямоугольник. */
+  .tabbar { display: flex; gap: 20px; overflow-x: auto; scrollbar-width: none; min-width: 0;
     width: 100%; box-sizing: border-box;
     max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
   .tabbar::-webkit-scrollbar { display: none; }
-  .tabbar button { flex: none; border: 1px solid var(--line); background: var(--card);
-    color: var(--ink-soft); font: 700 var(--fs-sm) var(--font); padding: 9px 16px;
-    border-radius: 999px; cursor: pointer; white-space: nowrap;
-    transition: color .15s, border-color .15s, background .15s, transform .15s var(--ease); }
+  .tabbar button { flex: none; border: 0; border-bottom: 2px solid transparent; background: none;
+    color: var(--ink-soft); font: 700 var(--fs-sm) var(--font); padding: 7px 1px 8px;
+    border-radius: 0; cursor: pointer; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 7px;
+    transition: color .15s, border-color .15s; }
   /* Карточки проявляются волной, а не все разом: глаз успевает
      заметить, что блок обновился. */
   @keyframes riseIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-  [data-pane].on > * { animation: riseIn .38s var(--ease); }
+  [data-pane].on > * { animation: riseIn .26s var(--ease); }
   [data-pane].on > *:nth-child(2) { animation-delay: .05s; }
   [data-pane].on > *:nth-child(3) { animation-delay: .1s; }
   [data-pane].on > *:nth-child(4) { animation-delay: .15s; }
@@ -914,9 +934,270 @@
   .wd-note b { color: var(--ink); }
   @media (max-width: 560px) { .wd-row { grid-template-columns: 74px 1fr 88px; gap: 8px; } }
 
+  /* ---------- Реестр групп ----------
+     Лист «МД» книги ВАЖНОЕ: 170 строк, семь полей на каждую. На широком
+     экране — таблица с колонками, на узком строка становится карточкой:
+     время, адрес и координатор нужны и на телефоне, прятать их нельзя. */
+  .reg-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .reg-chip { display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 13px;
+    border: 1px solid var(--line); background: var(--card); color: var(--ink-soft);
+    font: 700 var(--fs-sm) var(--font); border-radius: var(--r-control); cursor: pointer;
+    transition: border-color .15s, background .15s, color .15s; }
+  .reg-chip i { width: 8px; height: 8px; border-radius: 2px; display: block; }
+  .reg-chip b { font-variant-numeric: tabular-nums; color: var(--ink); }
+  .reg-chip:hover { border-color: var(--brand); }
+  .reg-chip.on { background: var(--ink); border-color: var(--ink); color: var(--card); }
+  .reg-chip.on b { color: var(--card); }
+
+  .reg-tools { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .reg-tools .pf-search { flex: 1 1 220px; min-width: 0; padding: 7px 10px; }
+  .reg-tools select { font: 500 var(--fs-sm) var(--font); border: 1px solid var(--line);
+    border-radius: var(--r-control); padding: 8px 10px; color: var(--ink); background: var(--card);
+    min-width: 0; max-width: 100%; }
+  .reg-tools select:focus { outline: none; border-color: var(--brand); }
+
+  .reg-table { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    box-shadow: var(--shadow); overflow: hidden; }
+  .reg-row { display: grid;
+    grid-template-columns: 3px 104px minmax(0,1.4fr) 150px minmax(0,1.5fr) 112px 124px;
+    align-items: center; gap: 12px; padding: 0 16px 0 0; }
+  .reg-row + .reg-row { border-top: 1px solid var(--line-soft); }
+  .reg-row > span { min-width: 0; }
+  .reg-row.hdr { background: var(--bg-2); padding-top: 8px; padding-bottom: 8px; }
+  /* На сером --bg-2 цвет --ink-mute давал 4.13 при норме 4.5 — берём --ink-soft. */
+  .reg-row.hdr span { font-size: var(--fs-2xs); font-weight: 800; letter-spacing: .04em;
+    text-transform: uppercase; color: var(--ink-soft); white-space: nowrap; }
+  .reg-row:not(.hdr) { padding-top: 10px; padding-bottom: 10px; }
+  .reg-row .rail { align-self: stretch; background: var(--line); }
+  .reg-row.s-work .rail { background: var(--green); }
+  .reg-row.s-open .rail { background: var(--teal); }
+  .reg-row.s-pause .rail { background: var(--amber); }
+  .reg-row.s-closed .rail { background: var(--brand); }
+  .reg-row.s-done .rail { background: var(--bar-muted); }
+  .reg-gid { font: 700 var(--fs-xs) ui-monospace, Menlo, Consolas, monospace;
+    color: var(--brand); text-decoration: none; white-space: nowrap;
+    border-bottom: 1px dashed var(--brand-line); }
+  .reg-gid:hover { border-bottom-style: solid; }
+  .reg-gid.no { color: var(--ink-mute); border-bottom-color: transparent; }
+  .reg-row .dir { display: block; font-size: var(--fs-sm); font-weight: 700; line-height: 1.25;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .reg-row .teach { display: block; margin-top: 2px; font-size: var(--fs-xs); color: var(--ink-mute);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .reg-row .cell { font-size: var(--fs-xs); color: var(--ink-soft); min-width: 0; }
+  .reg-row .cell small { display: block; color: var(--ink-mute); font-size: var(--fs-2xs);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .reg-ln { display: flex; align-items: center; gap: 6px; min-width: 0; }
+  .reg-ln svg { flex: none; color: var(--ink-mute); }
+  .reg-ln span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .reg-row .when { font-weight: 700; color: var(--ink); }
+  .reg-co-inline { display: none; margin-top: 2px; }
+  .reg-badge { display: inline-block; font-size: var(--fs-2xs); font-weight: 800; letter-spacing: .03em;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
+  .reg-badge.s-work { background: var(--green-soft); color: var(--green-dark); }
+  .reg-badge.s-open { background: var(--teal-soft); color: var(--teal-ink); }
+  .reg-badge.s-pause { background: var(--amber-soft); color: var(--amber-ink); }
+  .reg-badge.s-closed { background: var(--brand-soft); color: var(--brand-dark); }
+  .reg-badge.s-done { background: var(--bg-2); color: var(--ink-mute); }
+  .reg-more { display: block; width: 100%; border: 0; border-top: 1px solid var(--line);
+    background: var(--bg-2); padding: 11px; font: 700 var(--fs-sm) var(--font);
+    color: var(--ink-soft); cursor: pointer; }
+  .reg-more:hover { color: var(--brand); }
+  .reg-note { display: flex; gap: 10px; margin-top: 12px; background: var(--bg);
+    border-radius: var(--r-control); padding: 11px 13px; font-size: var(--fs-xs);
+    line-height: 1.5; color: var(--ink-soft); }
+  .reg-note[hidden] { display: none; }
+  .reg-note b { color: var(--ink); }
+
+
+  /* ---------- Таблица групп: повторяет лист «МД» ----------
+     Те же данные и тот же порядок, что в книге. Ширины — в долях, поэтому
+     все колонки помещаются целиком и на 1180, и на 1460 пикселях: боковая
+     прокрутка в рабочей таблице раздражает сильнее, чем мелкий шрифт. */
+  .mdt-wrap { border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); }
+  .mdt { border-collapse: collapse; width: 100%; table-layout: fixed; }
+  .mdt th, .mdt td { text-align: left; vertical-align: top; padding: 9px 10px;
+    border-bottom: 1px solid var(--line-soft); overflow-wrap: anywhere; }
+  .mdt thead th { position: sticky; top: calc(var(--topbar-h) + var(--tabbar-h)); z-index: 2;
+    background: var(--bg-2); color: var(--ink-soft);
+    font-size: var(--fs-2xs); font-weight: 800; letter-spacing: .03em; text-transform: uppercase;
+    line-height: 1.25; border-bottom: 1px solid var(--line); }
+  .mdt thead th:first-child { border-top-left-radius: var(--radius); }
+  .mdt thead th:last-child { border-top-right-radius: var(--radius); }
+  .mdt tbody tr:nth-child(even) { background: var(--bg-3); }
+  .mdt tbody tr:hover { background: var(--brand-soft); }
+  .mdt tbody tr:last-child td { border-bottom: 0; }
+  .mdt td { font-size: var(--fs-2xs); line-height: 1.5; color: var(--ink); }
+  /* Цветная кромка слева повторяет статус: строку видно до чтения. */
+  .mdt td.c-id { border-left: 3px solid var(--line); }
+  .mdt tr.s-work td.c-id { border-left-color: var(--green); }
+  .mdt tr.s-open td.c-id { border-left-color: var(--teal); }
+  .mdt tr.s-pause td.c-id { border-left-color: var(--amber); }
+  .mdt tr.s-closed td.c-id, .mdt tr.s-done td.c-id { border-left-color: var(--bar-muted); }
+  .mdt a.gid { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink);
+    text-decoration: none; }
+  .mdt a.gid:hover { color: var(--brand); text-decoration: underline; }
+  .mdt .idcell { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .mdt .who { display: block; }
+  .mdt .who + .who { margin-top: 1px; color: var(--ink-soft); }
+  .mdt .who.rest { margin-top: 3px; font-weight: 700; color: var(--ink-mute);
+    border-bottom: 1px dotted var(--bar-muted); display: inline-block; cursor: help; }
+  .mdt .sup { display: flex; align-items: flex-start; gap: 6px; }
+  .mdt .sup i { width: 8px; height: 8px; border-radius: 2px; flex: none; margin-top: 5px; }
+  .mdt .sub { display: block; margin-top: 3px; color: var(--ink-mute); font-weight: 600; }
+  .mdt .sch b { display: block; font-weight: 700; white-space: nowrap; }
+  .mdt .cm { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;
+    overflow: hidden; color: var(--ink-soft); }
+  .mdt .chat { display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: var(--radius-xs); color: var(--ink-mute);
+    border: 1px solid var(--line); }
+  .mdt .chat:hover { color: var(--brand); border-color: var(--brand-line); background: var(--brand-soft); }
+  .mdt .no { color: var(--ink-mute); }
+  /* Полный статус из листа длинный — в таблице он переносится и живёт
+     без капители: заглавные растягивают строку почти вдвое. */
+  .mdt .reg-badge { white-space: normal; text-transform: none; letter-spacing: 0;
+    font-weight: 700; line-height: 1.3; padding: 3px 7px; }
+  .mdt-foot { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 10px;
+    font-size: var(--fs-2xs); color: var(--ink-mute); font-weight: 600; }
+
+  /* Узкий экран: таблица разворачивается в карточки, каждое поле со своей
+     подписью. Девять колонок на телефоне нечитаемы в любом исполнении. */
+  @media (max-width: 1000px) {
+    .mdt, .mdt tbody, .mdt tr, .mdt td { display: block; width: auto; }
+    .mdt thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .mdt tbody tr { padding: 4px 0; border-bottom: 1px solid var(--line); }
+    .mdt tbody tr:last-child { border-bottom: 0; }
+    .mdt td { border: 0; padding: 4px 14px; display: grid; grid-template-columns: 116px minmax(0, 1fr); gap: 10px; }
+    .mdt td::before { content: attr(data-l); font-size: var(--fs-2xs); font-weight: 700;
+      color: var(--ink-mute); text-transform: uppercase; letter-spacing: .03em; }
+    .mdt td.c-id { border-left: 0; padding-top: 10px; }
+    .mdt td:last-child { padding-bottom: 10px; }
+    .mdt td:empty { display: none; }
+    .mdt .cm { -webkit-line-clamp: 3; }
+  }
+  @media (max-width: 520px) {
+    .mdt td { grid-template-columns: 1fr; gap: 1px; }
+  }
+  /* ---------- Поставщики ----------
+     Три слоя: сводка числами, нагрузка координаторов, карточки
+     поставщиков. Карточка раскрывается в список своих групп — так
+     реестр доступен в один клик, не уводя на отдельную вкладку. */
+  .sup-sum { display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 10px; margin-bottom: 16px; }
+  .sup-sum .b { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 12px 14px; }
+  .sup-sum .b .v { font-size: var(--fs-2xl); font-weight: 800; letter-spacing: -.02em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .sup-sum .b .l { margin-top: 5px; font-size: var(--fs-2xs); font-weight: 600; color: var(--ink-soft); line-height: 1.3; }
+  .sup-sum .b .s { margin-top: 6px; display: flex; gap: 8px; flex-wrap: wrap; font-size: var(--fs-2xs); color: var(--ink-mute); font-weight: 600; }
+  .sup-sum .b .s i { font-style: normal; display: inline-flex; align-items: center; gap: 4px; }
+  .sup-sum .b .s i::before { content: ""; width: 7px; height: 7px; border-radius: 2px; background: var(--bar-muted); }
+  .sup-sum .b .s i.work::before { background: var(--green); }
+  .sup-sum .b .s i.open::before { background: var(--teal); }
+  .sup-sum .b .s i.pause::before { background: var(--amber); }
+
+  .sup-h3 { display: flex; align-items: baseline; gap: 8px; margin: 26px 0 12px; font-size: var(--fs-lg);
+    flex-wrap: wrap; padding-top: 4px; border-top: 1px solid var(--line-soft);
+    font-weight: 800; letter-spacing: -.01em; color: var(--ink); }
+  .sup-h3 small { font-size: var(--fs-xs); font-weight: 600; color: var(--ink-mute); letter-spacing: 0; }
+  .sup-h3 .i { align-self: center; color: var(--brand); }
+  .sup-h3 + .sup-tools, .sup-h3 + .reg-chips { margin-top: 0; }
+
+  /* нагрузка координаторов */
+  .co-load { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  .co-row { display: grid; grid-template-columns: 150px 52px minmax(0,1fr) 150px; align-items: center; gap: 14px; padding: 11px 16px; }
+  .co-row + .co-row { border-top: 1px solid var(--line-soft); }
+  .co-row .who { display: flex; align-items: center; gap: 7px; font-size: var(--fs-sm); font-weight: 700; min-width: 0; }
+  .co-row .who span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .co-row .cnt { font-size: var(--fs-md); font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
+  .co-row .cnt small { display: block; font-size: var(--fs-2xs); font-weight: 600; color: var(--ink-mute); }
+  .co-row .extra { font-size: var(--fs-2xs); color: var(--ink-soft); font-weight: 600; text-align: right; line-height: 1.4; }
+  .co-bar { display: flex; height: 12px; border-radius: 3px; overflow: hidden; background: var(--bg-2); }
+  .co-bar i { display: block; height: 100%; }
+  .co-bar i.work { background: var(--green); }
+  .co-bar i.open { background: var(--teal); }
+  .co-bar i.pause { background: var(--amber); }
+  .co-bar i.closed, .co-bar i.done { background: var(--bar-muted); }
+
+  /* карточки поставщиков */
+  .sup-tools { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+  .sup-tools .pf-search { flex: 1 1 240px; min-width: 0; padding: 7px 10px; }
+  .sup-tools select { font: 500 var(--fs-sm) var(--font); border: 1px solid var(--line);
+    border-radius: var(--r-control); background: var(--card); color: var(--ink); padding: 8px 10px; }
+  .sup-tools select:focus { outline: none; border-color: var(--brand); }
+  .sup-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 12px; align-items: start; }
+  .sup-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  .sup-card.open { border-color: var(--bar-muted); }
+  .sup-top { display: grid; grid-template-columns: 4px minmax(0,1fr) auto; gap: 12px; align-items: start;
+    padding: 13px 14px 13px 0; cursor: pointer; background: none; border: 0; width: 100%; text-align: left; font: inherit; color: inherit; }
+  .sup-top .tint { align-self: stretch; border-radius: 0 3px 3px 0; }
+  .sup-top .nm { font-size: var(--fs-sm); font-weight: 700; line-height: 1.3; color: var(--ink); }
+  .sup-top .sub { margin-top: 5px; font-size: var(--fs-2xs); color: var(--ink-soft); font-weight: 600; line-height: 1.45; }
+  .sup-top .big { font-size: var(--fs-xl); font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; padding-right: 14px; }
+  .sup-top .big small { display: block; margin-top: 3px; font-size: var(--fs-2xs); font-weight: 600; color: var(--ink-mute); text-align: right; }
+  .sup-card .bar { margin: 0 14px 10px; }
+  .sup-chips { display: flex; flex-wrap: wrap; gap: 5px; padding: 0 14px 12px; }
+  .sup-chips span { font-size: var(--fs-2xs); font-weight: 600; color: var(--ink-soft);
+    background: var(--bg-2); border-radius: 999px; padding: 3px 9px; }
+  .sup-chips span.more { background: none; color: var(--ink-mute); }
+  .sup-more { border-top: 1px solid var(--line-soft); }
+  .sup-g { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 4px 12px; padding: 10px 14px; }
+  .sup-g + .sup-g { border-top: 1px solid var(--line-soft); }
+  .sup-g .d { font-size: var(--fs-xs); font-weight: 700; color: var(--ink); }
+  .sup-g .m { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px 12px;
+    font-size: var(--fs-2xs); color: var(--ink-soft); font-weight: 600; }
+  .sup-g .m span { display: inline-flex; align-items: center; gap: 4px; min-width: 0; }
+  .sup-g .m span b { font-weight: 700; color: var(--ink); }
+  .sup-g .gid { font-size: var(--fs-2xs); font-weight: 700; font-variant-numeric: tabular-nums;
+    color: var(--ink-mute); text-decoration: none; white-space: nowrap; }
+  .sup-g .gid:hover { color: var(--brand); text-decoration: underline; }
+  .sup-g .dot { width: 7px; height: 7px; border-radius: 2px; flex: none; }
+  .sup-g .dot.work { background: var(--green); }
+  .sup-g .dot.open { background: var(--teal); }
+  .sup-g .dot.pause { background: var(--amber); }
+  .sup-g .dot.closed, .sup-g .dot.done { background: var(--bar-muted); }
+  .sup-bar { display: flex; height: 8px; border-radius: 3px; overflow: hidden; background: var(--bg-2); }
+  .sup-bar i { display: block; height: 100%; }
+  .sup-bar i.work { background: var(--green); }
+  .sup-bar i.open { background: var(--teal); }
+  .sup-bar i.pause { background: var(--amber); }
+  .sup-bar i.closed, .sup-bar i.done { background: var(--bar-muted); }
+
+  /* дни недели: сколько групп в какой день */
+  .sup-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+  .sup-day { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 10px 8px; text-align: center; }
+  .sup-day .d { font-size: var(--fs-2xs); font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-mute); }
+  .sup-day .n { margin-top: 5px; font-size: var(--fs-xl); font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+  .sup-day .mini { margin-top: 7px; height: 4px; border-radius: 2px; background: var(--brand); opacity: .22; }
+  .sup-day.peak .mini { opacity: 1; }
+  .sup-day.peak .n { color: var(--brand); }
+
+  @media (max-width: 760px) {
+    .co-row { grid-template-columns: minmax(0,1fr) 52px; gap: 6px 12px; }
+    .co-row .cbar { grid-column: 1 / -1; }
+    .co-row .extra { grid-column: 1 / -1; text-align: left; }
+    .sup-days { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  @media (max-width: 1080px) {
+    .reg-row { grid-template-columns: 3px 104px minmax(0,1.4fr) 140px minmax(0,1.4fr) 124px; }
+    .reg-row .c-co, .reg-row.hdr span.c-co { display: none; }
+    .reg-co-inline { display: block; }
+    .sup-row { grid-template-columns: 24px minmax(0,1fr) 150px 52px; }
+    .sup-row .c-dirs { display: none; }
+  }
+  @media (max-width: 760px) {
+    /* Строка становится карточкой: ничего не прячем, всё в столбик. */
+    .reg-row { grid-template-columns: 3px minmax(0,1fr); row-gap: 5px;
+      padding: 12px 16px 12px 0; align-items: start; }
+    .reg-row.hdr { display: none; }
+    .reg-row > span:not(.rail) { grid-column: 2; }
+    .reg-row .cell small, .reg-ln span { white-space: normal; }
+    .reg-tools { gap: 6px; }
+  }
+
   /* ---------- Талисман ---------- */
-  .mascot { position: fixed; z-index: 70; width: 104px; cursor: pointer;
-    filter: drop-shadow(0 8px 20px rgba(0,0,0,.26)); }
+  /* Кот — приятная мелочь, а не помеха: меньше, прозрачнее, и на время
+     наведения уходит почти совсем, чтобы не закрывать строку таблицы. */
+  .mascot { position: fixed; z-index: 70; width: 84px; cursor: pointer; opacity: .92;
+    filter: drop-shadow(0 6px 14px rgba(0,0,0,.18)); transition: opacity .2s; }
+  .mascot:hover { opacity: .25; }
   .mascot[hidden] { display: none; }
   .mascot-art { display: block; width: 100%; height: auto; }
 
@@ -946,9 +1227,8 @@
     .mascot.in, .mascot.out, .mascot.in .mascot-art { animation: none; }
   }
 
-  .tabbar button:hover { color: var(--brand); border-color: var(--brand); transform: translateY(-1px); }
-  .tabbar button.on { background: var(--brand); border-color: var(--brand); color: #fff;
-    box-shadow: 0 4px 12px rgba(15,107,79,.22); }
+  .tabbar button:hover { color: var(--ink); }
+  .tabbar button.on { color: var(--ink); border-bottom-color: var(--brand); background: none; }
   body.view-partners .tabbar-wrap { display: none; }
   [data-pane] { display: none; }
   [data-pane].on { display: block; }
@@ -1163,8 +1443,8 @@
   :root[data-theme="dark"] .task-form button,
   :root[data-theme="dark"] .gate-card button[type=submit],
   :root[data-theme="dark"] .links-table a.idlink:hover { color: var(--on-brand); }
-  /* герой остаётся малиновым, но вечером не должен слепить */
-  :root[data-theme="dark"] .hero, :root[data-theme="dark"] .gate { filter: saturate(.95) brightness(.86); }
+  /* заливка осталась только у входа — его и приглушаем */
+  :root[data-theme="dark"] .gate { filter: saturate(.95) brightness(.86); }
   :root[data-theme="dark"] .garden-scene .g-cloud { opacity: .24; }
   :root[data-theme="dark"] .garden-scene .g-empty { fill: #6f6258; }
   /* карта светлая по своей природе — приглушаем, чтобы не резала глаз */
@@ -1250,6 +1530,37 @@
 </style>
 </head>
 <body>
+<svg class="icon-sprite" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+  <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+  <symbol id="i-sprout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21v-7"/><path d="M12 14c0-3.3-2.7-6-6-6 0 3.3 2.7 6 6 6z"/><path d="M12 14c0-3.9 3.1-7 7-7 0 3.9-3.1 7-7 7z"/></symbol>
+  <symbol id="i-ticket" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M12 5v3M12 11v2M12 16v3"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+  <symbol id="i-building" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v16"/><path d="M15 9h3a2 2 0 0 1 2 2v10"/><path d="M2 21h20M8 7h3M8 11h3M8 15h3"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6.5v13L9 17l6 2.5 6-2.5v-13L15 6.5z"/><path d="M9 4v13M15 6.5v13"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 7 8.5 6 8.5-6"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H4l2-3a8 8 0 1 1 15-5z"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.2 4.2l1.5 1.5M18.3 18.3l1.5 1.5M2 12h2M20 12h2M4.2 19.8l1.5-1.5M18.3 5.7l1.5-1.5"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 3v5h-5"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 9a6 6 0 1 0-12 0c0 5-2 6-2 6h16s-2-1-2-6z"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19.5 8.5a2.1 2.1 0 0 0-3-3L5 17z"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.5"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 2.6 17.2A2 2 0 0 0 4.3 20h15.4a2 2 0 0 0 1.7-2.8L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 16.4v.4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="2.6"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.4"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16.5 5.2a3.4 3.4 0 0 1 0 5.6M17.5 14.4A6.5 6.5 0 0 1 21.5 20"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1.2 1.2"/><path d="M14 11a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1.2-1.2"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.4 2.6 5.4 5.9.8-4.3 4.1 1.1 5.9L12 16.8 6.7 19.6l1.1-5.9L3.5 9.6l5.9-.8z"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+</svg>
 <div id="gate" class="gate">
   <img class="ring a" src="assets/ring-white.png" alt="">
   <img class="ring b" src="assets/ring-white.png" alt="">
@@ -1285,9 +1596,9 @@
     </nav>
     <div class="topbar-tools">
       <span class="sync" id="syncState" title="Данные обновляются автоматически: при открытии, каждые 10 минут и при возврате на вкладку"><span class="dot"></span><span class="t" id="syncText">загрузка…</span></span>
-      <button class="btn btn-ghost btn-icon theme-btn" id="themeBtn" type="button" title="Тёмная тема" aria-label="Переключить тему" aria-pressed="false">☾</button>
-      <button class="btn btn-ghost btn-icon" id="globalRefresh" title="Обновить данные">⟳</button>
-      <a class="btn btn-green btn-sm" href="https://my.mts-link.ru/j/93021939/551741639/stream-new/1048204767" target="_blank" rel="noopener" title="Открыть «Искренний сервис» (MTS Link)">💬 <span class="t">Искренний сервис</span></a>
+      <button class="btn btn-ghost btn-icon theme-btn" id="themeBtn" type="button" title="Тёмная тема" aria-label="Переключить тему" aria-pressed="false"><svg class="i"><use href="#i-moon"/></svg></button>
+      <button class="btn btn-ghost btn-icon" id="globalRefresh" title="Обновить данные"><svg class="i"><use href="#i-refresh"/></svg></button>
+      <a class="btn btn-green btn-sm" href="https://my.mts-link.ru/j/93021939/551741639/stream-new/1048204767" target="_blank" rel="noopener" title="Открыть «Искренний сервис» (MTS Link)"><svg class="i"><use href="#i-chat"/></svg> <span class="t">Искренний сервис</span></a>
       <span class="center-mark" title="ЦМД «Пресненский»"><svg class="mark" viewBox="0 14 88 80" aria-hidden="true" focusable="false"><g fill="currentColor"><path d="M44 18 84 42 4 42Z"/><rect x="3" y="43.5" width="82" height="4.6" rx="1.4"/><rect x="9.5" y="49.5" width="10.6" height="2.8" rx="1"/><rect x="11.4" y="52.3" width="6.8" height="24"/><rect x="9.5" y="76.3" width="10.6" height="3" rx="1"/><rect x="26.2" y="49.5" width="10.6" height="2.8" rx="1"/><rect x="28.1" y="52.3" width="6.8" height="24"/><rect x="26.2" y="76.3" width="10.6" height="3" rx="1"/><rect x="51.2" y="49.5" width="10.6" height="2.8" rx="1"/><rect x="53.1" y="52.3" width="6.8" height="24"/><rect x="51.2" y="76.3" width="10.6" height="3" rx="1"/><rect x="67.9" y="49.5" width="10.6" height="2.8" rx="1"/><rect x="69.8" y="52.3" width="6.8" height="24"/><rect x="67.9" y="76.3" width="10.6" height="3" rx="1"/><path d="M40.6 79.3V60.5a3.4 3.4 0 0 1 6.8 0v18.8Z" opacity=".5"/><rect x="3" y="80.2" width="82" height="4.2" rx="1.3"/><rect x="0" y="85.2" width="88" height="4.6" rx="1.4"/></g><circle cx="44" cy="33" r="4.6" fill="var(--accent)"/></svg><span>ЦМД<b>«Пресненский»</b></span></span>
     </div>
   </div>
@@ -1306,20 +1617,20 @@
           <rect x="3" y="80.2" width="82" height="4.2" rx="1.3"/><rect x="0" y="85.2" width="88" height="4.6" rx="1.4"/>
         </g>
       </svg>
-      <span class="kicker">✦ Команда мечты · ЦМД</span>
+      <span class="kicker"><svg class="i sm"><use href="#i-star"/></svg>Команда мечты · ЦМД</span>
       <h1>ЦМД Пресненский</h1>
       <div class="date" id="heroDate"></div>
       <div class="daily" id="daily">
-        <span class="daily-tag">✨ Комплимент дня</span>
+        <span class="daily-tag">Комплимент дня</span>
         <span id="dailyText"></span>
       </div>
       <div class="quick">
-        <a class="btn btn-light btn-sm" href="https://my.mts-link.ru/j/93021939/551741639/stream-new/1048204767" target="_blank" rel="noopener">💬 Искренний сервис</a>
-        <a class="btn btn-light btn-sm" href="#partners" data-nav="partners">🗺 Карта партнёров</a>
-        <a class="btn btn-light btn-sm" href="#tasksSec" data-scroll="tasksSec">📅 Задачи</a>
-        <a class="btn btn-light btn-sm" href="#linksSec" data-scroll="linksSec">⚡ Быстрый доступ</a>
-        <a class="btn btn-light btn-sm" href="https://docs.google.com/spreadsheets/d/1AaZjdwpx-oCdiglZxg1Wszod0xqQXOXU0cppJuOguhY/edit" target="_blank" rel="noopener">📊 Посещаемость</a>
-        <a class="btn btn-light btn-sm" href="https://owa.mos.ru/owa" target="_blank" rel="noopener">✉ Почта</a>
+        <a class="btn btn-light btn-sm" href="https://my.mts-link.ru/j/93021939/551741639/stream-new/1048204767" target="_blank" rel="noopener"><svg class="i"><use href="#i-chat"/></svg> Искренний сервис</a>
+        <a class="btn btn-light btn-sm" href="#partners" data-nav="partners"><svg class="i"><use href="#i-map"/></svg> Карта партнёров</a>
+        <a class="btn btn-light btn-sm" href="#tasksSec" data-scroll="tasksSec"><svg class="i"><use href="#i-calendar"/></svg> Задачи</a>
+        <a class="btn btn-light btn-sm" href="#linksSec" data-scroll="linksSec"><svg class="i"><use href="#i-bolt"/></svg> Быстрый доступ</a>
+        <a class="btn btn-light btn-sm" href="https://docs.google.com/spreadsheets/d/1AaZjdwpx-oCdiglZxg1Wszod0xqQXOXU0cppJuOguhY/edit" target="_blank" rel="noopener"><svg class="i"><use href="#i-chart"/></svg> Посещаемость</a>
+        <a class="btn btn-light btn-sm" href="https://owa.mos.ru/owa" target="_blank" rel="noopener"><svg class="i"><use href="#i-mail"/></svg> Почта</a>
       </div>
     </div>
     <div class="hero-side">
@@ -1334,11 +1645,12 @@
 <div id="tabbarAnchor" aria-hidden="true"></div>
 <div class="tabbar-wrap" id="tabbarWrap">
 <nav class="tabbar" id="mainTabs" aria-label="Разделы портала">
-  <button type="button" data-tab="tasks" class="on" aria-selected="true">📅 Задачи</button>
-  <button type="button" data-tab="att" aria-selected="false">📊 Посещаемость</button>
-  <button type="button" data-tab="garden" aria-selected="false">🌱 Грядка</button>
-  <button type="button" data-tab="clubs" aria-selected="false">🎭 Клубы</button>
-  <button type="button" data-tab="sections" aria-selected="false">🗂 Все разделы</button>
+  <button type="button" data-tab="tasks" class="on" aria-selected="true"><svg class="i"><use href="#i-calendar"/></svg><span>Задачи</span></button>
+  <button type="button" data-tab="att" aria-selected="false"><svg class="i"><use href="#i-chart"/></svg><span>Посещаемость</span></button>
+  <button type="button" data-tab="garden" aria-selected="false"><svg class="i"><use href="#i-sprout"/></svg><span>Грядка</span></button>
+  <button type="button" data-tab="clubs" aria-selected="false"><svg class="i"><use href="#i-ticket"/></svg><span>Клубы</span></button>
+  <button type="button" data-tab="registry" aria-selected="false"><svg class="i"><use href="#i-building"/></svg><span>Поставщики и группы</span></button>
+  <button type="button" data-tab="sections" aria-selected="false"><svg class="i"><use href="#i-grid"/></svg><span>Все разделы</span></button>
 </nav>
 </div>
 
@@ -1367,7 +1679,7 @@
       <span class="dash-tools">
         <span id="taskMeta"></span>
         <button id="taskAdd" class="add" title="Добавить задачу">+ задача</button>
-        <button id="notifyBtn" title="Включить уведомления о задачах на день">🔔</button>
+        <button id="notifyBtn" title="Включить уведомления о задачах на день"><svg class="i sm"><use href="#i-bell"/></svg></button>
         <a id="tasksLink" href="#" target="_blank" rel="noopener" style="display:none">таблица ↗</a>
       </span>
     </div>
@@ -1588,6 +1900,65 @@
         <div class="garden-staff" id="gardenStaff"></div>
       </div>
     </div>
+  </section>
+  <section class="cat reveal" id="registrySec" data-pane="registry">
+    <div class="cat-head">
+      <h2>Поставщики и группы</h2>
+      <span class="count" id="supCount"></span>
+      <span class="dash-tools">
+        <span id="supMeta"></span>
+        <button id="regRefresh" title="Обновить данные"><svg class="i sm"><use href="#i-refresh"/></svg></button>
+        <a id="regLink" href="#" target="_blank" rel="noopener">лист «МД» ↗</a>
+      </span>
+    </div>
+
+    <div class="sup-sum" id="supSum"></div>
+
+    <div class="sup-h3"><svg class="i"><use href="#i-users"/></svg><span>Нагрузка координаторов</span><small id="supCoHint"></small></div>
+    <div class="co-load" id="supCo"><div class="task-empty">Загружаю…</div></div>
+
+    <div class="sup-h3"><svg class="i"><use href="#i-calendar"/></svg><span>Занятость по дням недели</span><small>сколько групп занимается в каждый день</small></div>
+    <div class="sup-days" id="supDays"></div>
+
+    <div class="sup-h3"><svg class="i"><use href="#i-building"/></svg><span>Поставщики</span><small id="supHint">нажмите на карточку, чтобы увидеть её группы</small></div>
+    <div class="sup-tools">
+      <div class="pf-search"><svg class="i sm"><use href="#i-search"/></svg><input id="supQ" type="text" placeholder="Поставщик, направление, преподаватель, адрес…" autocomplete="off"></div>
+      <select id="supSort"><option value="n">По числу групп</option><option value="a">По названию</option><option value="d">По числу направлений</option></select>
+    </div>
+    <div class="sup-grid" id="supRows"><div class="task-empty">Загружаю…</div></div>
+    <div class="reg-note" id="supNote" hidden></div>
+
+    <div class="sup-h3"><svg class="i"><use href="#i-folder"/></svg><span>Все группы</span><small id="regMeta"></small></div>
+    <div class="reg-chips" id="regChips"></div>
+    <div class="reg-tools">
+      <div class="pf-search"><svg class="i sm"><use href="#i-search"/></svg><input id="regQ" type="text" placeholder="ID, направление, преподаватель, адрес, комментарий…" autocomplete="off"></div>
+      <select id="regSup"><option value="">Все поставщики</option></select>
+      <select id="regCo"><option value="">Все координаторы</option></select>
+      <select id="regDay"><option value="">Любой день</option></select>
+    </div>
+    <div class="mdt-wrap">
+      <table class="mdt">
+        <colgroup>
+          <col style="width:8%"><col style="width:9%"><col style="width:13%"><col style="width:13%">
+          <col style="width:13%"><col style="width:14%"><col style="width:11%"><col style="width:8%">
+          <col style="width:11%">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>ID</th><th>Статус</th><th>Направление</th><th>ФИО преподавателя</th>
+            <th>Поставщик</th><th>Адрес площадки</th>
+            <th>Расписание</th><th>Координатор</th><th>Комментарий</th>
+          </tr>
+        </thead>
+        <tbody id="regRows"><tr><td colspan="9"><div class="task-empty">Загружаю реестр…</div></td></tr></tbody>
+      </table>
+    </div>
+    <button class="reg-more" id="regMore" hidden></button>
+    <div class="mdt-foot">
+      <span id="regCount"></span>
+      <span>Код группы открывает карточку в КИС МД</span>
+    </div>
+    <div class="reg-note" id="regNote" hidden></div>
   </section>
   <section class="cat reveal" id="clubsSec" data-pane="clubs">
     <div class="cat-head">
@@ -2218,7 +2589,8 @@ function applyTheme(t, repaint) {
   document.documentElement.setAttribute('data-theme', t);
   const btn = document.getElementById('themeBtn');
   if (btn) {
-    btn.textContent = t === 'dark' ? '☀' : '☾';
+    const use = btn.querySelector('use');
+    if (use) use.setAttribute('href', t === 'dark' ? '#i-sun' : '#i-moon');
     btn.title = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
     btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
   }
@@ -2316,13 +2688,13 @@ document.getElementById('themeBtn').addEventListener('click', () => {
     cat.classList.remove('out');
     void cat.offsetWidth;                               /* перезапуск анимации */
     cat.classList.add('in');
-    hideTimer = setTimeout(() => hide(), 10000);        /* десять секунд на экране */
+    hideTimer = setTimeout(() => hide(), 6500);         /* шесть с половиной секунд на экране */
   }
 
   cat.addEventListener('click', () => hide());
   document.addEventListener('visibilitychange', () => { if (document.hidden) hide(true); });
-  setTimeout(show, 12000);         /* первый выход — когда портал загрузился */
-  setInterval(show, 60000);        /* дальше раз в минуту */
+  setTimeout(show, 45000);         /* первый выход — когда с порталом уже поработали */
+  setInterval(show, 300000);       /* дальше раз в пять минут, а не каждую */
 })();
 
 const gateEl = document.getElementById('gate');
@@ -2386,6 +2758,8 @@ function setTab(t, remember) {
   if (t === 'garden' && typeof renderGarden === 'function') renderGarden();
   /* сравнение с округом нужно на вкладке клубов — тянем реестр при первом заходе */
   if (t === 'clubs' && typeof loadCaoClubs === 'function') loadCaoClubs();
+  /* Реестр большой, тянем его только когда на него зашли. */
+  if (t === 'registry' && !mdLoaded && typeof loadMd === 'function') loadMd();
 }
 document.getElementById('mainTabs').addEventListener('click', e => {
   const b = e.target.closest('button[data-tab]');
@@ -3623,6 +3997,9 @@ function renderLinks(live) {
 const GARDEN_SHEET_ID = '1nUn-HFGA9-dwysu9wsVHA4BDI-Uv_yTLqWh1b_D1MEs';
 const GARDEN_GID = '1963113636';
 const PBDAY_GID = '147047501';     /* лист дней рождения участников */
+const MD_GID = '1134951489';       /* лист «МД»: реестр групп и поставщиков */
+/* Карточка группы в КИС МД: код без ведущих нулей. G-00000101 → /groups/101/view */
+const MD_GROUP_URL = 'https://smd.mos.ru/groups/{id}/view';
 const GARDEN_RETURNED = /зачислен|придет очно|придёт очно/i;
 
 let garden = null;
@@ -4714,6 +5091,487 @@ function renderPbdays() {
       (pbdaysNoDate ? ' У ' + pbdaysNoDate + ' — не указана дата рождения.' : '');
   }
 }
+
+/* ============================================================
+   РЕЕСТР ГРУПП И ПОСТАВЩИКИ
+   Источник — лист «МД» книги ВАЖНОЕ. Колонки ищем по заголовку:
+   лист продолжают вести руками, и порядок столбцов может поехать.
+   ============================================================ */
+let mdGroups = [], mdSup = [], mdLoaded = false;
+let regFilter = "", regShown = 30;
+
+/* Статусы листа сводим к пяти состояниям. Формулировки в таблице и в
+   КИС разные («Закрыта» против «Прекращение занятий»), поэтому ловим
+   по корню слова, а не по точному совпадению. */
+function mdState(raw) {
+  const t = (raw || "").toLowerCase();
+  if (/приостанов/.test(t)) return "pause";
+  if (/прекращ|закрыт/.test(t)) return "closed";
+  if (/заверш/.test(t)) return "done";
+  if (/набор|создана/.test(t)) return "open";
+  if (/приступила|заняти/.test(t)) return "work";
+  return "other";
+}
+const MD_LBL = { work: "работает", open: "идёт набор", pause: "приостановлена",
+  closed: "прекращена", done: "завершена", other: "—" };
+const MD_ORDER = ["work", "open", "pause", "closed", "done"];
+
+/* Код группы ведёт на карточку в КИС: G-00000101 → /groups/101/view */
+function mdHref(code) {
+  const m = /^G-0*([0-9]+)$/.exec((code || "").trim());
+  return m ? MD_GROUP_URL.replace("{id}", m[1]) : null;
+}
+
+/* Лист «МД» уже ведётся как чистовой реестр: занятия в самом центре и
+   автобусные экскурсии в него не попадают. Поэтому портал ничего не
+   прячет — показывает лист один в один. */
+
+function parseMdRows(rows) {
+  if (!rows.length) return [];
+  const head = rows[0].map(h => (h || "").trim().toLowerCase());
+  const col = re => head.findIndex(h => re.test(h));
+  const iSt = col(/статус/), iDir = col(/направлени/), iT = col(/препод/),
+        iSup = col(/поставщик/), iAddr = col(/адрес/), iPt = col(/тип площадк/),
+        iSch = col(/расписан/), iCo = col(/координатор/), iCm = col(/комментар/),
+        iChat = col(/чат|ссылк/), iAct = col(/актуальн/);
+  const cl = v => (v || "").replace(/\s+/g, " ").trim();
+  const out = [];
+  rows.slice(1).forEach(r => {
+    const id = cl(r[0]);
+    if (!/^G-\d{6,9}$/.test(id)) return;          /* строки-мусор пропускаем */
+
+    out.push({
+      id,
+      stRaw: cl(r[iSt]), st: mdState(r[iSt]),
+      dir: cl(r[iDir]),
+      t: (r[iT] || "").split(/[\n\/;]+/).map(cl).filter(Boolean),
+      sup: cl(r[iSup]), addr: cl(r[iAddr]), pt: cl(r[iPt]),
+      sch: cl(r[iSch]),
+      ...(function () { const s = mdSchedule(r[iSch]); return { days: s.days, slots: s.slots }; })(),
+      /* «Агапова Т.» и «Агапова Т.М.» — один человек, сводим к одному виду */
+      co: cl(r[iCo]).replace(/^(\S+)\s+([А-ЯЁ])\.[А-ЯЁ]\.$/, "$1 $2."),
+      cm: cl(r[iCm]),
+      chat: cl(r[iChat]), act: cl(r[iAct]),
+    });
+  });
+  return out;
+}
+
+/* Расписание в таблице пишут по-разному: «Пн. Ср. 10:00-11:00»,
+   «Вт.Чт. 12:15-13:15», «Вторник. 16:00-18:00». Разбираем токенами:
+   копим дни, а встретив промежуток времени — раздаём его всем. */
+const MD_DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+const MD_DAY_RE = [[/^(пн|понедельник|пон)/, "Пн"], [/^(вт|вторник)/, "Вт"], [/^(ср|среда|сред)/, "Ср"],
+  [/^(чт|четверг|чет)/, "Чт"], [/^(пт|пятниц)/, "Пт"], [/^(сб|субб|суб)/, "Сб"], [/^(вс|воскрес|воск)/, "Вс"]];
+function mdSchedule(raw) {
+  const txt = String(raw || "").replace(/\u00a0/g, " ").toLowerCase().replace(/ё/g, "е");
+  const toks = txt.match(/понедельник|вторник|среда|сред|четверг|чет|пятниц[а-я]*|суббот[а-я]*|субб|суб|воскресен[а-я]*|воскр|пн|вт|ср|чт|пт|сб|вс|\d{1,2}[:.]\d{2}\s*[-–—]\s*\d{1,2}[:.]\d{2}/g) || [];
+  const slots = [];
+  let acc = [];
+  toks.forEach(tok => {
+    const hit = MD_DAY_RE.find(([re]) => re.test(tok));
+    if (hit) { acc.push(hit[1]); return; }
+    const m = tok.match(/^(\d{1,2})[:.](\d{2})\s*[-–—]\s*(\d{1,2})[:.](\d{2})$/);
+    if (!m || !acc.length) return;
+    const pad = (h, mm) => String(+h).padStart(2, "0") + ":" + mm;
+    const time = pad(m[1], m[2]) + "–" + pad(m[3], m[4]);
+    acc.forEach(d => slots.push({ d: d, time: time }));
+    acc = [];
+  });
+  const days = [];
+  MD_DAYS.forEach(d => { if (slots.some(s => s.d === d)) days.push(d); });
+  return { days: days, slots: slots };
+}
+
+/* Один адрес в таблице пишут то с «улица», то без — для счёта площадок
+   сводим к «улица + номер дома». */
+function mdAddrKey(s) {
+  const stop = /^(город|москва|г|улица|ул|переулок|пер|проезд|бульвар|набережная|наб|площадь|пл|шоссе|дом|д|корпус|корп|к|строение|стр|с|владение|вл|муниципальный|округ|пресненский|район)$/;
+  const words = String(s || "").toLowerCase().replace(/ё/g, "е").replace(/[.,;()]/g, " ").split(/\s+/).filter(Boolean);
+  const name = [], num = [];
+  words.forEach(w => {
+    if (/^\d+([\/-]\d+)?[а-я]?$/.test(w)) num.push(w);
+    else if (!stop.test(w)) name.push(w);
+  });
+  return name.join(" ") + "|" + (num[0] || "");
+}
+
+/* Цвет поставщика — от названия, чтобы не держать таблицу соответствий:
+   одно и то же имя всегда даёт один и тот же оттенок. */
+function mdTint(name) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 360;
+  return "hsl(" + h + " 52% 62%)";
+}
+
+function mdSuppliers(list) {
+  const by = {};
+  list.forEach(g => {
+    const k = g.sup || "— не указан —";
+    if (!by[k]) by[k] = { n: k, all: 0, dirs: new Set(), addrs: new Set(),
+      co: new Set(), teach: new Set(), days: new Set(), groups: [] };
+    const e = by[k];
+    e.all++; e[g.st] = (e[g.st] || 0) + 1;
+    if (g.dir) e.dirs.add(g.dir);
+    if (g.addr) e.addrs.add(mdAddrKey(g.addr));
+    if (g.co) e.co.add(g.co);
+    g.t.forEach(x => e.teach.add(x));
+    g.days.forEach(d => e.days.add(d));
+    e.groups.push(g);
+  });
+  return Object.values(by).map(x => ({
+    n: x.n, all: x.all, work: x.work || 0, open: x.open || 0, pause: x.pause || 0,
+    closed: x.closed || 0, done: x.done || 0,
+    dirList: [...x.dirs], dirs: x.dirs.size, addrs: x.addrs.size,
+    coList: [...x.co].sort(), teachN: x.teach.size, days: [...x.days],
+    groups: x.groups.sort((a, b) => (a.dir || "").localeCompare(b.dir || "", "ru")),
+    tint: mdTint(x.n),
+  })).sort((a, b) => b.all - a.all);
+}
+
+async function loadMd() {
+  try {
+    const url = "https://docs.google.com/spreadsheets/d/" + GARDEN_SHEET_ID +
+      "/gviz/tq?tqx=out:csv&gid=" + MD_GID + "&_=" + Date.now();
+    mdGroups = parseMdRows(parseCSV(await getCSV(url)));
+    mdSup = mdSuppliers(mdGroups);
+    mdLoaded = true;
+  } catch (e) { mdGroups = []; mdSup = []; }
+  initMdFilters();
+  initSupFilters();
+  renderReg();
+  renderSup();
+}
+
+function regList() {
+  const v = id => ((document.getElementById(id) || {}).value || "");
+  const q = v("regQ").trim().toLowerCase();
+  const sup = v("regSup"), co = v("regCo"), day = v("regDay");
+  return mdGroups.filter(g =>
+    (!regFilter || g.st === regFilter) &&
+    (!sup || g.sup === sup) && (!co || g.co === co) &&
+    (!day || g.days.indexOf(day) > -1) &&
+    (!q || (g.id + " " + g.dir + " " + g.t.join(" ") + " " + g.addr + " " + g.sup + " " +
+            g.pt + " " + g.sch + " " + g.co + " " + g.cm).toLowerCase().includes(q)));
+}
+
+function renderRegChips() {
+  const box = document.getElementById("regChips");
+  if (!box) return;
+  const col = { work: "var(--green)", open: "var(--teal)", pause: "var(--amber)",
+    closed: "var(--brand)", done: "var(--bar-muted)" };
+  const name = { work: "Работают", open: "Идёт набор", pause: "Приостановлены",
+    closed: "Прекращены", done: "Завершены" };
+  const n = k => mdGroups.filter(g => g.st === k).length;
+  const items = [["", "Все", mdGroups.length, null]]
+    .concat(MD_ORDER.map(k => [k, name[k], n(k), k]).filter(x => x[2] > 0));
+  box.innerHTML = items.map(([k, label, cnt, st]) =>
+    '<button type="button" class="reg-chip' + (regFilter === k ? " on" : "") + '" data-st="' + k + '">' +
+      (st ? '<i style="background:' + col[st] + '"></i>' : "") +
+      label + ' <b>' + cnt + '</b></button>').join("");
+}
+
+/* Расписание для таблицы: «Пн Ср 10:00–11:00» одной строкой на каждое время. */
+function regWhen(g) {
+  if (!g.slots || !g.slots.length) return esc(g.sch || "—");
+  const times = [...new Set(g.slots.map(s => s.time))];
+  return times.map(tm => "<b>" + g.slots.filter(s => s.time === tm).map(s => s.d).join(" ") +
+    " " + tm + "</b>").join("");
+}
+
+function renderReg() {
+  const box = document.getElementById("regRows");
+  if (!box) return;
+  const link = document.getElementById("regLink");
+  if (link) link.href = "https://docs.google.com/spreadsheets/d/" + GARDEN_SHEET_ID +
+    "/edit?gid=" + MD_GID + "#gid=" + MD_GID;
+  const empty = msg => '<tr><td colspan="9"><div class="task-empty">' + msg + "</div></td></tr>";
+  if (!mdLoaded) { box.innerHTML = empty("Загружаю реестр…"); return; }
+  if (!mdGroups.length) { box.innerHTML = empty("Лист «МД» недоступен или пуст."); return; }
+  renderRegChips();
+  const list = regList();
+  const tint = {};
+  mdSup.forEach(s => tint[s.n] = s.tint);
+  box.innerHTML = list.slice(0, regShown).map(g => {
+    const href = mdHref(g.id);
+    const gid = href
+      ? '<a class="gid" href="' + href + '" target="_blank" rel="noopener" title="Карточка группы в КИС МД">' + esc(g.id) + "</a>"
+      : '<span class="gid no">' + esc(g.id) + "</span>";
+    const teach = g.t.length
+      ? g.t.slice(0, 3).map(x => '<span class="who">' + esc(x) + "</span>").join("") +
+        (g.t.length > 3 ? '<span class="who rest" title="' + esc(g.t.join(", ")) + '">и ещё ' +
+          (g.t.length - 3) + "</span>" : "")
+      : '<span class="no">—</span>';
+    const chat = /^https?:/.test(g.chat)
+      ? '<a class="chat" href="' + esc(g.chat) + '" target="_blank" rel="noopener" title="Информационный чат группы">' +
+        '<svg class="i sm"><use href="#i-chat"/></svg></a>'
+      : "";
+    return '<tr class="s-' + g.st + '">' +
+      '<td class="c-id" data-l="ID"><span class="idcell">' + gid + chat + "</span></td>" +
+      '<td data-l="Статус"><span class="reg-badge s-' + g.st + '">' + esc(g.stRaw || MD_LBL[g.st]) + "</span></td>" +
+      '<td data-l="Направление">' + (esc(g.dir) || '<span class="no">—</span>') + "</td>" +
+      '<td data-l="Преподаватель">' + teach + "</td>" +
+      '<td data-l="Поставщик"><span class="sup"><i style="background:' + (tint[g.sup] || "var(--bar-muted)") + '"></i>' +
+        "<span>" + (esc(g.sup) || "—") + "</span></span></td>" +
+      '<td data-l="Адрес">' + (esc(g.addr) || '<span class="no">—</span>') +
+        (g.pt ? '<span class="sub">' + esc(g.pt) + "</span>" : "") + "</td>" +
+      '<td class="sch" data-l="Расписание">' + regWhen(g) + "</td>" +
+      '<td data-l="Координатор">' + (esc(g.co) || '<span class="no">—</span>') + "</td>" +
+      '<td data-l="Комментарий">' + (g.cm ? '<span class="cm" title="' + esc(g.cm) + '">' + esc(g.cm) + "</span>" : "") + "</td>" +
+    "</tr>";
+  }).join("") || empty("Под этот выбор групп нет.");
+
+  const more = document.getElementById("regMore");
+  if (more) {
+    more.hidden = list.length <= regShown;
+    more.textContent = "Показать ещё " + Math.min(30, list.length - regShown);
+  }
+  const cnt = document.getElementById("regCount");
+  if (cnt) cnt.textContent = "показано " + Math.min(regShown, list.length) + " из " + list.length +
+    (list.length === mdGroups.length ? "" : " (всего в листе " + mdGroups.length + ")");
+  const meta = document.getElementById("regMeta");
+  if (meta) meta.textContent = "те же колонки, что в листе «МД»";
+  const note = document.getElementById("regNote");
+  if (note) {
+    note.hidden = false;
+    note.innerHTML = '<svg class="i sm"><use href="#i-info"/></svg><span>Статусы и все значения — те, что стоят в листе «МД». ' +
+      "Код группы открывает её карточку в КИС МД, значок чата — информационный чат группы.</span>";
+  }
+}
+/* Короткое имя поставщика: в таблице попадаются полные юридические
+   названия на 170 знаков — в карточке от них нет пользы. */
+function supShort(n) {
+  let s = String(n || "").replace(/\s+/g, " ").trim();
+  s = s.replace(/^Местная религиозная организация.*?храма\s*/i, "Приход храма ");
+  s = s.replace(/\s*\(Московский Патриархат\)\s*$/i, "");
+  s = s.replace(/\s*гор\. Москвы Московской епархии.*$/i, "");
+  s = s.replace(/^ГБУК г\. Москвы\s*/i, "").replace(/^ГАУК г\. Москвы\s*/i, "");
+  s = s.replace(/^ПОУ Автомобильная школа ЦАО г\. Москвы\s*/i, "Автошкола ");
+  return s.length > 64 ? s.slice(0, 62).trim() + "…" : s;
+}
+
+const supState = { q: "", co: "", day: "", sort: "n", open: {} };
+
+function supFiltered() {
+  const q = supState.q.trim().toLowerCase();
+  return mdSup.map(s => {
+    const groups = s.groups.filter(g =>
+      (!supState.co || g.co === supState.co) &&
+      (!supState.day || g.days.indexOf(supState.day) > -1));
+    if (!groups.length) return null;
+    if (q) {
+      const hay = (s.n + " " + groups.map(g => g.dir + " " + g.t.join(" ") + " " + g.addr + " " + g.id).join(" ")).toLowerCase();
+      if (hay.indexOf(q) < 0) return null;
+    }
+    const cnt = { work: 0, open: 0, pause: 0, closed: 0, done: 0 };
+    const dirs = new Set(), co = new Set();
+    groups.forEach(g => { cnt[g.st] = (cnt[g.st] || 0) + 1; if (g.dir) dirs.add(g.dir); if (g.co) co.add(g.co); });
+    return { ...s, groups: groups, all: groups.length, ...cnt,
+      dirList: [...dirs], dirs: dirs.size, coList: [...co].sort() };
+  }).filter(Boolean).sort((a, b) =>
+    supState.sort === "a" ? supShort(a.n).localeCompare(supShort(b.n), "ru")
+    : supState.sort === "d" ? b.dirs - a.dirs || b.all - a.all
+    : b.all - a.all || supShort(a.n).localeCompare(supShort(b.n), "ru"));
+}
+
+function supStatBar(x, cls) {
+  const w = k => (100 * (x[k] || 0) / Math.max(1, x.all)).toFixed(1) + "%";
+  return '<span class="' + cls + '">' +
+    MD_ORDER.map(k => x[k] ? '<i class="' + k + '" style="width:' + w(k) + '" title="' + MD_LBL[k] + ': ' + x[k] + '"></i>' : "").join("") +
+    "</span>";
+}
+
+function renderSupSummary() {
+  const box = document.getElementById("supSum");
+  if (!box) return;
+  const g = mdGroups;
+  const n = k => g.filter(x => x.st === k).length;
+  const venues = new Set(g.map(x => mdAddrKey(x.addr)).filter(x => x !== "|")).size;
+  const teach = new Set(); g.forEach(x => x.t.forEach(v => teach.add(v)));
+  const dirs = new Set(g.map(x => x.dir).filter(Boolean)).size;
+  const tiles = [
+    ["" + mdSup.length, "поставщиков", ""],
+    ["" + g.length, "групп в реестре",
+      '<span class="s"><i class="work">' + n("work") + " работают</i>" +
+      (n("open") ? '<i class="open">' + n("open") + " идёт набор</i>" : "") +
+      (n("pause") ? '<i class="pause">' + n("pause") + " на паузе</i>" : "") + "</span>"],
+    ["" + venues, "площадок", ""],
+    ["" + teach.size, "преподавателей", ""],
+    ["" + dirs, "направлений", ""],
+  ];
+  box.innerHTML = tiles.map(([v, l, s]) =>
+    '<div class="b"><div class="v">' + v + '</div><div class="l">' + l + "</div>" + s + "</div>").join("");
+}
+
+function renderSupCo() {
+  const box = document.getElementById("supCo");
+  if (!box) return;
+  const by = {};
+  mdGroups.forEach(g => {
+    const k = g.co || "не указан";
+    if (!by[k]) by[k] = { n: k, all: 0, sup: new Set(), addrs: new Set(), dirs: new Set() };
+    const e = by[k];
+    e.all++; e[g.st] = (e[g.st] || 0) + 1;
+    if (g.sup) e.sup.add(g.sup);
+    if (g.addr) e.addrs.add(mdAddrKey(g.addr));
+    if (g.dir) e.dirs.add(g.dir);
+  });
+  const list = Object.values(by).sort((a, b) => b.all - a.all);
+  const top = list[0];
+  box.innerHTML = list.map(x =>
+    '<div class="co-row"><span class="who">' + '<svg class="i sm"><use href="#i-user"/></svg>' +
+      "<span>" + esc(x.n) + "</span></span>" +
+      '<span class="cnt">' + x.all + "<small>" + plural(x.all, "группа", "группы", "групп") + "</small></span>" +
+      '<span class="cbar">' + supStatBar(x, "co-bar") + "</span>" +
+      '<span class="extra">' + x.sup.size + " " + plural(x.sup.size, "поставщик", "поставщика", "поставщиков") +
+      " · " + x.addrs.size + " " + plural(x.addrs.size, "площадка", "площадки", "площадок") + "</span></div>").join("");
+  const hint = document.getElementById("supCoHint");
+  if (hint && top) {
+    const share = Math.round(100 * top.all / Math.max(1, mdGroups.length));
+    hint.textContent = "у " + top.n + " — " + share + "% всех групп";
+  }
+}
+
+function renderSupDays() {
+  const box = document.getElementById("supDays");
+  if (!box) return;
+  const cnt = {};
+  MD_DAYS.forEach(d => cnt[d] = 0);
+  mdGroups.forEach(g => g.days.forEach(d => cnt[d]++));
+  const max = Math.max(1, ...MD_DAYS.map(d => cnt[d]));
+  box.innerHTML = MD_DAYS.map(d =>
+    '<div class="sup-day' + (cnt[d] === max ? " peak" : "") + '"><div class="d">' + d + '</div>' +
+    '<div class="n">' + cnt[d] + '</div>' +
+    '<div class="mini" style="width:' + Math.max(12, Math.round(100 * cnt[d] / max)) + '%;margin:7px auto 0"></div></div>').join("");
+}
+
+function renderSup() {
+  const box = document.getElementById("supRows");
+  if (!box) return;
+  const link = document.getElementById("supLink");
+  if (link) link.href = "https://docs.google.com/spreadsheets/d/" + GARDEN_SHEET_ID +
+    "/edit?gid=" + MD_GID + "#gid=" + MD_GID;
+  if (!mdLoaded) { box.innerHTML = '<div class="task-empty">Загружаю…</div>'; return; }
+  if (!mdSup.length) { box.innerHTML = '<div class="task-empty">Лист «МД» недоступен или пуст.</div>'; return; }
+  renderSupSummary();
+  renderSupCo();
+  renderSupDays();
+
+  const list = supFiltered();
+  const clock = '<svg class="i sm"><use href="#i-clock"/></svg>';
+  const pin = '<svg class="i sm"><use href="#i-pin"/></svg>';
+  const man = '<svg class="i sm"><use href="#i-user"/></svg>';
+  box.innerHTML = list.map(s => {
+    const op = !!supState.open[s.n];
+    const dirs = s.dirList.slice(0, 3).map(d => "<span>" + esc(d) + "</span>").join("") +
+      (s.dirs > 3 ? '<span class="more">+' + (s.dirs - 3) + "</span>" : "");
+    const sub = [
+      s.addrs + " " + plural(s.addrs, "площадка", "площадки", "площадок"),
+      s.teachN + " " + plural(s.teachN, "преподаватель", "преподавателя", "преподавателей"),
+      s.coList.join(", "),
+    ].filter(Boolean).join(" · ");
+    const groups = op ? '<div class="sup-more">' + s.groups.map(g => {
+      const href = mdHref(g.id);
+      const when = g.slots.length
+        ? [...new Set(g.slots.map(x => x.time))].map(tm =>
+            g.slots.filter(x => x.time === tm).map(x => x.d).join(" ") + " " + tm).join(" · ")
+        : (g.sch || "—");
+      return '<div class="sup-g">' +
+        '<span class="d"><span class="dot ' + g.st + '"></span> ' + esc(g.dir || "—") + "</span>" +
+        (href ? '<a class="gid" href="' + href + '" target="_blank" rel="noopener" title="Карточка в КИС МД">' + esc(g.id) + "</a>"
+              : '<span class="gid">' + esc(g.id) + "</span>") +
+        '<span class="m">' +
+          "<span>" + man + "<b>" + esc(g.t[0] || "—") + "</b>" + (g.t.length > 1 ? " и ещё " + (g.t.length - 1) : "") + "</span>" +
+          "<span>" + clock + esc(when) + "</span>" +
+          "<span>" + pin + esc(g.addr || "—") + "</span>" +
+          (g.co ? "<span>" + esc(g.co) + "</span>" : "") +
+        "</span></div>";
+    }).join("") + "</div>" : "";
+    return '<div class="sup-card' + (op ? " open" : "") + '">' +
+      '<button type="button" class="sup-top" data-sup="' + esc(s.n) + '" aria-expanded="' + (op ? "true" : "false") + '">' +
+        '<span class="tint" style="background:' + s.tint + '"></span>' +
+        '<span><span class="nm">' + esc(supShort(s.n)) + '</span><span class="sub">' + esc(sub) + "</span></span>" +
+        '<span class="big">' + s.all + "<small>" + plural(s.all, "группа", "группы", "групп") + "</small></span>" +
+      "</button>" +
+      '<div class="bar">' + supStatBar(s, "sup-bar") + "</div>" +
+      '<div class="sup-chips">' + dirs + "</div>" + groups +
+    "</div>";
+  }).join("") || '<div class="task-empty">Под этот выбор поставщиков нет.</div>';
+
+  const cnt = document.getElementById("supCount");
+  if (cnt) cnt.textContent = mdSup.length + " " + plural(mdSup.length, "организация", "организации", "организаций");
+  const meta = document.getElementById("supMeta");
+  if (meta) meta.textContent = list.length === mdSup.length
+    ? "ведут " + mdGroups.length + " " + plural(mdGroups.length, "группу", "группы", "групп")
+    : "показано " + list.length + " из " + mdSup.length;
+
+  /* Тревогу зажигаем только у заметных поставщиков: у того, кто ведёт
+     одну группу, её остановка — обычное дело, а не сигнал. */
+  const alarm = mdSup.filter(x => x.all >= 3 && x.work === 0);
+  const note = document.getElementById("supNote");
+  if (note) {
+    note.hidden = !alarm.length;
+    if (alarm.length) note.innerHTML = '<svg class="i sm"><use href="#i-warn"/></svg><span>Ни одной работающей группы у ' +
+      alarm.map(x => "<b>" + esc(supShort(x.n)) + "</b> (" + x.all + ")").join(", ") + ".</span>";
+  }
+}
+
+/* Координатор и день фильтруются в таблице ниже — здесь остаются
+   только поиск и сортировка карточек. */
+function initSupFilters() {}
+
+(function () {
+  const box = document.getElementById("supRows");
+  if (box) box.addEventListener("click", e => {
+    const b = e.target.closest("button[data-sup]"); if (!b) return;
+    const k = b.dataset.sup;
+    supState.open[k] = !supState.open[k];
+    renderSup();
+  });
+  const q = document.getElementById("supQ");
+  if (q) q.addEventListener("input", () => { supState.q = q.value; renderSup(); });
+  [["supSort", "sort"]].forEach(([id, key]) => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener("change", () => { supState[key] = el.value; renderSup(); });
+  });
+})();
+function initMdFilters() {
+  const day = document.getElementById("regDay");
+  if (day && day.options.length <= 1) {
+    const full = { "Пн": "Понедельник", "Вт": "Вторник", "Ср": "Среда", "Чт": "Четверг",
+      "Пт": "Пятница", "Сб": "Суббота", "Вс": "Воскресенье" };
+    MD_DAYS.forEach(d => day.insertAdjacentHTML("beforeend", '<option value="' + d + '">' + full[d] + "</option>"));
+  }
+  const sup = document.getElementById("regSup");
+  if (sup && sup.options.length <= 1) {
+    mdSup.forEach(x => sup.insertAdjacentHTML("beforeend",
+      '<option value="' + esc(x.n) + '">' + esc(x.n.length > 36 ? x.n.slice(0, 35) + "…" : x.n) + " · " + x.all + "</option>"));
+  }
+  const co = document.getElementById("regCo");
+  if (co && co.options.length <= 1) {
+    [...new Set(mdGroups.map(g => g.co).filter(Boolean))].sort().forEach(c =>
+      co.insertAdjacentHTML("beforeend", '<option value="' + esc(c) + '">' + esc(c) + "</option>"));
+  }
+}
+
+(function () {
+  const chips = document.getElementById("regChips");
+  if (chips) chips.addEventListener("click", e => {
+    const b = e.target.closest("button[data-st]"); if (!b) return;
+    regFilter = b.dataset.st; regShown = 30; renderReg();
+  });
+  ["regQ", "regSup", "regCo", "regDay"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener("input", () => { regShown = 30; renderReg(); });
+      el.addEventListener("change", () => { regShown = 30; renderReg(); });
+    }
+  });
+  const more = document.getElementById("regMore");
+  if (more) more.addEventListener("click", () => { regShown += 30; renderReg(); });
+  const rf = document.getElementById("regRefresh");
+  if (rf) rf.addEventListener("click", () => { mdLoaded = false; renderReg(); renderSup(); loadMd(); });
+})();
 
 function renderBirthdays() {
   const today = midnight(new Date());
