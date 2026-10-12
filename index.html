@@ -115,14 +115,17 @@
     --font-head: 'PT Serif', Georgia, 'Times New Roman', serif;
     --maxw: 1180px;       /* ширина рабочей области, растёт на широких экранах */
     /* типографическая шкала: 8 ступеней вместо 22 произвольных размеров */
-    --fs-2xs: 12px;   /* легенды, микроподписи */
-    --fs-xs:  13px;   /* подписи, мета */
-    --fs-sm:  14px;   /* основной текст интерфейса */
-    --fs-md:  16px;   /* поля ввода, акцентный текст */
-    --fs-lg:  18px;   /* заголовки карточек */
-    --fs-xl:  22px;   /* заголовки диалогов */
-    --fs-2xl: 26px;   /* заголовки секций */
-    --fs-3xl: 31px;   /* числа-показатели */
+    /* Шкала поднята на ступень: портал читают с рабочего ноутбука,
+       часто боком и мельком. 13 px для подписи и 15 px для основного
+       текста — нижняя граница, на которой не приходится вглядываться. */
+    --fs-2xs: 13px;   /* легенды, микроподписи */
+    --fs-xs:  14px;   /* подписи, мета */
+    --fs-sm:  15px;   /* основной текст интерфейса */
+    --fs-md:  17px;   /* поля ввода, акцентный текст */
+    --fs-lg:  20px;   /* заголовки карточек */
+    --fs-xl:  24px;   /* заголовки диалогов */
+    --fs-2xl: 30px;   /* заголовки секций */
+    --fs-3xl: 38px;   /* числа-показатели */
     /* элементы управления: единая высота и радиус */
     --control-h: 46px;
     --r-control: 11px;
@@ -206,8 +209,8 @@
     animation: pop .5s var(--ease) both;
   }
   @keyframes pop { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
-  .gate-logo { height: 58px; margin: 0 auto 4px; }
-  .gate-card h1 { font-size: var(--fs-2xl); font-weight: 800; color: var(--ink); letter-spacing: -.01em; }
+  .gate-logo { height: 64px; width: auto; margin: 0 auto 4px; }
+  .gate-card h1 { font-size: var(--fs-xl); font-weight: 800; color: var(--ink); letter-spacing: -.01em; }
   .gate-sub { font-size: var(--fs-sm); color: var(--ink-soft); margin-bottom: 6px; }
   .gate-field { position: relative; display: flex; align-items: center; }
   .gate-card input {
@@ -242,6 +245,14 @@
   }
   .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
   .brand img { height: 30px; }
+  .brand-md { height: 30px; width: auto; }
+  :root[data-theme="dark"] .brand-md { filter: brightness(1.9) saturate(.5); }
+  .brand-sep { width: 1px; height: 24px; background: var(--line); flex: none; }
+  /* Волк нарисован линией той же толщины, что иконки интерфейса:
+     рядом с эмблемой программы он читается как подпись, а не второй логотип. */
+  .brand-wolf { width: 28px; height: 28px; flex: none; fill: none; stroke: var(--brand);
+    stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+  .brand:hover .brand-wolf { stroke: var(--accent); }
   .brand b { font-size: var(--fs-md); font-weight: 800; letter-spacing: -.01em; }
   .brand small { display: block; font-size: var(--fs-2xs); font-weight: 700; color: var(--ink-mute); letter-spacing: .06em; text-transform: uppercase; }
   .nav { display: flex; gap: 4px; margin-left: 6px; }
@@ -1026,7 +1037,9 @@
   .mdt tbody tr:nth-child(even) { background: var(--bg-3); }
   .mdt tbody tr:hover { background: var(--brand-soft); }
   .mdt tbody tr:last-child td { border-bottom: 0; }
-  .mdt td { font-size: var(--fs-2xs); line-height: 1.5; color: var(--ink); }
+  .mdt td { font-size: var(--fs-xs); line-height: 1.5; color: var(--ink); }
+  /* Направление — то, по чему группу ищут глазами: даём ему вес и размер. */
+  .mdt td.c-dir { font-size: var(--fs-md); font-weight: 700; line-height: 1.3; color: var(--ink); }
   /* Цветная кромка слева повторяет статус: строку видно до чтения. */
   .mdt td.c-id { border-left: 3px solid var(--line); }
   .mdt tr.s-work td.c-id { border-left-color: var(--green); }
@@ -1133,13 +1146,13 @@
   .sup-top .big small { display: block; margin-top: 3px; font-size: var(--fs-2xs); font-weight: 600; color: var(--ink-mute); text-align: right; }
   .sup-card .bar { margin: 0 14px 10px; }
   .sup-chips { display: flex; flex-wrap: wrap; gap: 5px; padding: 0 14px 12px; }
-  .sup-chips span { font-size: var(--fs-2xs); font-weight: 600; color: var(--ink-soft);
-    background: var(--bg-2); border-radius: 999px; padding: 3px 9px; }
+  .sup-chips span { font-size: var(--fs-xs); font-weight: 700; color: var(--ink-soft);
+    background: var(--bg-2); border-radius: 999px; padding: 5px 12px; }
   .sup-chips span.more { background: none; color: var(--ink-mute); }
   .sup-more { border-top: 1px solid var(--line-soft); }
   .sup-g { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 4px 12px; padding: 10px 14px; }
   .sup-g + .sup-g { border-top: 1px solid var(--line-soft); }
-  .sup-g .d { font-size: var(--fs-xs); font-weight: 700; color: var(--ink); }
+  .sup-g .d { font-size: var(--fs-md); font-weight: 700; line-height: 1.3; color: var(--ink); }
   .sup-g .m { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px 12px;
     font-size: var(--fs-2xs); color: var(--ink-soft); font-weight: 600; }
   .sup-g .m span { display: inline-flex; align-items: center; gap: 4px; min-width: 0; }
@@ -1158,6 +1171,52 @@
   .sup-bar i.open { background: var(--teal); }
   .sup-bar i.pause { background: var(--amber); }
   .sup-bar i.closed, .sup-bar i.done { background: var(--bar-muted); }
+
+  /* Полоса сводки: кольцо статусов рядом с числами. */
+  .sup-hero { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 24px; align-items: center;
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 24px; margin-bottom: 14px; }
+  .sup-ring { display: flex; align-items: center; justify-content: center; position: relative; }
+  .sup-ring svg { width: 190px; height: 190px; transform: rotate(-90deg); }
+  .sup-ring .mid { position: absolute; text-align: center; }
+  .sup-ring .mid b { display: block; font-size: var(--fs-3xl); font-weight: 800; letter-spacing: -.03em; line-height: 1;
+    font-variant-numeric: tabular-nums; }
+  .sup-ring .mid span { display: block; margin-top: 4px; font-size: var(--fs-2xs); font-weight: 700; color: var(--ink-mute);
+    text-transform: uppercase; letter-spacing: .06em; }
+  .sup-legend { display: flex; flex-direction: column; gap: 10px; }
+  .sup-legend .row { display: grid; grid-template-columns: 14px minmax(0,1fr) 58px 64px; align-items: center; gap: 12px; }
+  .sup-legend .row i { width: 12px; height: 12px; border-radius: 4px; }
+  .sup-legend .row .nm3 { font-size: var(--fs-sm); font-weight: 700; }
+  .sup-legend .row .n3 { font-size: var(--fs-lg); font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
+  .sup-legend .row .p3 { font-size: var(--fs-xs); font-weight: 700; color: var(--ink-mute); text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* Столбцы по дням недели. */
+  .wk { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; align-items: end;
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px 16px; }
+  .wk-col { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .wk-col .n { font-size: var(--fs-lg); font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .wk-col .bar { width: 100%; border-radius: 8px 8px 3px 3px; min-height: 6px;
+    background: linear-gradient(180deg, var(--brand) 0%, var(--accent) 100%); opacity: .34; transition: opacity .2s; }
+  .wk-col:hover .bar { opacity: .72; }
+  .wk-col.peak .bar { opacity: 1; }
+  .wk-col.peak .n { color: var(--brand); }
+  .wk-col .d { font-size: var(--fs-xs); font-weight: 700; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .05em; }
+
+  /* Десятка крупнейших поставщиков. */
+  .top10 { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 22px; }
+  .top10 .r { display: grid; grid-template-columns: 210px minmax(0,1fr) 52px; align-items: center; gap: 14px; padding: 7px 0; }
+  .top10 .r + .r { border-top: 1px solid var(--line-soft); }
+  .top10 .r .nm4 { font-size: var(--fs-sm); font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .top10 .r .track { height: 16px; border-radius: 5px; background: var(--bg-2); overflow: hidden; }
+  .top10 .r .track i { display: block; height: 100%; border-radius: 5px; }
+  .top10 .r .n4 { font-size: var(--fs-md); font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
+
+  @media (max-width: 760px) {
+    .sup-hero { grid-template-columns: 1fr; }
+    .wk { grid-template-columns: repeat(7, 1fr); gap: 5px; padding: 14px 10px 12px; }
+    .wk-col .d { font-size: var(--fs-2xs); }
+    .top10 .r { grid-template-columns: minmax(0,1fr) 52px; }
+    .top10 .r .track { grid-column: 1 / -1; }
+  }
 
   /* дни недели: сколько групп в какой день */
   .sup-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
@@ -1565,7 +1624,7 @@
   <img class="ring a" src="assets/ring-white.png" alt="">
   <img class="ring b" src="assets/ring-white.png" alt="">
   <form id="gateForm" class="gate-card">
-    <img src="assets/logo-md-badge.png" alt="Московское долголетие" class="gate-logo">
+    <img src="assets/logo-md-2026.png" alt="Московское долголетие" class="gate-logo">
     <h1>ЦМД Пресненский</h1>
     <p class="gate-sub">Внутренний портал команды</p>
     <input type="text" id="gateLogin" placeholder="Логин" autocomplete="username" required>
@@ -1586,7 +1645,15 @@
 <div class="topbar">
   <div class="topbar-inner">
     <a class="brand" href="#" data-nav="main">
-      <img src="assets/logo-md-badge.png" alt="Московское долголетие">
+      <img class="brand-md" src="assets/logo-md-2026.png" alt="Московское долголетие">
+      <span class="brand-sep"></span>
+      <!-- Знак автора портала: волк. Рисуется линией, поэтому берёт цвет темы. -->
+      <svg class="brand-wolf" viewBox="0 0 48 48" aria-label="Данила Волков" role="img">
+        <path d="M9 11.5 13.5 20M39 11.5 34.5 20" />
+        <path d="M9 11.5v9.8c0 9.6 5.4 16.6 15 21.2 9.6-4.6 15-11.6 15-21.2v-9.8L31.5 17h-15z" />
+        <path d="M18.5 25.2h3M26.5 25.2h3" />
+        <path d="M24 29v3.4M20.6 34.8c1.3 1.5 2.3 2.2 3.4 2.2s2.1-.7 3.4-2.2" />
+      </svg>
       <span><b>ЦМД Пресненский</b><small>рабочий портал</small></span>
     </a>
     <nav class="nav">
@@ -1649,7 +1716,7 @@
   <button type="button" data-tab="att" aria-selected="false"><svg class="i"><use href="#i-chart"/></svg><span>Посещаемость</span></button>
   <button type="button" data-tab="garden" aria-selected="false"><svg class="i"><use href="#i-sprout"/></svg><span>Грядка</span></button>
   <button type="button" data-tab="clubs" aria-selected="false"><svg class="i"><use href="#i-ticket"/></svg><span>Клубы</span></button>
-  <button type="button" data-tab="registry" aria-selected="false"><svg class="i"><use href="#i-building"/></svg><span>Поставщики и группы</span></button>
+  <button type="button" data-tab="registry" aria-selected="false"><svg class="i"><use href="#i-building"/></svg><span>Поставщики</span></button>
   <button type="button" data-tab="sections" aria-selected="false"><svg class="i"><use href="#i-grid"/></svg><span>Все разделы</span></button>
 </nav>
 </div>
@@ -1903,7 +1970,7 @@
   </section>
   <section class="cat reveal" id="registrySec" data-pane="registry">
     <div class="cat-head">
-      <h2>Поставщики и группы</h2>
+      <h2>Поставщики</h2>
       <span class="count" id="supCount"></span>
       <span class="dash-tools">
         <span id="supMeta"></span>
@@ -1912,17 +1979,22 @@
       </span>
     </div>
 
+    <div class="sup-hero" id="supHero"></div>
     <div class="sup-sum" id="supSum"></div>
 
     <div class="sup-h3"><svg class="i"><use href="#i-users"/></svg><span>Нагрузка координаторов</span><small id="supCoHint"></small></div>
     <div class="co-load" id="supCo"><div class="task-empty">Загружаю…</div></div>
 
-    <div class="sup-h3"><svg class="i"><use href="#i-calendar"/></svg><span>Занятость по дням недели</span><small>сколько групп занимается в каждый день</small></div>
-    <div class="sup-days" id="supDays"></div>
+    <div class="sup-h3"><svg class="i"><use href="#i-chart"/></svg><span>Занятость по дням недели</span><small>сколько групп занимается в каждый день</small></div>
+    <div class="wk" id="supDays"></div>
+
+    <div class="sup-h3"><svg class="i"><use href="#i-layers"/></svg><span>Кто ведёт больше всего</span><small>десять крупнейших поставщиков</small></div>
+    <div class="top10" id="supTop"></div>
 
     <div class="sup-h3"><svg class="i"><use href="#i-building"/></svg><span>Поставщики</span><small id="supHint">нажмите на карточку, чтобы увидеть её группы</small></div>
     <div class="sup-tools">
       <div class="pf-search"><svg class="i sm"><use href="#i-search"/></svg><input id="supQ" type="text" placeholder="Поставщик, направление, преподаватель, адрес…" autocomplete="off"></div>
+      <select id="supDir"><option value="">Все направления</option></select>
       <select id="supSort"><option value="n">По числу групп</option><option value="a">По названию</option><option value="d">По числу направлений</option></select>
     </div>
     <div class="sup-grid" id="supRows"><div class="task-empty">Загружаю…</div></div>
@@ -1934,6 +2006,7 @@
       <div class="pf-search"><svg class="i sm"><use href="#i-search"/></svg><input id="regQ" type="text" placeholder="ID, направление, преподаватель, адрес, комментарий…" autocomplete="off"></div>
       <select id="regSup"><option value="">Все поставщики</option></select>
       <select id="regCo"><option value="">Все координаторы</option></select>
+      <select id="regDir"><option value="">Все направления</option></select>
       <select id="regDay"><option value="">Любой день</option></select>
     </div>
     <div class="mdt-wrap">
@@ -2079,7 +2152,7 @@
 
 <footer>
   <div class="foot-inner">
-    <span style="display:flex;align-items:center;gap:12px"><img src="assets/logo-md.png" alt="Московское долголетие" style="height:26px">ЦМД «Пресненский» · внутренний портал</span>
+    <span style="display:flex;align-items:center;gap:12px"><img src="assets/logo-md-2026.png" alt="Московское долголетие" style="height:30px">ЦМД «Пресненский» · внутренний портал</span>
     <span class="links">
       <button class="linklike" id="howto">Как добавить раздел?</button>
       <a id="editLink" href="#" target="_blank" rel="noopener" style="display:none">Таблица портала</a>
@@ -5229,6 +5302,7 @@ function mdSuppliers(list) {
   })).sort((a, b) => b.all - a.all);
 }
 
+let mdStamp = "";
 async function loadMd() {
   try {
     const url = "https://docs.google.com/spreadsheets/d/" + GARDEN_SHEET_ID +
@@ -5236,6 +5310,7 @@ async function loadMd() {
     mdGroups = parseMdRows(parseCSV(await getCSV(url)));
     mdSup = mdSuppliers(mdGroups);
     mdLoaded = true;
+    mdStamp = nowHM();
   } catch (e) { mdGroups = []; mdSup = []; }
   initMdFilters();
   initSupFilters();
@@ -5246,10 +5321,11 @@ async function loadMd() {
 function regList() {
   const v = id => ((document.getElementById(id) || {}).value || "");
   const q = v("regQ").trim().toLowerCase();
-  const sup = v("regSup"), co = v("regCo"), day = v("regDay");
+  const sup = v("regSup"), co = v("regCo"), day = v("regDay"), dir = v("regDir");
   return mdGroups.filter(g =>
     (!regFilter || g.st === regFilter) &&
     (!sup || g.sup === sup) && (!co || g.co === co) &&
+    (!dir || g.dir === dir) &&
     (!day || g.days.indexOf(day) > -1) &&
     (!q || (g.id + " " + g.dir + " " + g.t.join(" ") + " " + g.addr + " " + g.sup + " " +
             g.pt + " " + g.sch + " " + g.co + " " + g.cm).toLowerCase().includes(q)));
@@ -5309,7 +5385,7 @@ function renderReg() {
     return '<tr class="s-' + g.st + '">' +
       '<td class="c-id" data-l="ID"><span class="idcell">' + gid + chat + "</span></td>" +
       '<td data-l="Статус"><span class="reg-badge s-' + g.st + '">' + esc(g.stRaw || MD_LBL[g.st]) + "</span></td>" +
-      '<td data-l="Направление">' + (esc(g.dir) || '<span class="no">—</span>') + "</td>" +
+      '<td class="c-dir" data-l="Направление">' + (esc(g.dir) || '<span class="no">—</span>') + "</td>" +
       '<td data-l="Преподаватель">' + teach + "</td>" +
       '<td data-l="Поставщик"><span class="sup"><i style="background:' + (tint[g.sup] || "var(--bar-muted)") + '"></i>' +
         "<span>" + (esc(g.sup) || "—") + "</span></span></td>" +
@@ -5330,7 +5406,8 @@ function renderReg() {
   if (cnt) cnt.textContent = "показано " + Math.min(regShown, list.length) + " из " + list.length +
     (list.length === mdGroups.length ? "" : " (всего в листе " + mdGroups.length + ")");
   const meta = document.getElementById("regMeta");
-  if (meta) meta.textContent = "те же колонки, что в листе «МД»";
+  if (meta) meta.textContent = "те же колонки, что в листе «МД»" +
+    (mdStamp ? " · прочитан в " + mdStamp : "");
   const note = document.getElementById("regNote");
   if (note) {
     note.hidden = false;
@@ -5350,13 +5427,14 @@ function supShort(n) {
   return s.length > 64 ? s.slice(0, 62).trim() + "…" : s;
 }
 
-const supState = { q: "", co: "", day: "", sort: "n", open: {} };
+const supState = { q: "", co: "", dir: "", day: "", sort: "n", open: {} };
 
 function supFiltered() {
   const q = supState.q.trim().toLowerCase();
   return mdSup.map(s => {
     const groups = s.groups.filter(g =>
       (!supState.co || g.co === supState.co) &&
+      (!supState.dir || g.dir === supState.dir) &&
       (!supState.day || g.days.indexOf(supState.day) > -1));
     if (!groups.length) return null;
     if (q) {
@@ -5391,10 +5469,7 @@ function renderSupSummary() {
   const dirs = new Set(g.map(x => x.dir).filter(Boolean)).size;
   const tiles = [
     ["" + mdSup.length, "поставщиков", ""],
-    ["" + g.length, "групп в реестре",
-      '<span class="s"><i class="work">' + n("work") + " работают</i>" +
-      (n("open") ? '<i class="open">' + n("open") + " идёт набор</i>" : "") +
-      (n("pause") ? '<i class="pause">' + n("pause") + " на паузе</i>" : "") + "</span>"],
+    ["" + g.length, "групп в реестре", ""],
     ["" + venues, "площадок", ""],
     ["" + teach.size, "преподавателей", ""],
     ["" + dirs, "направлений", ""],
@@ -5432,6 +5507,35 @@ function renderSupCo() {
   }
 }
 
+/* Кольцо статусов: доли считаем в длинах дуги, чтобы не городить пути. */
+function renderSupHero() {
+  const box = document.getElementById("supHero");
+  if (!box) return;
+  const all = mdGroups.length;
+  const parts = [
+    ["work", "Работают", mdGroups.filter(g => g.st === "work").length, "var(--green)"],
+    ["open", "Идёт набор", mdGroups.filter(g => g.st === "open").length, "var(--teal)"],
+    ["pause", "Приостановлены", mdGroups.filter(g => g.st === "pause").length, "var(--amber)"],
+  ].filter(p => p[2]);
+  const R = 74, C = 2 * Math.PI * R;
+  let off = 0;
+  const arcs = parts.map(([k, lbl, n, col]) => {
+    const len = C * n / Math.max(1, all);
+    const seg = '<circle cx="95" cy="95" r="' + R + '" fill="none" stroke="' + col + '" stroke-width="22"' +
+      ' stroke-dasharray="' + (len - 3) + ' ' + (C - len + 3) + '" stroke-dashoffset="' + (-off) + '" stroke-linecap="butt"></circle>';
+    off += len;
+    return seg;
+  }).join("");
+  box.innerHTML =
+    '<div class="sup-ring"><svg viewBox="0 0 190 190" aria-hidden="true">' +
+      '<circle cx="95" cy="95" r="' + R + '" fill="none" stroke="var(--bg-2)" stroke-width="22"></circle>' + arcs +
+    '</svg><span class="mid"><b>' + all + '</b><span>групп</span></span></div>' +
+    '<div class="sup-legend">' + parts.map(([k, lbl, n, col]) =>
+      '<div class="row"><i style="background:' + col + '"></i>' +
+      '<span class="nm3">' + lbl + '</span><span class="n3">' + n + '</span>' +
+      '<span class="p3">' + Math.round(100 * n / Math.max(1, all)) + '%</span></div>').join("") + "</div>";
+}
+
 function renderSupDays() {
   const box = document.getElementById("supDays");
   if (!box) return;
@@ -5440,9 +5544,21 @@ function renderSupDays() {
   mdGroups.forEach(g => g.days.forEach(d => cnt[d]++));
   const max = Math.max(1, ...MD_DAYS.map(d => cnt[d]));
   box.innerHTML = MD_DAYS.map(d =>
-    '<div class="sup-day' + (cnt[d] === max ? " peak" : "") + '"><div class="d">' + d + '</div>' +
-    '<div class="n">' + cnt[d] + '</div>' +
-    '<div class="mini" style="width:' + Math.max(12, Math.round(100 * cnt[d] / max)) + '%;margin:7px auto 0"></div></div>').join("");
+    '<div class="wk-col' + (cnt[d] === max ? " peak" : "") + '" title="' + d + ": " + cnt[d] + ' ' + plural(cnt[d], "группа", "группы", "групп") + '">' +
+    '<span class="n">' + cnt[d] + "</span>" +
+    '<span class="bar" style="height:' + Math.max(6, Math.round(118 * cnt[d] / max)) + 'px"></span>' +
+    '<span class="d">' + d + "</span></div>").join("");
+}
+
+function renderSupTop() {
+  const box = document.getElementById("supTop");
+  if (!box) return;
+  const top = mdSup.slice(0, 10);
+  const max = Math.max(1, ...top.map(s => s.all));
+  box.innerHTML = top.map(s =>
+    '<div class="r"><span class="nm4" title="' + esc(s.n) + '">' + esc(supShort(s.n)) + "</span>" +
+    '<span class="track"><i style="width:' + Math.max(3, Math.round(100 * s.all / max)) + '%;background:' + s.tint + '"></i></span>' +
+    '<span class="n4">' + s.all + "</span></div>").join("");
 }
 
 function renderSup() {
@@ -5453,9 +5569,11 @@ function renderSup() {
     "/edit?gid=" + MD_GID + "#gid=" + MD_GID;
   if (!mdLoaded) { box.innerHTML = '<div class="task-empty">Загружаю…</div>'; return; }
   if (!mdSup.length) { box.innerHTML = '<div class="task-empty">Лист «МД» недоступен или пуст.</div>'; return; }
+  renderSupHero();
   renderSupSummary();
   renderSupCo();
   renderSupDays();
+  renderSupTop();
 
   const list = supFiltered();
   const clock = '<svg class="i sm"><use href="#i-clock"/></svg>';
@@ -5518,7 +5636,20 @@ function renderSup() {
 
 /* Координатор и день фильтруются в таблице ниже — здесь остаются
    только поиск и сортировка карточек. */
-function initSupFilters() {}
+/* Направления собираем из самих данных: список в листе не фиксирован,
+   новые появляются вместе с группами. */
+function mdDirections() {
+  const n = {};
+  mdGroups.forEach(g => { if (g.dir) n[g.dir] = (n[g.dir] || 0) + 1; });
+  return Object.keys(n).sort((a, b) => a.localeCompare(b, "ru")).map(d => [d, n[d]]);
+}
+function fillDirSelect(id) {
+  const el = document.getElementById(id);
+  if (!el || el.options.length > 1) return;
+  mdDirections().forEach(([d, n]) => el.insertAdjacentHTML("beforeend",
+    '<option value="' + esc(d) + '">' + esc(d) + " · " + n + "</option>"));
+}
+function initSupFilters() { fillDirSelect("supDir"); }
 
 (function () {
   const box = document.getElementById("supRows");
@@ -5530,7 +5661,7 @@ function initSupFilters() {}
   });
   const q = document.getElementById("supQ");
   if (q) q.addEventListener("input", () => { supState.q = q.value; renderSup(); });
-  [["supSort", "sort"]].forEach(([id, key]) => {
+  [["supDir", "dir"], ["supSort", "sort"]].forEach(([id, key]) => {
     const el = document.getElementById(id);
     if (el) el.addEventListener("change", () => { supState[key] = el.value; renderSup(); });
   });
@@ -5542,6 +5673,7 @@ function initMdFilters() {
       "Пт": "Пятница", "Сб": "Суббота", "Вс": "Воскресенье" };
     MD_DAYS.forEach(d => day.insertAdjacentHTML("beforeend", '<option value="' + d + '">' + full[d] + "</option>"));
   }
+  fillDirSelect("regDir");
   const sup = document.getElementById("regSup");
   if (sup && sup.options.length <= 1) {
     mdSup.forEach(x => sup.insertAdjacentHTML("beforeend",
@@ -5560,7 +5692,7 @@ function initMdFilters() {
     const b = e.target.closest("button[data-st]"); if (!b) return;
     regFilter = b.dataset.st; regShown = 30; renderReg();
   });
-  ["regQ", "regSup", "regCo", "regDay"].forEach(id => {
+  ["regQ", "regSup", "regCo", "regDay", "regDir"].forEach(id => {
     const el = document.getElementById(id);
     if (el) {
       el.addEventListener("input", () => { regShown = 30; renderReg(); });
@@ -6222,6 +6354,9 @@ async function refreshAll(manual) {
   loadClubs();
   loadGarden();
   loadPbdays();
+  /* Лист «МД» перечитываем только когда реестр уже открывали: иначе
+     каждый визит тянул бы 95 КБ ради раздела, в который не заходили. */
+  if (mdLoaded) loadMd();
   const failed = res.filter(r => r.status === 'rejected' || r.value === false).length;
   setSync(failed ? 'err' : 'ok', failed ? 'частично: ' + nowHM() : 'обновлено в ' + nowHM());
   btn.innerHTML = '⟳';
