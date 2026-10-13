@@ -75,6 +75,15 @@
     --teal-ink: #0c5247;
     --pink-ink: #902446;
     --amber-ink: #7a5410;
+    --grey-soft: #eceaea;      /* серый брендбука, разбелённый */
+    --grey-ink: #4a4442;       /* на --grey-soft даёт 9.1 */
+    /* Цвета статуса группы. Разные семьи брендбука, а не оттенки одной:
+       зелёный и бирюзовый рядом сливались, особенно на тонких дугах. */
+    --st-work: #008556;        /* занимаются */
+    --st-open: #a81d37;        /* идёт набор — туда нужны люди */
+    --st-pause: #afabab;       /* на паузе */
+    --st-closed: #4a4442;      /* прекращена */
+    --st-done: #2baf96;        /* завершена */
     --green-ink: #0b4b30;
     --on-brand: #fff;          /* текст на залитой фирменной кнопке */
     --crown-line: #eccb73;
@@ -594,6 +603,34 @@
   .pbday-foot { margin-top: 8px; font-size: var(--fs-2xs); color: var(--ink-mute); line-height: 1.4; }
 
   /* ---------- Цель грядки ---------- */
+  /* Прозвоны по дням: слева день, справа — кто сколько сделал. */
+  .gday { margin-top: 16px; }
+  .gday[hidden] { display: none; }
+  .gday .gd-h { display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+  .gday .gd-h b { font-size: var(--fs-lg); font-weight: 700; letter-spacing: -.015em; }
+  .gday .gd-h small { font-size: var(--fs-2xs); font-weight: 800; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--ink-soft); }
+  .gday .gd-list { display: grid; gap: 8px; }
+  .gday .gd-day { background: var(--card); border-radius: var(--r-control);
+    box-shadow: var(--shadow); padding: 13px 16px; }
+  .gday .gd-day.today { box-shadow: 0 3px 0 var(--brand-line); }
+  .gday .gd-top { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 12px; }
+  .gday .gd-when { font-size: var(--fs-md); font-weight: 700; }
+  .gday .gd-day.today .gd-when { color: var(--brand-dark); }
+  .gday .gd-tot { font-size: var(--fs-xl); font-weight: 400; letter-spacing: -.03em;
+    font-variant-numeric: tabular-nums; margin-left: auto; }
+  .gday .gd-tot small { font-size: var(--fs-2xs); font-weight: 800; letter-spacing: .05em;
+    text-transform: uppercase; color: var(--ink-soft); margin-left: 6px; }
+  .gday .gd-who { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .gday .gd-who span { display: inline-flex; align-items: baseline; gap: 6px;
+    font-size: var(--fs-xs); font-weight: 700; color: var(--ink);
+    background: var(--bg-2); border-radius: 999px; padding: 4px 11px; }
+  .gday .gd-who span b { font-weight: 800; font-variant-numeric: tabular-nums; }
+  .gday .gd-who span.flw { background: var(--green-soft); color: var(--green-ink); }
+  .gday .gd-zero { font-size: var(--fs-xs); font-weight: 600; color: var(--ink-mute); margin-top: 8px; }
+  .gday .gd-cap { margin: 10px 0 0; font-size: var(--fs-2xs); font-weight: 600;
+    line-height: 1.5; color: var(--ink-mute); }
+
   .ggoal { margin-top: 16px; background: var(--bg); border: 1px solid var(--line);
     border-radius: var(--radius-sm); padding: 14px 16px; }
   .ggoal[hidden] { display: none; }
@@ -785,6 +822,19 @@
     color: var(--ink-mute); font-weight: 700; letter-spacing: .02em; }
   .club-meta .dir { color: var(--ink-soft); background: var(--bg); border-radius: 5px;
     padding: 2px 7px; letter-spacing: .04em; }
+  /* Реестр заполняет ещё три колонки: статус набора словами, статус группы
+     в КИС и ответственного. Без них правки в листе не было видно. */
+  .club-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
+  .club-tags .ct { font-size: var(--fs-2xs); font-weight: 800; line-height: 1.3;
+    padding: 3px 8px; border-radius: 999px; letter-spacing: .01em; }
+  .club-tags .ct-open { background: var(--green-soft); color: var(--green-ink); }
+  .club-tags .ct-rec  { background: var(--amber-soft); color: var(--amber-ink); }
+  .club-tags .ct-off  { background: var(--grey-soft); color: var(--grey-ink); }
+  .club-tags .ct-kis  { background: var(--brand-soft); color: var(--brand-dark); }
+  .club-tags .ct-who  { background: var(--teal-soft); color: var(--teal-ink); font-weight: 700; }
+  .club-note { display: flex; align-items: flex-start; gap: 6px; margin-top: 4px;
+    font-size: var(--fs-xs); font-weight: 700; line-height: 1.4; color: var(--brand-dark); }
+  .club-note svg { flex: none; width: 13px; height: 13px; margin-top: 2px; fill: currentColor; }
   .clubs-legend { display: flex; flex-wrap: wrap; gap: 14px; margin: 0 0 10px;
     font-size: var(--fs-xs); color: var(--ink-soft); }
   .clubs-legend span { display: flex; align-items: center; gap: 6px; }
@@ -985,11 +1035,11 @@
     text-transform: uppercase; color: var(--ink-soft); white-space: nowrap; }
   .reg-row:not(.hdr) { padding-top: 10px; padding-bottom: 10px; }
   .reg-row .rail { align-self: stretch; background: var(--line); }
-  .reg-row.s-work .rail { background: var(--green); }
-  .reg-row.s-open .rail { background: var(--teal); }
-  .reg-row.s-pause .rail { background: var(--amber); }
-  .reg-row.s-closed .rail { background: var(--brand); }
-  .reg-row.s-done .rail { background: var(--bar-muted); }
+  .reg-row.s-work .rail { background: var(--st-work); }
+  .reg-row.s-open .rail { background: var(--st-open); }
+  .reg-row.s-pause .rail { background: var(--st-pause); }
+  .reg-row.s-closed .rail { background: var(--st-closed); }
+  .reg-row.s-done .rail { background: var(--st-done); }
   .reg-gid { font: 700 var(--fs-xs) ui-monospace, Menlo, Consolas, monospace;
     color: var(--brand); text-decoration: none; white-space: nowrap;
     border-bottom: 1px dashed var(--brand-line); }
@@ -1009,11 +1059,13 @@
   .reg-co-inline { display: none; margin-top: 2px; }
   .reg-badge { display: inline-block; font-size: var(--fs-2xs); font-weight: 800; letter-spacing: .03em;
     text-transform: uppercase; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
-  .reg-badge.s-work { background: var(--green-soft); color: var(--green-dark); }
-  .reg-badge.s-open { background: var(--teal-soft); color: var(--teal-ink); }
-  .reg-badge.s-pause { background: var(--brand-soft); color: var(--pink-ink); }
-  .reg-badge.s-closed { background: var(--brand-soft); color: var(--brand-dark); }
-  .reg-badge.s-done { background: var(--bg-2); color: var(--ink-mute); }
+  /* Подложка плашки — та же семья, что и кромка строки: статус
+     читается и цветом, и словом, и не путается с соседним. */
+  .reg-badge.s-work { background: var(--green-soft); color: var(--green-ink); }
+  .reg-badge.s-open { background: var(--brand-soft-2); color: var(--brand-dark); }
+  .reg-badge.s-pause { background: var(--grey-soft); color: var(--grey-ink); }
+  .reg-badge.s-closed { background: var(--grey-ink); color: #fff; }
+  .reg-badge.s-done { background: var(--teal-soft); color: var(--teal-ink); }
   .reg-more { display: block; width: 100%; border: 0; border-top: 1px solid var(--line);
     background: var(--bg-2); padding: 11px; font: 700 var(--fs-sm) var(--font);
     color: var(--ink-soft); cursor: pointer; }
@@ -1054,10 +1106,11 @@
   .mdt td.c-dir { font-size: var(--fs-md); font-weight: 700; line-height: 1.3; color: var(--ink); }
   /* Цветная кромка слева повторяет статус: строку видно до чтения. */
   .mdt td.c-id { border-left: 3px solid var(--line); }
-  .mdt tr.s-work td.c-id { border-left-color: var(--green); }
-  .mdt tr.s-open td.c-id { border-left-color: var(--teal); }
-  .mdt tr.s-pause td.c-id { border-left-color: var(--pink); }
-  .mdt tr.s-closed td.c-id, .mdt tr.s-done td.c-id { border-left-color: var(--bar-muted); }
+  .mdt tr.s-work td.c-id { border-left-color: var(--st-work); }
+  .mdt tr.s-open td.c-id { border-left-color: var(--st-open); }
+  .mdt tr.s-pause td.c-id { border-left-color: var(--st-pause); }
+  .mdt tr.s-closed td.c-id { border-left-color: var(--st-closed); }
+  .mdt tr.s-done td.c-id { border-left-color: var(--st-done); }
   .mdt a.gid { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink);
     text-decoration: none; }
   .mdt a.gid:hover { color: var(--brand); text-decoration: underline; }
@@ -1124,15 +1177,24 @@
   :root[data-theme="dark"] .sup-sum .b:nth-child(4) { background: #18301f; color: #86d79f; }
   :root[data-theme="dark"] .sup-sum .b:nth-child(5) { background: #32202a; color: #efa4b4; }
   :root[data-theme="dark"] .sup-sum .b { box-shadow: 0 3px 0 rgba(0,0,0,.45); }
+  /* На #141414 те же семьи, но светлее: иначе малиновый уходит в бурый. */
+  :root[data-theme="dark"] {
+    --st-work: #30b163; --st-open: #ea6c85; --st-pause: #8d8886;
+    --st-closed: #5f5856; --st-done: #2baf96;
+    --grey-soft: #2a2726; --grey-ink: #cfc9c7;
+  }
+  /* В тёмной теме --grey-ink светлый: как подложка под белый текст он
+     давал контраст 1.64. Плашке нужна своя пара. */
+  :root[data-theme="dark"] .reg-badge.s-closed { background: #4a4442; color: #ece9ea; }
   .sup-sum .b .v { font-size: calc(var(--fs-3xl) + 2px); font-weight: 400; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; }
   .sup-sum .b .l { margin-top: 7px; font-size: var(--fs-2xs); font-weight: 800; color: var(--ink-soft);
     letter-spacing: .07em; text-transform: uppercase; line-height: 1.35; }
   .sup-sum .b .s { margin-top: 6px; display: flex; gap: 8px; flex-wrap: wrap; font-size: var(--fs-2xs); color: var(--ink-mute); font-weight: 600; }
   .sup-sum .b .s i { font-style: normal; display: inline-flex; align-items: center; gap: 4px; }
   .sup-sum .b .s i::before { content: ""; width: 7px; height: 7px; border-radius: 2px; background: var(--bar-muted); }
-  .sup-sum .b .s i.work::before { background: var(--green); }
-  .sup-sum .b .s i.open::before { background: var(--teal); }
-  .sup-sum .b .s i.pause::before { background: var(--pink); }
+  .sup-sum .b .s i.work::before { background: var(--st-work); }
+  .sup-sum .b .s i.open::before { background: var(--st-open); }
+  .sup-sum .b .s i.pause::before { background: var(--st-pause); }
 
   .sup-h3 { display: flex; align-items: baseline; gap: 10px; margin: 30px 0 14px;
     font-size: calc(var(--fs-xl) + 2px); flex-wrap: wrap; padding-top: 6px;
@@ -1154,10 +1216,11 @@
   .co-row .extra { font-size: var(--fs-xs); color: var(--ink-soft); font-weight: 600; text-align: right; line-height: 1.45; }
   .co-bar { display: flex; height: 14px; border-radius: 999px; overflow: hidden; background: var(--bg-2); }
   .co-bar i { display: block; height: 100%; }
-  .co-bar i.work { background: var(--green); }
-  .co-bar i.open { background: var(--teal); }
-  .co-bar i.pause { background: var(--pink); }
-  .co-bar i.closed, .co-bar i.done { background: var(--bar-muted); }
+  .co-bar i.work { background: var(--st-work); }
+  .co-bar i.open { background: var(--st-open); }
+  .co-bar i.pause { background: var(--st-pause); }
+  .co-bar i.closed { background: var(--st-closed); }
+  .co-bar i.done { background: var(--st-done); }
 
   /* карточки поставщиков */
   .sup-tools { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 14px; align-items: stretch; }
@@ -1204,16 +1267,18 @@
     color: var(--ink-mute); text-decoration: none; white-space: nowrap; }
   .sup-g .gid:hover { color: var(--brand); text-decoration: underline; }
   .sup-g .dot { width: 7px; height: 7px; border-radius: 2px; flex: none; }
-  .sup-g .dot.work { background: var(--green); }
-  .sup-g .dot.open { background: var(--teal); }
-  .sup-g .dot.pause { background: var(--pink); }
-  .sup-g .dot.closed, .sup-g .dot.done { background: var(--bar-muted); }
+  .sup-g .dot.work { background: var(--st-work); }
+  .sup-g .dot.open { background: var(--st-open); }
+  .sup-g .dot.pause { background: var(--st-pause); }
+  .sup-g .dot.closed { background: var(--st-closed); }
+  .sup-g .dot.done { background: var(--st-done); }
   .sup-bar { display: flex; height: 9px; border-radius: 999px; overflow: hidden; background: var(--bg-2); }
   .sup-bar i { display: block; height: 100%; }
-  .sup-bar i.work { background: var(--green); }
-  .sup-bar i.open { background: var(--teal); }
-  .sup-bar i.pause { background: var(--pink); }
-  .sup-bar i.closed, .sup-bar i.done { background: var(--bar-muted); }
+  .sup-bar i.work { background: var(--st-work); }
+  .sup-bar i.open { background: var(--st-open); }
+  .sup-bar i.pause { background: var(--st-pause); }
+  .sup-bar i.closed { background: var(--st-closed); }
+  .sup-bar i.done { background: var(--st-done); }
 
   /* Полоса сводки: кольцо статусов рядом с числами. */
   .sup-hero { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 28px; align-items: center;
@@ -1226,8 +1291,17 @@
   .sup-ring .mid span { display: block; margin-top: 5px; font-size: var(--fs-2xs); font-weight: 800; color: var(--ink-soft);
     text-transform: uppercase; letter-spacing: .06em; }
   .sup-legend { display: flex; flex-direction: column; gap: 10px; }
-  .sup-legend .row { display: grid; grid-template-columns: 14px minmax(0,1fr) 64px 56px; align-items: baseline; gap: 14px; }
-  .sup-legend .row i { width: 12px; height: 12px; border-radius: 4px; }
+  .sup-legend .row { display: grid; grid-template-columns: 14px 148px minmax(0,1fr) 56px 52px;
+    align-items: center; gap: 14px; }
+  .sup-legend .row > i { width: 12px; height: 12px; border-radius: 4px; flex: none; }
+  .sup-legend .row .lbar { height: 10px; border-radius: 999px; background: var(--bg-2); overflow: hidden; }
+  .sup-legend .row .lbar i { display: block; height: 100%; border-radius: 999px; }
+  .sup-legend .lsay { margin: 4px 0 0; font-size: var(--fs-xs); font-weight: 600;
+    line-height: 1.5; color: var(--ink-soft); }
+  @media (max-width: 760px) {
+    .sup-legend .row { grid-template-columns: 12px minmax(0,1fr) 52px 48px; gap: 10px; }
+    .sup-legend .row .lbar { display: none; }
+  }
   .sup-legend .row .nm3 { font-size: var(--fs-sm); font-weight: 700; }
   .sup-legend .row .n3 { font-size: var(--fs-xl); font-weight: 400; letter-spacing: -.03em; text-align: right; font-variant-numeric: tabular-nums; }
   .sup-legend .row .p3 { font-size: var(--fs-xs); font-weight: 800; color: var(--ink-soft); text-align: right; font-variant-numeric: tabular-nums; }
@@ -2011,6 +2085,7 @@
           </div>
           <div class="gg-note" id="ggNote"></div>
         </div>
+        <div class="gday" id="gardenDay"></div>
         <div class="side-head" style="margin-top:16px">🏅 Кто отрабатывает список</div>
         <div class="garden-staff" id="gardenStaff"></div>
       </div>
@@ -4131,7 +4206,12 @@ async function loadGarden() {
   try {
     const url = 'https://docs.google.com/spreadsheets/d/' + GARDEN_SHEET_ID +
       '/gviz/tq?tqx=out:csv&gid=' + GARDEN_GID + '&_=' + Date.now();
-    const rows = parseCSV(await getCSV(url)).slice(1).filter(r => (r[0] || '').trim());
+    const all = parseCSV(await getCSV(url));
+    const head = all[0] || [];
+    const rows = all.slice(1).filter(r => (r[0] || '').trim());
+    /* Колонки с датой в листе пока нет. Если её завести — портал начнёт
+       считать прозвоны по дням точно и одинаково для всех, без снимков. */
+    const iDate = head.findIndex(h => /дата/i.test(h || ''));
 
     const людей = rows.length;
     const dealt = rows.filter(r => (r[3] || '').trim());
@@ -4149,6 +4229,7 @@ async function loadGarden() {
     });
 
     garden = {
+      byDate: iDate > -1 ? gardenByDate(rows, iDate) : null,
       total: людей,
       dealt: dealt.length,
       returned: returned.length,
@@ -4178,6 +4259,53 @@ function rememberGarden(g) {
   log.push({ d: today, w: g.dealt, r: g.returned, by: by });
   store(key, log.slice(-90));
 }
+/* Лист с датой: группируем отработанные дела по дню и сотруднику.
+   Принимаем 13.10.2026, 2026-10-13 и Date(2026,9,13) — gviz отдаёт разное. */
+function gardenDay(v) {
+  const s = String(v || '').trim();
+  let m = /^Date\((\d+),(\d+),(\d+)/.exec(s);
+  if (m) return m[1] + '-' + String(+m[2] + 1).padStart(2, '0') + '-' + m[3].padStart(2, '0');
+  m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s);
+  if (m) return m[1] + '-' + m[2] + '-' + m[3];
+  m = /^(\d{1,2})[.\/](\d{1,2})[.\/](\d{4})/.exec(s);
+  if (m) return m[3] + '-' + m[2].padStart(2, '0') + '-' + m[1].padStart(2, '0');
+  return '';
+}
+function gardenByDate(rows, iDate) {
+  const by = {};
+  rows.forEach(r => {
+    const d = gardenDay(r[iDate]);
+    const out = (r[3] || '').trim();
+    if (!d || !out) return;
+    if (!by[d]) by[d] = { d: d, dealt: 0, returned: 0, by: {} };
+    by[d].dealt++;
+    if (GARDEN_RETURNED.test(out)) by[d].returned++;
+    const who = (r[4] || '').trim();
+    if (who) by[d].by[who] = (by[d].by[who] || 0) + 1;
+  });
+  return Object.values(by).sort((a, b) => a.d < b.d ? -1 : 1);
+}
+
+/* Разница соседних снимков: снимок за день хранит накопленный итог,
+   значит «за день» — это сегодняшний минус предыдущий. */
+function gardenDaysFromLog() {
+  const log = load('presnya-garden-log', []).filter(x => x && x.d);
+  const out = [];
+  /* По возрастанию даты — так же, как отдаёт gardenByDate(): разворот
+     на «сначала сегодня» делается один раз, в отрисовке. */
+  for (let i = 1; i < log.length; i++) {
+    const cur = log[i], prev = log[i - 1];
+    const by = {};
+    Object.keys(cur.by || {}).forEach(k => {
+      const d = ((cur.by[k] || {}).w || 0) - (((prev.by || {})[k] || {}).w || 0);
+      if (d > 0) by[k] = d;
+    });
+    out.push({ d: cur.d, from: prev.d, dealt: (cur.w || 0) - (prev.w || 0),
+      returned: (cur.r || 0) - (prev.r || 0), by: by });
+  }
+  return out;
+}
+
 function gardenMomentum() {
   const log = load('presnya-garden-log', []);
   if (log.length < 2) return null;
@@ -4498,6 +4626,7 @@ function renderGarden() {
     document.getElementById('gardenHead').textContent = 'Таблица подбора сейчас недоступна';
     document.getElementById('gardenSub').textContent = 'Портал покажет грядку, как только таблица ответит.';
     document.getElementById('gardenStats').innerHTML = '';
+    document.getElementById('gardenDay').innerHTML = '';
     document.getElementById('gardenStaff').innerHTML = '';
     return;
   }
@@ -4619,8 +4748,61 @@ function renderGarden() {
     tile('🪴', g.waiting, 'ждут своей очереди', '') +
     (mom ? tile('📆', (mom.dealt > 0 ? '+' : '') + mom.dealt, 'за две недели', mom.dealt > 0 ? 'c-green' : 'c-mute') : '');
 
+  renderGardenDay();
   renderFarmers(staff, best, shirts);
   renderGardenGoal();
+}
+
+/* Прозвоны за сегодня и вчера. Точный счёт — если в листе есть дата;
+   иначе разница снимков, и об этом прямо сказано в подписи. */
+const GD_MON = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+  'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+function gdWhen(iso) {
+  const today = new Date().toISOString().slice(0, 10);
+  const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+  if (iso === today) return 'Сегодня';
+  if (iso === y) return 'Вчера';
+  const p = iso.split('-');
+  return (+p[2]) + ' ' + (GD_MON[+p[1] - 1] || '');
+}
+function renderGardenDay() {
+  const box = document.getElementById('gardenDay');
+  if (!box) return;
+  const exact = garden && garden.byDate && garden.byDate.length;
+  const days = (exact ? garden.byDate.slice() : gardenDaysFromLog()).slice(-7).reverse();
+  const names = garden ? garden.staff.map(s => s.name) : [];
+  if (!days.length) {
+    box.innerHTML = '<div class="gd-h"><b>Прозвоны по дням</b></div>' +
+      '<div class="gd-day"><div class="gd-zero">Счёт по дням начнётся со следующего захода: ' +
+      'портал запомнил сегодняшние цифры, а день считается разницей с предыдущим днём.</div>' +
+      '<p class="gd-cap">В листе подбора нет колонки с датой обработки. Добавьте её — ' +
+      'и дни будут считаться точно, одинаково у всех сотрудников.</p></div>';
+    return;
+  }
+  const rows = days.map(x => {
+    const who = Object.keys(x.by || {}).sort((a, b) => x.by[b] - x.by[a]);
+    const gap = !exact && x.from && x.from !== new Date(new Date(x.d).getTime() - 864e5)
+      .toISOString().slice(0, 10);
+    return '<div class="gd-day' + (gdWhen(x.d) === 'Сегодня' ? ' today' : '') + '">' +
+      '<div class="gd-top"><span class="gd-when">' + gdWhen(x.d) + '</span>' +
+        (gap ? '<small style="color:var(--ink-mute);font-weight:700">с ' + gdWhen(x.from).toLowerCase() + '</small>' : '') +
+        '<span class="gd-tot">' + (x.dealt > 0 ? '+' : '') + x.dealt +
+        '<small>' + plural(x.dealt, 'дело', 'дела', 'дел') + '</small></span></div>' +
+      (who.length
+        ? '<div class="gd-who">' + who.map(k =>
+            '<span class="' + (k === who[0] ? 'flw' : '') + '">' + esc(k) +
+            ' <b>' + x.by[k] + '</b></span>').join('') + '</div>'
+        : '<div class="gd-zero">За этот день отметок в листе не появилось.</div>') +
+      '</div>';
+  }).join('');
+  box.innerHTML = '<div class="gd-h"><b>Прозвоны по дням</b><small>' +
+    (exact ? 'по дате из листа' : 'по снимкам портала') + '</small></div>' +
+    '<div class="gd-list">' + rows + '</div>' +
+    '<p class="gd-cap">' + (exact
+      ? 'Считается по колонке с датой обработки в листе подбора.'
+      : 'Лист подбора не хранит даты, поэтому день считается как разница с предыдущим ' +
+        'заходом на портал с этого устройства. Чтобы счёт стал точным и общим для всех, ' +
+        'в лист нужно добавить колонку с датой обработки.') + '</p>';
 }
 
 /* Карточка фермера: его доля грядки, цифры и искра по накопленным снимкам */
@@ -4684,54 +4866,59 @@ const CLUBS_SHEET_ID = '177EGdB70p38wLZUAzEokryomknkKs0Oiz1b4ktbEIYY';
 const CLUBS_GID = '392902746';
 const CLUBS_SHEET_PRESNYA = 'Пресненский';
 
-/* резерв: реестр клубов ЦМД «Пресненский», снимок 06.10.2026
-   [название, направление, статус, номер группы, описание] */
+/* резерв: реестр клубов ЦМД «Пресненский», снимок 13.10.2026
+   [название, направление, статус, номер группы, описание,
+    статус в КИС, ответственный, комментарий] */
 const DEFAULT_CLUBS = [
-  ["Ин.ЯЗ.На Пресне.", "ЯЗЫКИ", "Набор в клуб приостановлен", "2389969", "Разговорный английский. Не учит теории"],
-  ["Клуб Марья Искусница", "ХПТ", "Набор в клуб приостановлен", "2389985", "Делают ожерелье и бусы."],
-  ["Шедевры живописи", "ХПТ", "По записи", "2390007", "Техника сухой масляной краской."],
-  ["Клуб Аксессуар", "ХПТ", "По записи", "2390027", "Делают броши. Участвуют в модных показах и выступают в театре"],
-  ["Ансамбль Смагин", "МУЗЫКА", "Набор в клуб приостановлен", "2390036", "Театрально вокальный клуб"],
-  ["Клуб Рисунок и Живопись", "ХПТ", "По записи", "2390048", "Техника сухой масляной краской."],
-  ["Клуб Крейзи-пэчворк", "ХПТ", "По записи", "2390053", "лоскутное шитьё, лоскутная техника, лоскутная мозаика, текстильная мозаика — вид рукоделия, в котором по принципу мозаики сшивается цельное изделие из кусочков ткани."],
-  ["Клуб Бодрость духа", "СПОРТ", "Открытый", "2390057", "Что то на подобии суставной гимнастики с палками."],
-  ["Суставная гимнастика", "СПОРТ", "Набор в клуб приостановлен", "2390097", "Цель клуба - поддержание физической формы, укрепление мышц и суставов."],
-  ["Цигун", "СПОРТ", "Открытый", "2390104", "Оздоровительная гимнастика, которая веками практикуется миллионами китайцев. Она включает в себя медитацию и упражнения, с контролируемыми движениями и дыханием"],
-  ["Клуб Жемчужина", "СПОРТ", "Набор в клуб приостановлен", "2390115", "Национальные башкирские танцы, занятия направлены на изучение традиционных этнических танцев, с целью сохранения традиций. Коллектив состоит из дам, они являются участниками различных конкурсов-смотров."],
-  ["Ансамбль вокальный", "МУЗЫКА", "По записи", "2390122", "Русские народные песни"],
-  ["Клуб Испанский язык и культура Испании", "ЯЗЫКИ", "Набор в клуб приостановлен", "2390128", "Клуб,в котором вы сможете изучить испанский с нуля,подтянуть разговорную речь и глубже познакомиться с культурой удивительной страны Испании"],
-  ["Клуб Английский язык по песням", "ЯЗЫКИ", "Набор в клуб приостановлен", "2390148", "поддержание навыков пения на английском языке, повышение уровня разговорного английского, расширение кругозора членов клуба, приобщение к мировым культурным ценностям."],
-  ["Эстрадный вокал", "МУЗЫКА", "По записи", "2390201", "Формирование умения и навыка эстрадно-вокальной техники; развитие музыкальных способностей и голосовых данных."],
-  ["Исторические бальные танцы", "СПОРТ", "Набор в клуб приостановлен", "2390208", "Занятия включающуют базовые хореографические упражнения, элементы хореографии необходимые для изучения техники исторических танцев, танцевальные шаги и связки, используемые в танцах. Изучение теоретического аспекта: история танцев, танцевальный этикет различных эпох, история костюмов"],
-  ["Клуб Тай Дзи", "СПОРТ", "Открытый", "2390214", "Цай цзи» или «тайцзи цюань», этот комплекс упражнений способен снижать уровень стресса и улучшать гибкость тела и увеличивать физическую силу организма. Тай цзи базируется на китайской даосской философии и была разработана в свое время для здоровья, самозащиты и духовного развития. Характеризуется комбинацией мягких, медленных физических движений и дыхательных техник, совершаемых в частично медитативном состоянии."],
-  ["Цигун", "СПОРТ", "Открытый", "2390232", "Оздоровительная гимнастика, которая веками практикуется миллионами китайцев. Она включает в себя медитацию и упражнения, с контролируемыми движениями и дыханием"],
-  ["Клуб Немецкого языка", "ЯЗЫКИ", "По записи", "2390239", "Цель клуба - совместное изучение немецкого языка с нуля. Немецкий язык не самый простой, но совладать с ним вполне возможно. Особенно если уже владеете английским, ведь это языки из одной семьи. Тем не менее, различий между двумя языками больше, чем сходств. Вы будете узнавать типовые конструкции и видеть параллели в значениях глаголов, но грамматически между языками нет почти ничего общего."],
-  ["Клуб Английский для Вас", "ЯЗЫКИ", "По записи", "2390243", "Решение проблемы языкового барьера, понимание английской речи на слух, повышение уровня разговорного английского, расширение кругозора членов клуба."],
-  ["Клуб Белая птица", "ИСКУССТВО", "Набор в клуб приостановлен", "2390246", "Театральный клуб"],
-  ["Клуб Танго.практика", "СПОРТ", "Открытый", "2390269", "Обучение аргентинскому танго - это этнический танец, к бальным танцам он отношение не имеет. Изучение новых движений, улучшение и поддержка физической формы и хорошего настроения."],
-  ["Танцевальный Хастл-вечер", "СПОРТ", "Открытый", "2390275", "Клуб создан для активного досуга людей старшего возраста, улучшения физического и психо-эмоционального здоровья с помощью танцев и музыки."],
-  ["Бридж", "РАЗВИТИЕ", "Набор в клуб приостановлен", "2390287", "интеллектуальная карточная игра для четверых."],
-  ["Настольный теннис", "СПОРТ", "Открытый", "2390299", "Теннис"],
-  ["Бильярд в ЦМД", "СПОРТ", "Набор в клуб приостановлен", "2390307", "Клуб создан для тренировки навыков игры в бильярд. Есть как начинающие игроки, так и люди, которые уверенно держат кий в руках."],
-  ["Йога радости", "СПОРТ", "Открытый", "2390312", "Кундалини Йога - это дыхательные практики, основанные да мощном,ритмичном и осознанном дыхании - дыхании йогов"],
-  ["Дефиле", "СТИЛЬ", "Набор в клуб приостановлен", "2402266", "Уметь красиво и элегантно одеваться - отдельная наука. Если всё это объединить, то получится ТЕАТР МОДЕЛЕЙ. Мода быстротечна, но найти свой стиль и умение перевоплощаться в любой образ нам под силу!"],
-  ["Оздоровительные гимнастики", "СПОРТ", "По записи", "2405271", "Цель клуба - поддержание физической формы, укрепление мышц и суставов."],
-  ["Гимнастика Будь в тонусе", "СПОРТ", "Открытый", "2412303", "Оздоровительная гимнастика общей направленности для поддержания тела втонусе"],
-  ["Клуб Декупаж", "ХПТ", "Набор в клуб приостановлен", "2417572", ""],
-  ["Клуб Нейрографика", "ИСКУССТВО", "Открытый", "2419963", "Творческий метод самопознания и психологической коррекции через рисование линий и фигур, позволяющий осознать внутренние состояния и найти решения проблем."],
-  ["Сериаломания", "ИСКУССТВО", "Открытый", "2423417", "Просмотр зарубежный сериалов"],
-  ["Вокальный клуб \"Встреча\"", "МУЗЫКА", "Открытый", "2420131", "Вокальный клуб"],
-  ["Клуб \"Три аккорда\"", "МУЗЫКА", "Набор в клуб приостановлен", "2420134", "Вокально-инструментальный клуб"],
-  ["Клуб Speak English", "ЯЗЫКИ", "Открытый", "2424981", "Клуб изучения английского языка"],
-  ["Зарубежные кинопоказы", "ИСКУССТВО", "Открытый", "2403556", "Просмотр зарубежных фильмов"],
-  ["Студия сценический искусств \"Шаг\"", "ИСКУССТВО", "Набор в клуб приостановлен", "2421692", "Театральная студия"],
-  ["Клуб \"Виртуальное путешествие\"", "ИСКУССТВО", "Открытый", "2420127", "Вирутальные путешествия по странам мира"],
-  ["Клуб \"Летучая мышь\"", "МУЗЫКА", "Набор в клуб приостановлен", "2430017", "Вокально-инструментальный клуб"],
-  ["Клуб \"Русская душа\"", "МУЗЫКА", "Набор в клуб приостановлен", "2429355", "Народный хор"],
-  ["Клуб \"Хобби хор\"", "МУЗЫКА", "По записи", "2427036", "Занятия хора (по предварительному прослушиваню у преподователя)"],
+  ["Ин.ЯЗ.На Пресне.", "ЯЗЫКИ", "Набор в клуб приостановлен", "2389969", "Разговорный английский. Не учит теории", "Приступила к занятиям"],
+  ["Клуб Марья Искусница", "ХПТ", "Набор в клуб приостановлен", "2389985", "Делают ожерелье и бусы.", "Приступила к занятиям"],
+  ["Шедевры живописи", "ХПТ", "По записи", "2390007", "Техника сухой масляной краской.", "Приступила к занятиям"],
+  ["Клуб Аксессуар", "ХПТ", "По записи", "2390027", "Делают броши. Участвуют в модных показах и выступают в театре", "Приступила к занятиям"],
+  ["Ансамбль Смагин", "МУЗЫКА", "Набор в клуб приостановлен", "2390036", "Театрально вокальный клуб", "Приступила к занятиям"],
+  ["Клуб Рисунок и Живопись", "ХПТ", "По записи", "2390048", "Техника сухой масляной краской.", "Приступила к занятиям", "", "Будем закрывать"],
+  ["Клуб Крейзи-пэчворк", "ХПТ", "По записи", "2390053", "лоскутное шитьё, лоскутная техника, лоскутная мозаика, текстильная мозаика — вид рукоделия, в котором по принципу мозаики сшивается цельное изделие из кусочков ткани.", "Приступила к занятиям", "", "Будем закрывать"],
+  ["Клуб Бодрость духа", "СПОРТ", "Открытый", "2390057", "Что то на подобии суставной гимнастики с палками.", "Приступила к занятиям"],
+  ["Суставная гимнастика", "СПОРТ", "Набор в клуб приостановлен", "2390097", "Цель клуба - поддержание физической формы, укрепление мышц и суставов.", "Приступила к занятиям"],
+  ["Цигун", "СПОРТ", "Открытый", "2390104", "Оздоровительная гимнастика, которая веками практикуется миллионами китайцев. Она включает в себя медитацию и упражнения, с контролируемыми движениями и дыханием", "Приступила к занятиям"],
+  ["Клуб Жемчужина", "СПОРТ", "Набор в клуб приостановлен", "2390115", "Национальные башкирские танцы, занятия направлены на изучение традиционных этнических танцев, с целью сохранения традиций. Коллектив состоит из дам, они являются участниками различных конкурсов-смотров.", "Приступила к занятиям"],
+  ["Ансамбль вокальный", "МУЗЫКА", "По записи", "2390122", "Русские народные песни", "Приступила к занятиям"],
+  ["Клуб Испанский язык и культура Испании", "ЯЗЫКИ", "Набор в клуб приостановлен", "2390128", "Клуб,в котором вы сможете изучить испанский с нуля,подтянуть разговорную речь и глубже познакомиться с культурой удивительной страны Испании", "Приступила к занятиям"],
+  ["Клуб Английский язык по песням", "ЯЗЫКИ", "Набор в клуб приостановлен", "2390148", "поддержание навыков пения на английском языке, повышение уровня разговорного английского, расширение кругозора членов клуба, приобщение к мировым культурным ценностям.", "Приступила к занятиям"],
+  ["Эстрадный вокал", "МУЗЫКА", "По записи", "2390201", "Формирование умения и навыка эстрадно-вокальной техники; развитие музыкальных способностей и голосовых данных.", "Приступила к занятиям"],
+  ["Исторические бальные танцы", "СПОРТ", "Набор в клуб приостановлен", "2390208", "Занятия включающуют базовые хореографические упражнения, элементы хореографии необходимые для изучения техники исторических танцев, танцевальные шаги и связки, используемые в танцах. Изучение теоретического аспекта: история танцев, танцевальный этикет различных эпох, история костюмов", "Приступила к занятиям"],
+  ["Клуб Тай Дзи", "СПОРТ", "Открытый", "2390214", "Цай цзи» или «тайцзи цюань», этот комплекс упражнений способен снижать уровень стресса и улучшать гибкость тела и увеличивать физическую силу организма. Тай цзи базируется на китайской даосской философии и была разработана в свое время для здоровья, самозащиты и духовного развития. Характеризуется комбинацией мягких, медленных физических движений и дыхательных техник, совершаемых в частично медитативном состоянии.", "Приступила к занятиям"],
+  ["Цигун", "СПОРТ", "Открытый", "2390232", "Оздоровительная гимнастика, которая веками практикуется миллионами китайцев. Она включает в себя медитацию и упражнения, с контролируемыми движениями и дыханием", "Приступила к занятиям"],
+  ["Клуб Немецкого языка", "ЯЗЫКИ", "По записи", "2390239", "Цель клуба - совместное изучение немецкого языка с нуля. Немецкий язык не самый простой, но совладать с ним вполне возможно. Особенно если уже владеете английским, ведь это языки из одной семьи. Тем не менее, различий между двумя языками больше, чем сходств. Вы будете узнавать типовые конструкции и видеть параллели в значениях глаголов, но грамматически между языками нет почти ничего общего.", "Приступила к занятиям"],
+  ["Клуб Английский для Вас", "ЯЗЫКИ", "По записи", "2390243", "Решение проблемы языкового барьера, понимание английской речи на слух, повышение уровня разговорного английского, расширение кругозора членов клуба.", "Приступила к занятиям"],
+  ["Клуб Белая птица", "ИСКУССТВО", "Набор в клуб приостановлен", "2390246", "Театральный клуб", "Приступила к занятиям"],
+  ["Клуб Танго.практика", "СПОРТ", "Открытый", "2390269", "Обучение аргентинскому танго - это этнический танец, к бальным танцам он отношение не имеет. Изучение новых движений, улучшение и поддержка физической формы и хорошего настроения.", "Приступила к занятиям", "", "Нужны люди (анонс по всему округу)"],
+  ["Танцевальный Хастл-вечер", "СПОРТ", "Открытый", "2390275", "Клуб создан для активного досуга людей старшего возраста, улучшения физического и психо-эмоционального здоровья с помощью танцев и музыки.", "Приступила к занятиям"],
+  ["Бридж", "РАЗВИТИЕ", "Набор в клуб приостановлен", "2390287", "интеллектуальная карточная игра для четверых.", "Приступила к занятиям"],
+  ["Настольный теннис", "СПОРТ", "Открытый", "2390299", "Теннис", "Приступила к занятиям"],
+  ["Бильярд в ЦМД", "СПОРТ", "Набор в клуб приостановлен", "2390307", "Клуб создан для тренировки навыков игры в бильярд. Есть как начинающие игроки, так и люди, которые уверенно держат кий в руках.", "Приступила к занятиям"],
+  ["Йога радости", "СПОРТ", "Открытый", "2390312", "Кундалини Йога - это дыхательные практики, основанные да мощном,ритмичном и осознанном дыхании - дыхании йогов", "Приступила к занятиям"],
+  ["Дефиле", "СТИЛЬ", "Набор в клуб приостановлен", "2402266", "Уметь красиво и элегантно одеваться - отдельная наука. Если всё это объединить, то получится ТЕАТР МОДЕЛЕЙ. Мода быстротечна, но найти свой стиль и умение перевоплощаться в любой образ нам под силу!", "Приступила к занятиям"],
+  ["Оздоровительные гимнастики", "СПОРТ", "По записи", "2405271", "Цель клуба - поддержание физической формы, укрепление мышц и суставов.", "Приступила к занятиям"],
+  ["Гимнастика Будь в тонусе", "СПОРТ", "Открытый", "2412303", "Оздоровительная гимнастика общей направленности для поддержания тела втонусе", "Приступила к занятиям"],
+  ["Клуб Декупаж", "ХПТ", "Набор в клуб приостановлен", "2417572", "", "Приступила к занятиям", "Агапова Т.М."],
+  ["Клуб Нейрографика", "ИСКУССТВО", "Открытый", "2419963", "Творческий метод самопознания и психологической коррекции через рисование линий и фигур, позволяющий осознать внутренние состояния и найти решения проблем.", "Приступила к занятиям"],
+  ["Сериаломания", "ИСКУССТВО", "Открытый", "2423417", "Просмотр зарубежный сериалов", "Приступила к занятиям", "Курганская А.Г."],
+  ["Вокальный клуб \"Встреча\"", "МУЗЫКА", "Открытый", "2420131", "Вокальный клуб", "Приступила к занятиям"],
+  ["Клуб \"Три аккорда\"", "МУЗЫКА", "Набор в клуб приостановлен", "2420134", "Вокально-инструментальный клуб", "Приступила к занятиям"],
+  ["Клуб Speak English", "ЯЗЫКИ", "Открытый", "2424981", "Клуб изучения английского языка", "Приступила к занятиям"],
+  ["Зарубежные кинопоказы", "ИСКУССТВО", "Открытый", "2403556", "Просмотр зарубежных фильмов", "Приступила к занятиям", "Курганская А.Г."],
+  ["Студия сценический искусств \"Шаг\"", "ИСКУССТВО", "Набор в клуб приостановлен", "2421692", "Театральная студия", "Приступила к занятиям"],
+  ["Клуб \"Виртуальное путешествие\"", "ИСКУССТВО", "Открытый", "2420127", "Вирутальные путешествия по странам мира", "Приступила к занятиям", "Анисимов Д.А."],
+  ["Клуб \"Летучая мышь\"", "МУЗЫКА", "Набор в клуб приостановлен", "2430017", "Вокально-инструментальный клуб", "Приступила к занятиям"],
+  ["Клуб \"Русская душа\"", "МУЗЫКА", "Набор в клуб приостановлен", "2429355", "Народный хор", "Приступила к занятиям"],
+  ["Клуб \"Хобби хор\"", "МУЗЫКА", "По записи", "2427036", "Занятия хора (по предварительному прослушиваню у преподователя)", "Приступила к занятиям"],
+  ["Клуб \"Ступень\"", "ИСКУССТВО", "По записи", "2450009", "Комплексный психолого-актёрский курс, напрпавленный на развитие актерского мастерства", "Ожидает начало"],
 ];
 
 let clubs = [], clubsFromSeed = false, clubDir = '', clubSt = '';
+/* Время последнего чтения листа: без него «обновилось или нет» нельзя
+   проверить, и живые данные выглядели как залипшие. */
+let clubsStamp = '';
 
 function clubState(status) {
   if (/приостановл/i.test(status)) return 'off';
@@ -4759,6 +4946,9 @@ function parseClubRows(rows, centerRe) {
       status: (r[5] || '').trim(),
       num: (r[6] || '').trim().replace(/^G-0*/, ''),
       desc: (r[8] || '').replace(/\s+/g, ' ').trim(),
+      kis: (r[7] || '').trim(),
+      resp: (r[9] || '').trim(),
+      note: (r[10] || '').replace(/\s+/g, ' ').trim(),
     }));
 }
 function clubsCsvUrl(sheet) {
@@ -4774,8 +4964,10 @@ async function loadClubs() {
     if (list.length) { clubs = list; live = true; }
   } catch (e) { /* реестр чужой: его недоступность не считается сбоем портала */ }
   clubsFromSeed = !live;
+  if (live) clubsStamp = nowHM();
   if (clubsFromSeed) clubs = DEFAULT_CLUBS.map(r =>
-    ({ name: r[0], dir: r[1], status: r[2], num: r[3], desc: r[4] }));
+    ({ name: r[0], dir: r[1], status: r[2], num: r[3], desc: r[4],
+       kis: r[5] || '', resp: r[6] || '', note: r[7] || '' }));
   renderClubs();
 }
 
@@ -4784,7 +4976,9 @@ function renderClubs() {
   const by = { open: n(c => clubState(c.status) === 'open'), rec: n(c => clubState(c.status) === 'rec'), off: n(c => clubState(c.status) === 'off') };
 
   document.getElementById('clubsCount').textContent = clubWord(clubs.length);
-  document.getElementById('clubsMeta').textContent = clubsFromSeed ? 'встроенный список' : 'из реестра ЦАО';
+  document.getElementById('clubsMeta').textContent = clubsFromSeed
+    ? 'встроенный список — реестр недоступен'
+    : 'из реестра ЦАО' + (clubsStamp ? ', прочитан в ' + clubsStamp : '');
   document.getElementById('clubsLink').href =
     'https://docs.google.com/spreadsheets/d/' + CLUBS_SHEET_ID + '/edit?gid=' + CLUBS_GID;
 
@@ -4811,16 +5005,30 @@ function renderClubs() {
   const list = clubs.filter(c =>
     (!clubDir || c.dir === clubDir) && (!clubSt || clubState(c.status) === clubSt));
 
-  /* Описание клуба ушло в подсказку: плитка держит имя, направление и номер,
-     иначе сорок две карточки с текстом превращаются в стену. */
-  document.getElementById('clubsGrid').innerHTML = list.map(c =>
-    '<a class="club" href="' + clubGroupUrl(c.num) + '" target="_blank" rel="noopener" title="' +
+  /* Описание остаётся в подсказке — сорок три карточки с текстом
+     превращаются в стену. А вот статус словами, статус в КИС,
+     ответственный и комментарий нужны на виду: именно их правят в листе. */
+  const ST_LBL = { open: 'Открытый', rec: 'По записи', off: 'Набор приостановлен' };
+  document.getElementById('clubsGrid').innerHTML = list.map(c => {
+    const st = clubState(c.status);
+    /* «Приступила к занятиям» — норма у 42 из 43: в тег выносим только
+       отклонение, иначе одинаковая плашка на каждой карточке. */
+    const kisOdd = c.kis && !/приступила/i.test(c.kis);
+    return '<a class="club" href="' + clubGroupUrl(c.num) + '" target="_blank" rel="noopener" title="' +
       esc(c.status + (c.desc ? ' — ' + c.desc : '')) + '">' +
-      '<span class="st ' + clubState(c.status) + '"></span>' +
+      '<span class="st ' + st + '"></span>' +
       '<span class="club-body">' +
         '<span class="club-name">' + esc(c.name) + '</span>' +
         '<span class="club-meta"><span class="dir">' + esc(c.dir) + '</span>' + esc(c.num) + '</span>' +
-      '</span></a>').join('') ||
+        '<span class="club-tags">' +
+          '<span class="ct ct-' + st + '">' + (ST_LBL[st] || esc(c.status)) + '</span>' +
+          (kisOdd ? '<span class="ct ct-kis" title="статус группы в КИС МД">' + esc(c.kis) + '</span>' : '') +
+          (c.resp ? '<span class="ct ct-who" title="ответственный сотрудник">' + esc(c.resp) + '</span>' : '') +
+        '</span>' +
+        (c.note ? '<span class="club-note"><svg viewBox="0 0 16 16" aria-hidden="true">' +
+          '<path d="M8 1.5 15 14H1z"/></svg>' + esc(c.note) + '</span>' : '') +
+      '</span></a>';
+  }).join('') ||
     '<div class="task-empty">Под этот выбор клубов нет.</div>';
 
   document.getElementById('clubsShown').textContent =
@@ -5233,7 +5441,7 @@ function mdState(raw) {
   if (/приступила|заняти/.test(t)) return "work";
   return "other";
 }
-const MD_LBL = { work: "работает", open: "идёт набор", pause: "приостановлена",
+const MD_LBL = { work: "занимается", open: "идёт набор", pause: "на паузе",
   closed: "прекращена", done: "завершена", other: "—" };
 const MD_ORDER = ["work", "open", "pause", "closed", "done"];
 
@@ -5574,29 +5782,53 @@ function renderSupHero() {
   const box = document.getElementById("supHero");
   if (!box) return;
   const all = mdGroups.length;
-  /* Три цвета брендбука: зелёный, бирюзовый, розовый. */
+  /* Разные семьи брендбука: зелёный / малиновый / серый. Оттенки одной
+     семьи на дугах в 7% не различались. */
   const parts = [
-    ["work", "Работают", mdGroups.filter(g => g.st === "work").length, "var(--green)"],
-    ["open", "Идёт набор", mdGroups.filter(g => g.st === "open").length, "var(--teal)"],
-    ["pause", "Приостановлены", mdGroups.filter(g => g.st === "pause").length, "var(--pink)"],
+    ["work", "Занимаются", mdGroups.filter(g => g.st === "work").length, "var(--st-work)"],
+    ["open", "Идёт набор", mdGroups.filter(g => g.st === "open").length, "var(--st-open)"],
+    ["pause", "На паузе", mdGroups.filter(g => g.st === "pause").length, "var(--st-pause)"],
+    ["closed", "Прекращены", mdGroups.filter(g => g.st === "closed").length, "var(--st-closed)"],
+    ["done", "Завершены", mdGroups.filter(g => g.st === "done").length, "var(--st-done)"],
   ].filter(p => p[2]);
   const R = 74, C = 2 * Math.PI * R;
   let off = 0;
   const arcs = parts.map(([k, lbl, n, col]) => {
     const len = C * n / Math.max(1, all);
+    /* Зазор не может быть больше дуги: иначе dasharray уходит в минус,
+       браузер её отбрасывает и заливает всё кольцо одним цветом. */
+    const dash = Math.max(1, len - Math.min(3, len * 0.45));
     const seg = '<circle cx="95" cy="95" r="' + R + '" fill="none" stroke="' + col + '" stroke-width="22"' +
-      ' stroke-dasharray="' + (len - 3) + ' ' + (C - len + 3) + '" stroke-dashoffset="' + (-off) + '" stroke-linecap="butt"></circle>';
+      ' stroke-dasharray="' + dash.toFixed(2) + ' ' + (C - dash).toFixed(2) +
+      '" stroke-dashoffset="' + (-off).toFixed(2) + '" stroke-linecap="butt"></circle>';
     off += len;
     return seg;
   }).join("");
+  /* Полоса в строке легенды: 13 и 14 групп на кольце — две почти
+     одинаковые дуги, а рядом друг с другом их длины сравниваются сразу. */
+  const mx = Math.max(1, ...parts.map(p => p[2]));
+  /* Форма сказуемого зависит от числа: «1 прекращена», «14 на паузе». */
+  const SAY = {
+    work: n => plural(n, "занимается", "занимаются", "занимаются"),
+    open: n => plural(n, "набирает участников", "набирают участников", "набирают участников"),
+    pause: () => "на паузе",
+    closed: n => plural(n, "прекращена", "прекращены", "прекращены"),
+    done: n => plural(n, "завершена", "завершены", "завершены"),
+  };
+  const say = parts.map(([k, lbl, n]) => n + " " + (SAY[k] ? SAY[k](n) : lbl.toLowerCase())).join(", ");
   box.innerHTML =
     '<div class="sup-ring"><svg viewBox="0 0 190 190" aria-hidden="true">' +
       '<circle cx="95" cy="95" r="' + R + '" fill="none" stroke="var(--bg-2)" stroke-width="22"></circle>' + arcs +
     '</svg><span class="mid"><b>' + all + '</b><span>групп</span></span></div>' +
     '<div class="sup-legend">' + parts.map(([k, lbl, n, col]) =>
       '<div class="row"><i style="background:' + col + '"></i>' +
-      '<span class="nm3">' + lbl + '</span><span class="n3">' + n + '</span>' +
-      '<span class="p3">' + Math.round(100 * n / Math.max(1, all)) + '%</span></div>').join("") + "</div>";
+      '<span class="nm3">' + lbl + '</span>' +
+      '<span class="lbar"><i style="width:' + Math.max(2, 100 * n / mx).toFixed(1) +
+        '%;background:' + col + '"></i></span>' +
+      '<span class="n3">' + n + '</span>' +
+      '<span class="p3">' + Math.round(100 * n / Math.max(1, all)) + '%</span></div>').join("") +
+      '<p class="lsay">Из ' + all + ' ' + plural(all, "группы", "групп", "групп") + ' ' + say + '.</p>' +
+    "</div>";
 }
 
 function renderSupDays() {
@@ -6416,10 +6648,10 @@ async function refreshAll(manual) {
     loadPartners(),
     loadData().then(data => { items = data; render(document.getElementById('search').value); return true; }),
   ]);
-  loadLinks();
-  loadClubs();
-  loadGarden();
-  loadPbdays();
+  /* Эти загрузки раньше не дожидались: первый проход идёт из кэша,
+     второй — из сети, и без await они перекрывались. Клубы могли
+     остаться нарисованными по кэшу. */
+  await Promise.allSettled([loadLinks(), loadClubs(), loadGarden(), loadPbdays()]);
   /* Лист «МД» перечитываем только когда реестр уже открывали: иначе
      каждый визит тянул бы 95 КБ ради раздела, в который не заходили. */
   if (mdLoaded) loadMd();
