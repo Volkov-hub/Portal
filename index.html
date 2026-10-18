@@ -265,13 +265,6 @@
   .brand:hover .brand-wolf { stroke: var(--accent); }
   .brand b { font-size: var(--fs-md); font-weight: 800; letter-spacing: -.01em; }
   .brand small { display: block; font-size: var(--fs-2xs); font-weight: 700; color: var(--ink-mute); letter-spacing: .06em; text-transform: uppercase; }
-  .nav { display: flex; gap: 4px; margin-left: 6px; }
-  .nav a {
-    text-decoration: none; color: var(--ink-soft); font-weight: 700; font-size: var(--fs-sm);
-    padding: 8px 12px; border-radius: 10px; transition: background .15s, color .15s;
-  }
-  .nav a:hover { background: var(--bg); color: var(--ink); }
-  .nav a.on { background: var(--brand-soft); color: var(--brand-dark); }
   .topbar-tools { margin-left: auto; display: flex; align-items: center; gap: 8px; }
   .sync { font-size: var(--fs-xs); color: var(--ink-mute); display: flex; align-items: center; gap: 6px; white-space: nowrap; }
   .sync .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px var(--green-soft); }
@@ -411,6 +404,9 @@
   .cat-head h2 { font-family: var(--font); font-size: calc(var(--fs-2xl) + 4px); font-weight: 600;
     letter-spacing: -.025em; }
   .cat-head .count { font-size: var(--fs-xs); font-weight: 800; color: var(--green-dark); background: var(--green-soft); border-radius: 999px; padding: 3px 10px; }
+  /* Одна строка под заголовком: что это за раздел и что в нём делать. */
+  .cat-lead { margin: -6px 0 18px; max-width: 72ch; font-size: var(--fs-md); font-weight: 500;
+    line-height: 1.5; color: var(--ink-soft); }
   .cat-head .meta { margin-left: auto; font-size: var(--fs-sm); color: var(--ink-soft); }
   .dash-tools { margin-left: auto; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: var(--fs-sm); color: var(--ink-soft); }
   .dash-tools a { color: var(--green-dark); font-weight: 700; text-decoration: none; }
@@ -587,7 +583,9 @@
 
   /* ---------- Дни рождения ---------- */
   .bday-card { padding: 14px 16px; }
-  .side-head { font-size: var(--fs-md); font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+  /* подзаголовки блоков внутри разделов — на ступень крупнее */
+  .side-head { font-size: var(--fs-lg); font-weight: 800; letter-spacing: -.01em; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 8px; }
   .side-head .tools { margin-left: auto; display: flex; gap: 6px; }
   .bday-row { display: flex; align-items: baseline; gap: 10px; padding: 8px 0; font-size: var(--fs-sm); }
   .bday-row + .bday-row { border-top: 1px solid var(--line-soft); }
@@ -658,6 +656,43 @@
 
   /* ---------- Быстрый доступ ---------- */
   .links-card { padding: 14px 16px; }
+  /* ---------- Быстрый доступ: плитки ---------- */
+  .lk-tools { display: flex; gap: 10px; margin-bottom: 16px; }
+  .lk-tools .pf-search { max-width: 520px; min-height: 50px; border-radius: 14px; padding: 0 16px; }
+  .lk-tools .pf-search .i { width: 20px; height: 20px; }
+  .lk-tools input { font-size: var(--fs-md); }
+  .lk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); gap: 12px; }
+  .lk-item { position: relative; min-width: 0; }
+  .lk-tile { display: flex; align-items: center; gap: 14px; min-height: 84px; height: 100%;
+    padding: 14px 44px 14px 14px; border-radius: 18px; background: var(--card); color: var(--ink);
+    text-decoration: none; box-shadow: var(--shadow); border: 1.5px solid transparent;
+    transition: transform .15s var(--ease), border-color .15s, box-shadow .15s; }
+  a.lk-tile:hover { border-color: var(--brand-line); transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+  a.lk-tile:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+  .lk-ic { flex: none; width: 48px; height: 48px; border-radius: 15px; display: grid; place-items: center; }
+  .lk-ic .i { width: 24px; height: 24px; }
+  /* шесть цветов брендбука по кругу — соседние плитки не сливаются */
+  .lk-ic.t0 { background: var(--brand-soft-2); color: var(--brand); }
+  .lk-ic.t1 { background: var(--green-soft); color: var(--green-ink); }
+  .lk-ic.t2 { background: var(--teal-soft); color: var(--teal-ink); }
+  .lk-ic.t3 { background: var(--amber-soft); color: var(--amber-ink); }
+  .lk-ic.t4 { background: var(--brand-soft); color: var(--brand-dark); }
+  .lk-ic.t5 { background: var(--grey-soft); color: var(--grey-ink); }
+  .lk-txt { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .lk-txt b { font-size: var(--fs-md); font-weight: 700; line-height: 1.25; overflow-wrap: anywhere; }
+  .lk-txt small { font-size: var(--fs-xs); color: var(--ink-soft); line-height: 1.35; }
+  .lk-num { font-size: var(--fs-xs); font-weight: 700; color: var(--ink-mute); font-variant-numeric: tabular-nums; }
+  .lk-go { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-size: 18px;
+    font-weight: 700; color: var(--ink-mute); transition: color .15s; pointer-events: none; }
+  .lk-item:hover .lk-go { color: var(--brand); }
+  .lk-acts { position: absolute; right: 8px; top: 8px; display: flex; gap: 4px; opacity: 0; transition: opacity .15s; }
+  .lk-item:hover .lk-acts, .lk-item:focus-within .lk-acts { opacity: 1; }
+  .lk-item:hover .lk-go { opacity: 0; }
+  .lk-acts button { width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--line);
+    background: var(--card); color: var(--ink-soft); cursor: pointer; font-size: var(--fs-sm); }
+  .lk-acts button:hover { border-color: var(--brand); color: var(--brand); }
+  /* на телефоне наведения нет — кнопки правки видны всегда, стрелка уходит */
+  @media (hover: none) { .lk-acts { opacity: 1; } .lk-go { display: none; } }
   .links-table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
   .links-table th { text-align: left; font-size: var(--fs-2xs); font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-mute); padding: 6px 0; border-bottom: 1px solid var(--line); }
   .links-table td { padding: 9px 8px; border-bottom: 1px solid var(--line-soft); vertical-align: middle; }
@@ -881,11 +916,20 @@
     width: 100%; box-sizing: border-box;
     max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
   .tabbar::-webkit-scrollbar { display: none; }
+  /* Названия разделов крупнее: 17 px и иконка 20 px — пункт меню
+     находится взглядом, а не чтением. Высота 46 px — под палец и мышь. */
   .tabbar button { flex: none; border: 0; border-bottom: 2px solid transparent; background: none;
-    color: var(--ink-soft); font: 700 var(--fs-sm) var(--font); padding: 7px 12px 8px;
+    color: var(--ink-soft); font: 700 var(--fs-md) var(--font); padding: 0 15px; min-height: 46px;
     border-radius: 999px; cursor: pointer; white-space: nowrap;
-    display: inline-flex; align-items: center; gap: 7px;
-    transition: color .15s, border-color .15s; }
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: color .15s, background .15s, border-color .15s; }
+  .tabbar button .i { width: 20px; height: 20px; }
+  .tabbar button:not(.on):hover { background: var(--card); color: var(--ink); }
+  @media (max-width: 1240px) {
+    .tabbar button { padding: 0 12px; font-size: var(--fs-sm); gap: 7px; }
+    .tabbar button .i { width: 18px; height: 18px; }
+  }
+
   /* Карточки проявляются волной, а не все разом: глаз успевает
      заметить, что блок обновился. */
   @keyframes riseIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
@@ -1137,23 +1181,221 @@
   .mdt-foot { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 10px;
     font-size: var(--fs-2xs); color: var(--ink-mute); font-weight: 600; }
 
-  /* Узкий экран: таблица разворачивается в карточки, каждое поле со своей
-     подписью. Девять колонок на телефоне нечитаемы в любом исполнении. */
+  /* ---------- Реестр групп: главное в разделе ---------- */
+  .rg-box { position: relative; isolation: isolate; overflow: hidden; margin-bottom: 18px;
+    padding: 22px 24px 20px; border-radius: 24px; box-shadow: var(--shadow);
+    background: linear-gradient(120deg, var(--brand-soft) 0%, var(--card) 46%, var(--card) 68%, var(--green-soft) 135%); }
+  /* годовые кольца брендбука в углу — та же фактура, что по краям страницы */
+  .rg-box::before { content: ""; position: absolute; right: -96px; top: -120px; width: 340px; height: 340px; z-index: -1;
+    background: url(assets/ring-green.png) center / contain no-repeat; opacity: .16; transform: rotate(18deg);
+    pointer-events: none; }
+  .rg-top { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+  .rg-ic { flex: none; width: 50px; height: 50px; border-radius: 16px; display: grid; place-items: center;
+    background: var(--brand); color: var(--on-brand); box-shadow: 0 8px 18px rgba(168,29,55,.25); }
+  .rg-ic .i { width: 25px; height: 25px; }
+  .rg-top h3 { font-size: var(--fs-xl); font-weight: 700; letter-spacing: -.02em; line-height: 1.15; }
+  .rg-top small { display: block; margin-top: 4px; font-size: var(--fs-xs); font-weight: 600; color: var(--ink-soft); }
+  .rg-search { display: flex; align-items: center; gap: 12px; height: 60px; padding: 0 9px 0 18px;
+    border-radius: 17px; background: var(--card); border: 1.5px solid var(--line);
+    box-shadow: 0 6px 18px rgba(43,43,46,.06); transition: border-color .15s, box-shadow .15s; }
+  .rg-search:focus-within { border-color: var(--brand); box-shadow: 0 0 0 4px rgba(168,29,55,.12); }
+  .rg-search > .i { width: 23px; height: 23px; color: var(--brand); }
+  .rg-search input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: none;
+    color: var(--ink); font: 600 18px var(--font); }
+  .rg-search input::placeholder { color: var(--ink-mute); font-weight: 500; }
+  .rg-search input::-webkit-search-cancel-button { -webkit-appearance: none; display: none; }
+  .rg-clear { flex: none; width: 42px; height: 42px; border-radius: 12px; border: 0; cursor: pointer;
+    background: var(--bg-2); color: var(--ink-soft); display: grid; place-items: center; }
+  .rg-clear[hidden] { display: none; }
+  .rg-clear:hover { color: var(--brand); }
+  .rg-box .reg-chips { margin: 14px 0 0; }
+  .rg-box .reg-chip { height: 40px; padding: 0 15px; border-radius: 999px; font-size: var(--fs-sm); }
+  .rg-box .reg-chip i { width: 10px; height: 10px; border-radius: 50%; }
+  /* компьютер: подписанные списки строкой, кнопки телефона спрятаны */
+  .rg-bar, .rg-panel-back, .rg-panel-head, .rg-panel-foot { display: none; }
+  .rg-panel { margin-top: 14px; }
+  .rg-panel-card { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+  .rg-f { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .rg-f > span { font-size: var(--fs-2xs); font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--ink-soft); }
+  .rg-f select { width: 100%; min-width: 0; height: 46px; padding: 0 10px; border-radius: 12px;
+    border: 1.5px solid var(--line); background: var(--card); color: var(--ink);
+    font: 600 var(--fs-sm) var(--font); cursor: pointer; }
+  .rg-f select:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px rgba(168,29,55,.12); }
+  /* выбранный фильтр подсвечен — видно, какие списки уже сужают реестр */
+  .rg-f select.set { border-color: var(--brand); background: var(--brand-soft); color: var(--brand-dark); }
+  @media (max-width: 1240px) { .rg-panel-card { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .rg-active { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .rg-active:empty { display: none; }
+  .rg-pill { display: inline-flex; align-items: center; gap: 8px; min-height: 38px; padding: 0 7px 0 14px;
+    border: 0; border-radius: 999px; background: var(--ink); color: var(--card); cursor: pointer;
+    font: 600 var(--fs-xs) var(--font); max-width: 100%; }
+  .rg-pill b { font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rg-pill .x { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--card); color: var(--ink); font-size: 11px; }
+  .rg-pill.all { background: none; color: var(--brand); padding: 0 8px; text-decoration: underline;
+    text-underline-offset: 3px; font-weight: 800; }
+
+  /* заголовки таблицы — кнопки сортировки */
+  .mdt thead th { padding: 0; }
+  .th-s { display: flex; align-items: center; gap: 6px; width: 100%; box-sizing: border-box;
+    padding: 12px; border: 0; background: none; cursor: pointer; text-align: left;
+    font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; }
+  .th-s.no { cursor: default; }
+  .th-s i { flex: none; width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent;
+    border-bottom: 5px solid currentColor; opacity: .22; transition: transform .15s, opacity .15s; }
+  button.th-s:hover { color: var(--brand); }
+  button.th-s:hover i { opacity: .6; }
+  .th-s:focus-visible { outline: 2px solid var(--brand); outline-offset: -3px; border-radius: 8px; }
+  .mdt th[aria-sort] .th-s { color: var(--brand-dark); }
+  .mdt th[aria-sort] .th-s i { opacity: 1; }
+  .mdt th[aria-sort="descending"] .th-s i { transform: rotate(180deg); }
+
+  /* дни недели плашками, координатор — с инициалами */
+  .wd { display: inline-grid; place-items: center; min-width: 27px; height: 24px; padding: 0 5px; margin: 0 3px 3px 0;
+    border-radius: 7px; background: var(--brand-soft); color: var(--brand-dark);
+    font-size: 12px; font-weight: 800; letter-spacing: .01em; }
+  .mdt .sch .ln, .gc-when .ln { display: flex; flex-wrap: wrap; align-items: center; }
+  .mdt .sch .ln + .ln { margin-top: 4px; }
+  .mdt .sch .tm, .gc-when .tm { display: block; width: 100%; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .co { display: inline-flex; align-items: center; gap: 7px; min-width: 0; font-weight: 600; }
+  .co .av { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
+    font-size: 10.5px; font-weight: 800; letter-spacing: .02em; }
+  .co .av.t0 { background: var(--brand-soft-2); color: var(--brand-dark); }
+  .co .av.t1 { background: var(--green-soft); color: var(--green-ink); }
+  .co .av.t2 { background: var(--teal-soft); color: var(--teal-ink); }
+  .co .av.t3 { background: var(--amber-soft); color: var(--amber-ink); }
+  .co .av.t4 { background: var(--grey-soft); color: var(--grey-ink); }
+  .mdt a.gid { display: inline-block; padding: 3px 6px; border-radius: 8px; background: var(--bg-2);
+    font-size: 12.5px; white-space: nowrap; letter-spacing: -.01em; }
+
+  /* ---------- карточки групп: планшет и телефон ---------- */
+  .rg-cards { display: none; }
   @media (max-width: 1000px) {
-    .mdt, .mdt tbody, .mdt tr, .mdt td { display: block; width: auto; }
-    .mdt thead { display: none; }   /* подписи полей выводит td::before */
-    .mdt tbody tr { padding: 4px 0; border-bottom: 1px solid var(--line); }
-    .mdt tbody tr:last-child { border-bottom: 0; }
-    .mdt td { border: 0; padding: 4px 14px; display: grid; grid-template-columns: 116px minmax(0, 1fr); gap: 10px; }
-    .mdt td::before { content: attr(data-l); font-size: var(--fs-2xs); font-weight: 700;
-      color: var(--ink-mute); text-transform: uppercase; letter-spacing: .03em; }
-    .mdt td.c-id { border-left: 0; padding-top: 10px; }
-    .mdt td:last-child { padding-bottom: 10px; }
-    .mdt td:empty { display: none; }
-    .mdt .cm { -webkit-line-clamp: 3; }
+    .mdt-wrap { display: none; }
+    .rg-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: start; }
   }
-  @media (max-width: 520px) {
-    .mdt td { grid-template-columns: 1fr; gap: 1px; }
+  .gc { position: relative; min-width: 0; overflow: hidden; display: flex; flex-direction: column; gap: 10px;
+    padding: 15px 16px 15px 20px; border-radius: 18px; background: var(--card); box-shadow: var(--shadow); }
+  .gc::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--line); }
+  .gc.s-work::before { background: var(--st-work); }
+  .gc.s-open::before { background: var(--st-open); }
+  .gc.s-pause::before { background: var(--st-pause); }
+  .gc.s-closed::before { background: var(--st-closed); }
+  .gc.s-done::before { background: var(--st-done); }
+  .gc-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .gc .reg-badge { text-transform: none; letter-spacing: 0; font-size: var(--fs-xs); padding: 4px 10px; }
+  .gc-id { margin-left: auto; padding: 6px 10px; border-radius: 10px; background: var(--bg-2); color: var(--ink);
+    font-size: var(--fs-xs); font-weight: 800; text-decoration: none; font-variant-numeric: tabular-nums; }
+  a.gc-id:active { background: var(--brand-soft); color: var(--brand); }
+  .gc-chat { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center;
+    border: 1px solid var(--line); color: var(--ink-soft); }
+  .gc-chat .i { width: 18px; height: 18px; }
+  .gc-dir { font-size: var(--fs-lg); font-weight: 700; line-height: 1.25; letter-spacing: -.01em; overflow-wrap: anywhere; }
+  .gc-sup { display: flex; align-items: baseline; gap: 8px; margin-top: -4px; font-size: var(--fs-sm);
+    font-weight: 700; color: var(--ink-soft); }
+  .gc-sup i { flex: none; width: 10px; height: 10px; border-radius: 3px; transform: translateY(-1px); }
+  .gc-when { display: flex; flex-direction: column; gap: 6px; }
+  .gc-when .tm { width: auto; margin: 0 0 3px 4px; font-size: var(--fs-sm); }
+  .gc-when .raw { font-size: var(--fs-sm); font-weight: 600; }
+  .gc-info { display: grid; gap: 8px; padding-top: 10px; border-top: 1px solid var(--line); }
+  .gc-info > div { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; align-items: start;
+    font-size: var(--fs-sm); line-height: 1.45; }
+  .gc-info .i { width: 18px; height: 18px; margin-top: 1px; color: var(--ink-mute); }
+  .gc-info small { display: block; font-size: var(--fs-xs); color: var(--ink-soft); }
+  .gc-cm { margin: 0; padding: 10px 12px; border-radius: 12px; background: var(--amber-soft); color: var(--amber-ink);
+    font-size: var(--fs-xs); font-weight: 600; line-height: 1.45; overflow-wrap: anywhere; }
+
+  .gc-link { color: var(--brand); font-weight: 700; text-decoration: none; }
+  .gc-link:hover { text-decoration: underline; }
+
+  /* кнопка «Наверх» */
+  .totop { position: fixed; right: 20px; bottom: 22px; z-index: 85; width: 52px; height: 52px;
+    border-radius: 50%; border: 0; display: grid; place-items: center; cursor: pointer;
+    background: var(--ink); color: var(--card); box-shadow: 0 10px 24px rgba(0,0,0,.22);
+    animation: fadeIn .2s ease; }
+  .totop[hidden] { display: none; }
+  .totop .i { width: 22px; height: 22px; }
+  .totop:hover { background: var(--brand); color: var(--on-brand); }
+  @media (max-width: 760px) { .totop { right: 14px; width: 48px; height: 48px; } }
+
+  /* ---------- свёрнутые блоки: статистика и карточки поставщиков ---------- */
+  .sx { margin-top: 16px; }
+  .sx > summary { list-style: none; display: flex; align-items: center; gap: 14px; min-height: 76px;
+    padding: 14px 20px; border-radius: 20px; background: var(--card); box-shadow: var(--shadow); cursor: pointer;
+    transition: background .15s, box-shadow .15s; }
+  .sx > summary::-webkit-details-marker { display: none; }
+  .sx > summary:hover { box-shadow: var(--shadow-hover); }
+  .sx > summary:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+  .sx-ic { flex: none; width: 48px; height: 48px; border-radius: 15px; display: grid; place-items: center;
+    background: var(--teal-soft); color: var(--teal-ink); }
+  .sx-ic.g { background: var(--green-soft); color: var(--green-ink); }
+  .sx-ic .i { width: 23px; height: 23px; }
+  .sx-t { flex: 1; min-width: 0; }
+  .sx-t b { display: block; font-size: var(--fs-lg); font-weight: 700; letter-spacing: -.01em; }
+  .sx-t small { display: block; margin-top: 3px; font-size: var(--fs-xs); font-weight: 600; color: var(--ink-soft); line-height: 1.4; }
+  .sx-cta { flex: none; font-size: var(--fs-sm); font-weight: 800; color: var(--brand); }
+  .sx-cta::after { content: "Показать"; }
+  .sx[open] .sx-cta::after { content: "Скрыть"; }
+  .sx-chev { flex: none; width: 22px; height: 22px; color: var(--brand); transition: transform .2s; }
+  .sx[open] .sx-chev { transform: rotate(180deg); }
+  .sx-body { padding: 18px 0 4px; animation: riseIn .24s var(--ease); }
+  .sx-body > .sup-h3:first-child { margin-top: 4px; }
+  .sx-note { margin: 0 0 12px; font-size: var(--fs-sm); color: var(--ink-soft); }
+
+  /* ---------- телефон: поиск во всю ширину, две кнопки, лист снизу ---------- */
+  @media (max-width: 760px) {
+    .rg-cards { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+    .rg-box { padding: 16px 14px 14px; border-radius: 20px; }
+    .rg-box::before { width: 240px; height: 240px; right: -80px; top: -90px; }
+    .rg-top { margin-bottom: 12px; gap: 12px; }
+    .rg-ic { width: 42px; height: 42px; border-radius: 13px; }
+    .rg-ic .i { width: 21px; height: 21px; }
+    .rg-top h3 { font-size: var(--fs-lg); }
+    .rg-search { height: 54px; padding-left: 14px; border-radius: 15px; }
+    .rg-search input { font-size: 17px; }
+    /* статусы — одной лентой с прокруткой, а не в три рваных строки */
+    .rg-box .reg-chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x proximity;
+      margin-left: -14px; margin-right: -14px; padding: 0 14px 2px; }
+    .rg-box .reg-chips::-webkit-scrollbar { display: none; }
+    .rg-box .reg-chip { flex: none; scroll-snap-align: start; }
+    .rg-bar { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; margin-top: 12px; }
+    .rg-btn { display: flex; align-items: center; justify-content: center; gap: 8px; min-width: 0; min-height: 50px;
+      padding: 0 10px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--card);
+      color: var(--ink); font: 700 var(--fs-sm) var(--font); cursor: pointer; }
+    .rg-btn .i { flex: none; width: 20px; height: 20px; color: var(--brand); }
+    .rg-btn { justify-content: flex-start; padding: 0 12px; min-height: 56px; }
+    .rg-bt { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; flex: 1; line-height: 1.2; }
+    .rg-bt small { font-size: 12px; font-weight: 700; color: var(--ink-soft); }
+    .rg-bt b { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      font-size: var(--fs-sm); }
+    .rg-btn b { font-weight: 800; color: var(--brand-dark); }
+    .rg-n { flex: none; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; display: grid; place-items: center;
+      background: var(--brand); color: var(--on-brand); font-size: 12px; font-weight: 800; }
+    .rg-n[hidden] { display: none; }
+    .rg-panel { display: none; position: fixed; inset: 0; z-index: 130; margin: 0; }
+    .rg-panel.open { display: block; }
+    .rg-panel-back { display: block; position: absolute; inset: 0; background: rgba(24,16,18,.46); animation: fadeIn .2s ease; }
+    .rg-panel-card { position: absolute; left: 0; right: 0; bottom: 0; grid-template-columns: minmax(0, 1fr); gap: 14px;
+      max-height: 88vh; overflow: auto; padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+      background: var(--card); border-radius: 26px 26px 0 0; box-shadow: 0 -12px 40px rgba(0,0,0,.18);
+      animation: sheetUp .26s var(--ease); }
+    .rg-panel-head { display: flex; align-items: center; justify-content: space-between; }
+    .rg-panel-head b { font-size: var(--fs-xl); font-weight: 700; letter-spacing: -.02em; }
+    .rg-f > span { font-size: var(--fs-xs); }
+    .rg-f select { height: 54px; padding: 0 12px; font-size: 16px; border-radius: 14px; }
+    .rg-panel-foot { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; position: sticky; bottom: -16px;
+      margin: 4px -16px -16px; padding: 12px 16px calc(16px + env(safe-area-inset-bottom, 0px)); background: var(--card);
+      border-top: 1px solid var(--line); }
+    .rg-reset { min-height: 54px; padding: 0 18px; border-radius: 14px; border: 1.5px solid var(--line);
+      background: var(--card); color: var(--ink); font: 700 var(--fs-md) var(--font); cursor: pointer; }
+    .rg-apply { min-height: 54px; border-radius: 14px; border: 0; background: var(--brand); color: var(--on-brand);
+      font: 800 var(--fs-md) var(--font); cursor: pointer; }
+    .rg-active { margin-top: 10px; }
+    .sx-cta { display: none; }
+    .sx > summary { padding: 12px 14px; gap: 12px; min-height: 70px; }
+    .sx-ic { width: 42px; height: 42px; border-radius: 13px; }
+    .sx-t b { font-size: var(--fs-md); }
   }
   /* ---------- Поставщики ----------
      Три слоя: сводка числами, нагрузка координаторов, карточки
@@ -1407,16 +1649,81 @@
   /* Активная вкладка залита фирменным: на пастельном фоне это
      единственное место с полной яркостью, и его видно сразу. */
   .tabbar button.on { color: #fff; background: var(--brand); border-bottom-color: transparent;
-    border-radius: 999px; padding-left: 15px; padding-right: 15px; }
+    border-radius: 999px; box-shadow: 0 6px 16px rgba(168,29,55,.22); }
   :root[data-theme="dark"] .tabbar button.on { color: #141211; }
-  body.view-partners .tabbar-wrap { display: none; }
+  /* «Партнёры» теперь обычная вкладка: панель остаётся на месте,
+     чтобы вернуться в любой раздел одним нажатием. */
+
+  /* ---------- Нижнее меню (телефон) ---------- */
+  .bnav { display: none; }
+  .nsheet { position: fixed; inset: 0; z-index: 140; }
+  .nsheet[hidden] { display: none; }
+  .nsheet-back { position: absolute; inset: 0; background: rgba(24,16,18,.46);
+    animation: fadeIn .2s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes sheetUp { from { transform: translateY(40px); opacity: .4; } to { transform: none; opacity: 1; } }
+  .nsheet-card { position: absolute; left: 0; right: 0; bottom: 0; max-height: 88vh; overflow: auto;
+    background: var(--card); border-radius: 26px 26px 0 0; box-shadow: 0 -12px 40px rgba(0,0,0,.18);
+    padding: 8px 16px calc(18px + env(safe-area-inset-bottom, 0px));
+    animation: sheetUp .26s var(--ease); }
+  .nsheet-grip { width: 44px; height: 5px; border-radius: 3px; background: var(--line); margin: 4px auto 12px; }
+  .nsheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .nsheet-head b { font-size: var(--fs-xl); font-weight: 700; letter-spacing: -.02em; }
+  .nsheet-x { width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--bg-2);
+    color: var(--ink); display: grid; place-items: center; cursor: pointer; }
+  .nsheet-x .i { width: 20px; height: 20px; }
+  .nsheet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .nsheet-grid button { display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+    min-height: 118px; padding: 14px; border-radius: 18px; border: 1.5px solid var(--line);
+    background: var(--bg-3); color: var(--ink); font: inherit; text-align: left; cursor: pointer;
+    transition: border-color .15s, background .15s, transform .15s; }
+  .nsheet-grid button:active { transform: scale(.98); }
+  .nsheet-grid button .ic { width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center;
+    margin-bottom: 4px; background: var(--brand-soft); color: var(--brand); }
+  .nsheet-grid button .ic .i { width: 22px; height: 22px; }
+  .nsheet-grid button b { font-size: var(--fs-md); font-weight: 800; line-height: 1.2; }
+  .nsheet-grid button small { font-size: var(--fs-2xs); font-weight: 600; line-height: 1.35; color: var(--ink-soft); }
+  .nsheet-grid button.on { border-color: var(--brand); background: var(--brand-soft); }
+  /* у каждого раздела свой цвет брендбука — плитку находишь, не читая */
+  .nsheet-grid .c-amber .ic { background: var(--amber-soft); color: var(--amber-ink); }
+  .nsheet-grid .c-green .ic { background: var(--green-soft); color: var(--green-ink); }
+  .nsheet-grid .c-teal .ic { background: var(--teal-soft); color: var(--teal-ink); }
+  .nsheet-grid .c-pink .ic { background: var(--brand-soft-2); color: var(--brand-dark); }
+  .nsheet-grid .c-grey .ic { background: var(--grey-soft); color: var(--grey-ink); }
+  .nsheet-ext { display: grid; gap: 8px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .nsheet-ext a { display: flex; align-items: center; gap: 12px; min-height: 50px; padding: 0 14px;
+    border-radius: 14px; background: var(--bg-2); color: var(--ink); text-decoration: none;
+    font-size: var(--fs-md); font-weight: 700; }
+  .nsheet-ext a .i { width: 20px; height: 20px; color: var(--brand); }
+
+  /* До 1100 px восемь вкладок в ряд не помещаются — меню переезжает вниз. */
+  @media (max-width: 1100px) {
+    .tabbar-wrap { display: none; }
+    .bnav { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); position: fixed;
+      left: 0; right: 0; bottom: 0; z-index: 90; background: var(--topbar-bg);
+      -webkit-backdrop-filter: blur(16px) saturate(1.3); backdrop-filter: blur(16px) saturate(1.3);
+      border-top: 1px solid var(--line); box-shadow: 0 -8px 24px rgba(43,43,46,.08);
+      padding: 6px max(4px, calc(50% - 340px)) calc(6px + env(safe-area-inset-bottom, 0px)); }
+    .bnav button { display: flex; flex-direction: column; align-items: center; gap: 3px;
+      min-height: 56px; padding: 4px 0 2px; border: 0; background: none; cursor: pointer;
+      font: 700 12px/1.15 var(--font); color: var(--ink-soft); letter-spacing: -.01em; min-width: 0; }
+    .bnav button > span:last-child { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    /* Активный пункт — «таблетка» под иконкой, как в системных меню телефона. */
+    .bnav .ic { width: 58px; height: 32px; border-radius: 999px; display: grid; place-items: center;
+      transition: background .2s; }
+    .bnav .ic .i { width: 23px; height: 23px; }
+    .bnav button.on { color: var(--brand-dark); }
+    .bnav button.on .ic { background: var(--brand-soft-2); color: var(--brand); }
+    body { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
+    .toasts { bottom: calc(86px + env(safe-area-inset-bottom, 0px)) !important; }
+    .totop { bottom: calc(90px + env(safe-area-inset-bottom, 0px)); }
+  }
   [data-pane] { display: none; }
   [data-pane].on { display: block; }
   @media (max-width: 760px) {
     .tabbar { padding: 0 14px; }
     .topbar .btn-green span.t { display: none; }
     .topbar .btn-green { padding: 9px 12px; }
-    .nav a.hide-sm { display: none; }
   }
 
   /* ---------- Грядка долголетия ---------- */
@@ -1547,6 +1854,8 @@
 
   /* ---------- Подвал ---------- */
   footer { border-top: 1px solid var(--line); background: var(--card); padding: 22px 20px 28px; }
+  /* место под кнопку «Наверх»: внизу страницы она закрывала ссылку подвала */
+  footer { padding-bottom: 88px; }
   .foot-inner { max-width: var(--maxw); margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; font-size: var(--fs-sm); color: var(--ink-soft); }
   .foot-inner .links { display: flex; gap: 18px; flex-wrap: wrap; }
   .foot-inner a, .foot-inner button.linklike { color: var(--brand); font: inherit; font-weight: 700; text-decoration: none; background: none; border: none; cursor: pointer; padding: 0; }
@@ -1641,7 +1950,6 @@
      страница ехала вбок. Текст синхронизации и дубль «Задачи» уходят раньше. */
   @media (max-width: 920px) {
     .sync .t { display: none; }
-    .nav a.hide-sm { display: none; }
   }
   .topbar-inner, .topbar-tools, .brand { min-width: 0; }
 
@@ -1655,13 +1963,15 @@
     :root { --topbar-h: 56px; }   /* липкая панель вкладок встаёт вплотную */
     .topbar-inner { gap: 8px; }
     .brand small { display: none; }
-    .nav a { padding: 7px 9px; font-size: var(--fs-sm); }
     .sync span.t { display: none; }
     .hero { padding: 18px 16px 16px; border-radius: 20px; gap: 16px; }
     .hero .kicker { margin-bottom: 10px; padding: 5px 11px; font-size: var(--fs-2xs); }
     .hero .daily { flex-direction: column; gap: 4px; padding: 10px 13px; margin-top: 12px; }
     .hero .daily span:last-child { font-size: var(--fs-sm); line-height: 1.35; }
     .hero-side { grid-template-columns: 1fr 1fr; gap: 8px; }
+    /* Первый экран телефона — содержание, а не шапка: плашка и
+       кнопки сервисов уходят, сервисы есть в листе «Ещё». */
+    .hero .kicker, .hero .quick, .hero-mark { display: none; }
     .kpi { padding: 11px 13px; border-radius: 13px; }
     .kpi .v { font-size: var(--fs-xl); }
     .kpi .l { margin-top: 3px; font-size: var(--fs-2xs); }
@@ -1681,8 +1991,6 @@
     .topbar-inner { padding: 0 12px; gap: 8px; }
     .brand span { display: none; }
     .sync { display: none; }
-    .nav { margin-left: 0; gap: 2px; }
-    .nav a { padding: 7px 8px; font-size: var(--fs-sm); }
     .topbar-tools { gap: 6px; }
   }
   @media (max-width: 480px) {
@@ -1696,7 +2004,6 @@
     .search-box kbd { display: none; }
     .tile .val { font-size: var(--fs-2xl); }
     .hero .btn-light { padding: 8px 11px; font-size: var(--fs-sm); }
-    .nav a.hide-sm { display: none; }
     .topbar .btn-green span.t { display: none; }
     .sync .t { display: none; }
     .topbar-inner { padding: 0 10px; gap: 6px; }
@@ -1741,6 +2048,11 @@
   <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.4 2.6 5.4 5.9.8-4.3 4.1 1.1 5.9L12 16.8 6.7 19.6l1.1-5.9L3.5 9.6l5.9-.8z"/></symbol>
   <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></symbol>
   <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></symbol>
+  <symbol id="i-sort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16M3.5 16.5 7 20l3.5-3.5M17 20V4M13.5 7.5 17 4l3.5 3.5"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5.5 11.5 12 5l6.5 6.5"/></symbol>
   <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6 6 18"/></symbol>
 </svg>
 <div id="gate" class="gate">
@@ -1778,11 +2090,6 @@
       </svg>
       <span><b>ЦМД Пресненский</b><small>рабочий портал</small></span>
     </a>
-    <nav class="nav">
-      <a href="#" data-nav="main" id="navMain" class="on">Главная</a>
-      <a href="#partners" data-nav="partners" id="navPartners">Партнёры</a>
-      <a href="#tasksSec" class="hide-sm" data-nav="main" data-scroll="tasksSec">Задачи</a>
-    </nav>
     <div class="topbar-tools">
       <span class="sync" id="syncState" title="Данные обновляются автоматически: при открытии, каждые 10 минут и при возврате на вкладку"><span class="dot"></span><span class="t" id="syncText">загрузка…</span></span>
       <button class="btn btn-ghost btn-icon theme-btn" id="themeBtn" type="button" title="Тёмная тема" aria-label="Переключить тему" aria-pressed="false"><svg class="i"><use href="#i-moon"/></svg></button>
@@ -1814,12 +2121,10 @@
         <span id="dailyText"></span>
       </div>
       <div class="quick">
+        <!-- Только внешние сервисы: разделы самого портала — в панели ниже. -->
         <a class="btn btn-light btn-sm" href="https://my.mts-link.ru/j/93021939/551741639/stream-new/1048204767" target="_blank" rel="noopener"><svg class="i"><use href="#i-chat"/></svg> Искренний сервис</a>
-        <a class="btn btn-light btn-sm" href="#partners" data-nav="partners"><svg class="i"><use href="#i-map"/></svg> Карта партнёров</a>
-        <a class="btn btn-light btn-sm" href="#tasksSec" data-scroll="tasksSec"><svg class="i"><use href="#i-calendar"/></svg> Задачи</a>
-        <a class="btn btn-light btn-sm" href="#linksSec" data-scroll="linksSec"><svg class="i"><use href="#i-bolt"/></svg> Быстрый доступ</a>
-        <a class="btn btn-light btn-sm" href="https://docs.google.com/spreadsheets/d/1AaZjdwpx-oCdiglZxg1Wszod0xqQXOXU0cppJuOguhY/edit" target="_blank" rel="noopener"><svg class="i"><use href="#i-chart"/></svg> Посещаемость</a>
         <a class="btn btn-light btn-sm" href="https://owa.mos.ru/owa" target="_blank" rel="noopener"><svg class="i"><use href="#i-mail"/></svg> Почта</a>
+        <a class="btn btn-light btn-sm" href="https://docs.google.com/spreadsheets/d/1AaZjdwpx-oCdiglZxg1Wszod0xqQXOXU0cppJuOguhY/edit" target="_blank" rel="noopener"><svg class="i"><use href="#i-link"/></svg> Таблица посещаемости</a>
       </div>
     </div>
     <div class="hero-side">
@@ -1835,12 +2140,50 @@
 <div class="tabbar-wrap" id="tabbarWrap">
 <nav class="tabbar" id="mainTabs" aria-label="Разделы портала">
   <button type="button" data-tab="tasks" class="on" aria-selected="true"><svg class="i"><use href="#i-calendar"/></svg><span>Задачи</span></button>
+  <button type="button" data-tab="links" aria-selected="false"><svg class="i"><use href="#i-bolt"/></svg><span>Быстрый доступ</span></button>
+  <button type="button" data-tab="registry" aria-selected="false"><svg class="i"><use href="#i-building"/></svg><span>Поставщики</span></button>
   <button type="button" data-tab="att" aria-selected="false"><svg class="i"><use href="#i-chart"/></svg><span>Посещаемость</span></button>
   <button type="button" data-tab="garden" aria-selected="false"><svg class="i"><use href="#i-sprout"/></svg><span>Грядка</span></button>
   <button type="button" data-tab="clubs" aria-selected="false"><svg class="i"><use href="#i-ticket"/></svg><span>Клубы</span></button>
-  <button type="button" data-tab="registry" aria-selected="false"><svg class="i"><use href="#i-building"/></svg><span>Поставщики</span></button>
-  <button type="button" data-tab="sections" aria-selected="false"><svg class="i"><use href="#i-grid"/></svg><span>Все разделы</span></button>
+  <button type="button" data-tab="partners" aria-selected="false"><svg class="i"><use href="#i-map"/></svg><span>Партнёры</span></button>
+  <button type="button" data-tab="sections" aria-selected="false"><svg class="i"><use href="#i-grid"/></svg><span>Таблицы и сервисы</span></button>
 </nav>
+</div>
+
+<!-- Телефон: нижнее меню под большой палец. Четыре частых раздела и «Ещё»
+     с полным списком — в панели сверху на узком экране было видно три
+     вкладки из шести, остальные прятались за прокруткой вбок. -->
+<nav class="bnav" id="bottomNav" aria-label="Разделы портала">
+  <button type="button" data-tab="tasks"><span class="ic"><svg class="i"><use href="#i-calendar"/></svg></span><span>Задачи</span></button>
+  <button type="button" data-tab="links"><span class="ic"><svg class="i"><use href="#i-bolt"/></svg></span><span>Доступ</span></button>
+  <button type="button" data-tab="registry"><span class="ic"><svg class="i"><use href="#i-building"/></svg></span><span>Поставщики</span></button>
+  <button type="button" data-tab="garden"><span class="ic"><svg class="i"><use href="#i-sprout"/></svg></span><span>Грядка</span></button>
+  <button type="button" id="bnavMore" aria-haspopup="dialog" aria-expanded="false" aria-controls="navSheet"><span class="ic"><svg class="i"><use href="#i-menu"/></svg></span><span>Ещё</span></button>
+</nav>
+<button type="button" class="totop" id="toTop" aria-label="Наверх, к началу раздела" title="Наверх" hidden>
+  <svg class="i"><use href="#i-up"/></svg></button>
+<div class="nsheet" id="navSheet" hidden>
+  <div class="nsheet-back" data-close></div>
+  <div class="nsheet-card" role="dialog" aria-modal="true" aria-labelledby="navSheetTitle">
+    <div class="nsheet-grip" aria-hidden="true"></div>
+    <div class="nsheet-head"><b id="navSheetTitle">Разделы портала</b>
+      <button type="button" class="nsheet-x" data-close aria-label="Закрыть"><svg class="i"><use href="#i-close"/></svg></button></div>
+    <div class="nsheet-grid">
+      <button type="button" data-tab="tasks" class="c-brand"><span class="ic"><svg class="i"><use href="#i-calendar"/></svg></span><b>Задачи</b><small>Дела команды и дни рождения</small></button>
+      <button type="button" data-tab="links" class="c-amber"><span class="ic"><svg class="i"><use href="#i-bolt"/></svg></span><b>Быстрый доступ</b><small>Группы в КИС МД в один клик</small></button>
+      <button type="button" data-tab="registry" class="c-green"><span class="ic"><svg class="i"><use href="#i-building"/></svg></span><b>Поставщики</b><small>Реестр групп с поиском</small></button>
+      <button type="button" data-tab="att" class="c-teal"><span class="ic"><svg class="i"><use href="#i-chart"/></svg></span><b>Посещаемость</b><small>Цифры за день и месяц</small></button>
+      <button type="button" data-tab="garden" class="c-green"><span class="ic"><svg class="i"><use href="#i-sprout"/></svg></span><b>Грядка</b><small>Подбор направления и прозвоны</small></button>
+      <button type="button" data-tab="clubs" class="c-pink"><span class="ic"><svg class="i"><use href="#i-ticket"/></svg></span><b>Клубы</b><small>Клубы центра и набор</small></button>
+      <button type="button" data-tab="partners" class="c-teal"><span class="ic"><svg class="i"><use href="#i-map"/></svg></span><b>Партнёры</b><small>Карта партнёров района</small></button>
+      <button type="button" data-tab="sections" class="c-grey"><span class="ic"><svg class="i"><use href="#i-grid"/></svg></span><b>Таблицы и сервисы</b><small>Все рабочие таблицы, почта, диски</small></button>
+    </div>
+    <div class="nsheet-ext">
+      <a href="https://my.mts-link.ru/j/93021939/551741639/stream-new/1048204767" target="_blank" rel="noopener"><svg class="i"><use href="#i-chat"/></svg>Искренний сервис</a>
+      <a href="https://owa.mos.ru/owa" target="_blank" rel="noopener"><svg class="i"><use href="#i-mail"/></svg>Почта</a>
+      <a href="https://docs.google.com/spreadsheets/d/1AaZjdwpx-oCdiglZxg1Wszod0xqQXOXU0cppJuOguhY/edit" target="_blank" rel="noopener"><svg class="i"><use href="#i-link"/></svg>Таблица посещаемости</a>
+    </div>
+  </div>
 </div>
 
 <div class="search-wrap" data-pane="sections">
@@ -1872,6 +2215,7 @@
         <a id="tasksLink" href="#" target="_blank" rel="noopener" style="display:none">таблица ↗</a>
       </span>
     </div>
+    <p class="cat-lead">Дела команды на сегодня и ближайшие дни, а рядом — дни рождения сотрудников и участников.</p>
     <div class="task-wrap">
       <div>
         <div class="task-state" id="taskState"></div>
@@ -1916,16 +2260,22 @@
         </div>
       </div>
     </div>
+  </section>
 
-    <div class="task-card links-card" id="linksSec">
-      <div class="side-head">⚡ Быстрый доступ
-        <span class="tools">
-          <button class="btn btn-sm add" id="linkAdd" title="Добавить группу">+ группа</button>
-        </span>
-      </div>
-      <div id="linksBody"><div class="task-empty">Загружаю…</div></div>
-      <div class="task-state" id="linksState"></div>
+  <section class="cat reveal" id="linksSec" data-pane="links">
+    <div class="cat-head">
+      <h2>Быстрый доступ</h2>
+      <span class="count" id="linksCount"></span>
+      <span class="dash-tools">
+        <button class="add" id="linkAdd" title="Добавить группу">+ группа</button>
+      </span>
     </div>
+    <p class="cat-lead">Группы в КИС МД, которые открываем каждый день. Нажмите плитку — откроется список участников группы.</p>
+    <div class="lk-tools">
+      <div class="pf-search"><svg class="i"><use href="#i-search"/></svg><input id="lkQ" type="search" placeholder="Найти группу или номер…" autocomplete="off" aria-label="Поиск по быстрому доступу"></div>
+    </div>
+    <div id="linksBody"><div class="task-empty">Загружаю…</div></div>
+    <div class="task-state" id="linksState"></div>
   </section>
 
   <div id="notice" class="notice"></div>
@@ -2101,59 +2451,96 @@
         <a id="regLink" href="#" target="_blank" rel="noopener">лист «МД» ↗</a>
       </span>
     </div>
+    <p class="cat-lead">Все группы поставщиков из листа «МД». Найдите группу по направлению, преподавателю, адресу или коду.</p>
 
-    <div class="sup-hero" id="supHero"></div>
-    <div class="sup-sum" id="supSum"></div>
-
-    <div class="sup-h3"><svg class="i"><use href="#i-users"/></svg><span>Нагрузка координаторов</span><small id="supCoHint"></small></div>
-    <div class="co-load" id="supCo"><div class="task-empty">Загружаю…</div></div>
-
-    <div class="sup-h3"><svg class="i"><use href="#i-chart"/></svg><span>Занятость по дням недели</span><small>сколько групп занимается в каждый день</small></div>
-    <div class="wk" id="supDays"></div>
-
-    <div class="sup-h3"><svg class="i"><use href="#i-layers"/></svg><span>Кто ведёт больше всего</span><small>десять крупнейших поставщиков</small></div>
-    <div class="top10" id="supTop"></div>
-
-    <div class="sup-h3"><svg class="i"><use href="#i-building"/></svg><span>Поставщики</span><small id="supHint">нажмите на карточку, чтобы увидеть её группы</small></div>
-    <div class="sup-tools">
-      <div class="pf-search"><svg class="i sm"><use href="#i-search"/></svg><input id="supQ" type="text" placeholder="Поставщик, направление, преподаватель, адрес…" autocomplete="off"></div>
-      <select id="supDir"><option value="">Все направления</option></select>
-      <select id="supSort"><option value="n">По числу групп</option><option value="a">По названию</option><option value="d">По числу направлений</option></select>
+    <!-- Реестр — главное в разделе. Статистика ниже, свёрнута. -->
+    <div class="rg-box">
+      <div class="rg-top">
+        <span class="rg-ic"><svg class="i"><use href="#i-folder"/></svg></span>
+        <div><h3>Реестр групп</h3><small id="regMeta"></small></div>
+      </div>
+      <div class="rg-search">
+        <svg class="i"><use href="#i-search"/></svg>
+        <input id="regQ" type="search" enterkeyhint="search" placeholder="Направление, преподаватель, адрес, код группы…" autocomplete="off" aria-label="Поиск по реестру групп">
+        <button type="button" class="rg-clear" id="regClear" hidden aria-label="Очистить поиск"><svg class="i"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="reg-chips" id="regChips" role="group" aria-label="Статус группы"></div>
+      <!-- Телефон: две крупные кнопки вместо пяти выпадающих списков. -->
+      <div class="rg-bar">
+        <button type="button" class="rg-btn" id="regSortBtn" aria-haspopup="dialog" aria-controls="regPanel"><svg class="i"><use href="#i-sort"/></svg><span class="rg-bt"><small>Сортировка</small><b id="regSortLbl"></b></span></button>
+        <button type="button" class="rg-btn" id="regFiltBtn" aria-haspopup="dialog" aria-controls="regPanel"><svg class="i"><use href="#i-sliders"/></svg><span class="rg-bt"><small>Фильтры</small><b id="regFiltLbl">не выбраны</b></span><span class="rg-n" id="regFiltN" hidden></span></button>
+      </div>
+      <!-- На компьютере — строка подписанных списков, на телефоне — лист снизу. -->
+      <div class="rg-panel" id="regPanel">
+        <div class="rg-panel-back" data-rg-close></div>
+        <div class="rg-panel-card" role="group" aria-labelledby="regPanelTitle">
+          <div class="rg-panel-head"><b id="regPanelTitle">Сортировка и фильтры</b>
+            <button type="button" class="nsheet-x" data-rg-close aria-label="Закрыть"><svg class="i"><use href="#i-close"/></svg></button></div>
+          <label class="rg-f"><span>Сортировка</span><select id="regSort"><option value="sheet">Как в листе «МД»</option><option value="dir">Направление А–Я</option><option value="sup">Поставщик А–Я</option><option value="sch">День и время занятий</option><option value="st">Статус</option><option value="co">Координатор</option><option value="addr">Адрес</option><option value="t">Преподаватель</option><option value="id">Код группы</option></select></label>
+          <label class="rg-f"><span>Поставщик</span><select id="regSup"><option value="">Все поставщики</option></select></label>
+          <label class="rg-f"><span>Координатор</span><select id="regCo"><option value="">Все координаторы</option></select></label>
+          <label class="rg-f"><span>Направление</span><select id="regDir"><option value="">Все направления</option></select></label>
+          <label class="rg-f"><span>День недели</span><select id="regDay"><option value="">Любой день</option></select></label>
+          <div class="rg-panel-foot">
+            <button type="button" class="rg-reset" id="regReset">Сбросить</button>
+            <button type="button" class="rg-apply" id="regApply" data-rg-close>Показать группы</button>
+          </div>
+        </div>
+      </div>
+      <div class="rg-active" id="regActive"></div>
     </div>
-    <div class="sup-grid" id="supRows"><div class="task-empty">Загружаю…</div></div>
-    <div class="reg-note" id="supNote" hidden></div>
 
-    <div class="sup-h3"><svg class="i"><use href="#i-folder"/></svg><span>Все группы</span><small id="regMeta"></small></div>
-    <div class="reg-chips" id="regChips"></div>
-    <div class="reg-tools">
-      <div class="pf-search"><svg class="i sm"><use href="#i-search"/></svg><input id="regQ" type="text" placeholder="ID, направление, преподаватель, адрес, комментарий…" autocomplete="off"></div>
-      <select id="regSup"><option value="">Все поставщики</option></select>
-      <select id="regCo"><option value="">Все координаторы</option></select>
-      <select id="regDir"><option value="">Все направления</option></select>
-      <select id="regDay"><option value="">Любой день</option></select>
-    </div>
     <div class="mdt-wrap">
       <table class="mdt">
         <colgroup>
-          <col style="width:7.5%"><col style="width:9%"><col style="width:13%"><col style="width:13%">
-          <col style="width:13%"><col style="width:14%"><col style="width:10.5%"><col style="width:9.5%">
-          <col style="width:10.5%">
+          <col style="width:8.5%"><col style="width:9%"><col style="width:13%"><col style="width:13%">
+          <col style="width:12.5%"><col style="width:12.5%"><col style="width:10.5%"><col style="width:11%">
+          <col style="width:10%">
         </colgroup>
         <thead>
-          <tr>
-            <th>ID</th><th>Статус</th><th>Направление</th><th>ФИО преподавателя</th>
-            <th>Поставщик</th><th>Адрес площадки</th>
-            <th>Расписание</th><th>Координатор</th><th>Комментарий</th>
-          </tr>
+          <tr><th data-k="id"><button type="button" class="th-s" data-sort="id" title="Сортировать по колонке «ID»">ID<i aria-hidden="true"></i></button></th><th data-k="st"><button type="button" class="th-s" data-sort="st" title="Сортировать по колонке «Статус»">Статус<i aria-hidden="true"></i></button></th><th data-k="dir"><button type="button" class="th-s" data-sort="dir" title="Сортировать по колонке «Направление»">Направление<i aria-hidden="true"></i></button></th><th data-k="t"><button type="button" class="th-s" data-sort="t" title="Сортировать по колонке «ФИО преподавателя»">ФИО преподавателя<i aria-hidden="true"></i></button></th><th data-k="sup"><button type="button" class="th-s" data-sort="sup" title="Сортировать по колонке «Поставщик»">Поставщик<i aria-hidden="true"></i></button></th><th data-k="addr"><button type="button" class="th-s" data-sort="addr" title="Сортировать по колонке «Адрес площадки»">Адрес площадки<i aria-hidden="true"></i></button></th><th data-k="sch"><button type="button" class="th-s" data-sort="sch" title="Сортировать по колонке «Расписание»">Расписание<i aria-hidden="true"></i></button></th><th data-k="co"><button type="button" class="th-s" data-sort="co" title="Сортировать по колонке «Координатор»">Координатор<i aria-hidden="true"></i></button></th><th><span class="th-s no">Комментарий</span></th></tr>
         </thead>
         <tbody id="regRows"><tr><td colspan="9"><div class="task-empty">Загружаю реестр…</div></td></tr></tbody>
       </table>
     </div>
+    <div class="rg-cards" id="regCards"></div>
     <button class="reg-more" id="regMore" hidden></button>
     <div class="mdt-foot">
       <span id="regCount"></span>
-      <span>Код группы открывает карточку в КИС МД</span>
+      <span>Код группы открывает карточку в КИС МД, значок чата — чат группы</span>
     </div>
+
+    <!-- Статистика и карточки поставщиков — по запросу, а не на пути к реестру. -->
+    <details class="sx" id="sxStats">
+      <summary><span class="sx-ic"><svg class="i"><use href="#i-chart"/></svg></span>
+        <span class="sx-t"><b>Статистика и динамика</b><small id="sxStatsHint">статусы групп, нагрузка координаторов, дни недели, крупнейшие поставщики</small></span>
+        <span class="sx-cta" aria-hidden="true"></span><svg class="i sx-chev"><use href="#i-chevron"/></svg></summary>
+      <div class="sx-body">
+        <div class="sup-hero" id="supHero"></div>
+        <div class="sup-sum" id="supSum"></div>
+        <div class="sup-h3"><svg class="i"><use href="#i-users"/></svg><span>Нагрузка координаторов</span><small id="supCoHint"></small></div>
+        <div class="co-load" id="supCo"><div class="task-empty">Загружаю…</div></div>
+        <div class="sup-h3"><svg class="i"><use href="#i-chart"/></svg><span>Занятость по дням недели</span><small>сколько групп занимается в каждый день</small></div>
+        <div class="wk" id="supDays"></div>
+        <div class="sup-h3"><svg class="i"><use href="#i-layers"/></svg><span>Кто ведёт больше всего</span><small>десять крупнейших поставщиков</small></div>
+        <div class="top10" id="supTop"></div>
+      </div>
+    </details>
+    <details class="sx" id="sxSup">
+      <summary><span class="sx-ic g"><svg class="i"><use href="#i-building"/></svg></span>
+        <span class="sx-t"><b>Поставщики карточками</b><small id="sxSupHint">у каждого — группы, площадки, преподаватели, координаторы</small></span>
+        <span class="sx-cta" aria-hidden="true"></span><svg class="i sx-chev"><use href="#i-chevron"/></svg></summary>
+      <div class="sx-body">
+        <p class="sx-note" id="supHint">Нажмите на карточку, чтобы увидеть группы поставщика.</p>
+        <div class="sup-tools">
+          <div class="pf-search"><svg class="i sm"><use href="#i-search"/></svg><input id="supQ" type="search" placeholder="Поставщик, направление, преподаватель, адрес…" autocomplete="off" aria-label="Поиск по поставщикам"></div>
+          <select id="supDir" aria-label="Направление"><option value="">Все направления</option></select>
+          <select id="supSort" aria-label="Порядок карточек"><option value="n">По числу групп</option><option value="a">По названию</option><option value="d">По числу направлений</option></select>
+        </div>
+        <div class="sup-grid" id="supRows"><div class="task-empty">Загружаю…</div></div>
+        <div class="reg-note" id="supNote" hidden></div>
+      </div>
+    </details>
     <div class="reg-note" id="regNote" hidden></div>
   </section>
   <section class="cat reveal" id="clubsSec" data-pane="clubs">
@@ -2167,6 +2554,7 @@
         <a id="clubsLink" href="#" target="_blank" rel="noopener">реестр ↗</a>
       </span>
     </div>
+    <p class="cat-lead">Клубы ЦМД из реестра ЦАО. Нажмите плитку — откроется список участников клуба в КИС МД.</p>
     <div class="pstats" id="clubsStats"></div>
     <div class="clubs-note" id="clubsNote" hidden></div>
     <div class="club-stats" id="clubStats">
@@ -2939,15 +3327,23 @@ function showGate() { gateEl.hidden = false; document.getElementById('gateLogin'
    ============================================================ */
 /* Вкладки главной: на экране одна панель, остальные скрыты. */
 let mainTab = load('presnya-tab', 'tasks');
+/* Подсветка текущего раздела сразу в трёх местах: панель, нижнее меню
+   и лист «Ещё». Если раздела нет среди четырёх кнопок внизу, горит «Ещё». */
+function markTabs(t) {
+  document.querySelectorAll('#mainTabs button, #bottomNav button[data-tab], #navSheet button[data-tab]').forEach(btn => {
+    const on = btn.dataset.tab === t;
+    btn.classList.toggle('on', on);
+    if (btn.closest('#mainTabs')) btn.setAttribute('aria-selected', on ? 'true' : 'false');
+    else btn.setAttribute('aria-current', on ? 'page' : 'false');
+  });
+  const more = document.getElementById('bnavMore');
+  if (more) more.classList.toggle('on', !document.querySelector('#bottomNav button[data-tab="' + t + '"]'));
+}
 function setTab(t, remember) {
   if (!document.querySelector('[data-pane="' + t + '"]')) t = 'tasks';
   mainTab = t;
   if (remember !== false) store('presnya-tab', t);
-  document.querySelectorAll('#mainTabs button').forEach(btn => {
-    const on = btn.dataset.tab === t;
-    btn.classList.toggle('on', on);
-    btn.setAttribute('aria-selected', on ? 'true' : 'false');
-  });
+  markTabs(t);
   document.querySelectorAll('[data-pane]').forEach(p => p.classList.toggle('on', p.dataset.pane === t));
   watchReveal();
   /* грядка знает ширину окна, а не свою: после показа кадр пересобираем */
@@ -2957,20 +3353,62 @@ function setTab(t, remember) {
   /* Реестр большой, тянем его только когда на него зашли. */
   if (t === 'registry' && !mdLoaded && typeof loadMd === 'function') loadMd();
 }
-document.getElementById('mainTabs').addEventListener('click', e => {
-  const b = e.target.closest('button[data-tab]');
-  if (!b) return;
+/* Переход в раздел — один на все три меню. */
+function goTab(t) {
+  closeNavSheet(false);
+  if (t === 'partners') { setView('partners'); return; }
   const wrap = document.getElementById('tabbarWrap');
-  /* Если панель уже прилипла, человек сравнивает вкладки — не выдёргиваем
-     его наверх, оставляем на том же месте. Иначе уводим к началу. */
+  /* Прилипшая панель значит, что человек листает разделы: новый
+     начинается прямо под ней. На телефоне меню внизу, и герой каждый
+     раз закрывал бы экран — там всегда сразу к содержанию. */
   const stuck = wrap && wrap.classList.contains('stuck');
+  const phone = matchMedia('(max-width: 1100px)').matches;   /* меню внизу */
   setView('main');
-  setTab(b.dataset.tab);
-  /* Если панель прилипла, человек сравнивает вкладки. Возвращаем его не
-     наверх страницы, а ровно к панели: новая вкладка начинается под ней.
-     Иначе — к самому началу, вместе с героем. */
-  window.scrollTo({ top: stuck ? tabbarTop() : 0, behavior: 'smooth' });
+  setTab(t);
+  window.scrollTo({ top: (stuck || phone) ? tabbarTop() : 0, behavior: phone ? 'auto' : 'smooth' });
+}
+['mainTabs', 'bottomNav', 'navSheet'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('click', e => {
+    const b = e.target.closest('button[data-tab]');
+    if (b) goTab(b.dataset.tab);
+  });
 });
+
+/* Лист «Все разделы» на телефоне. Закрывается крестиком, фоном и Esc;
+   фокус возвращается на кнопку «Ещё». */
+function openNavSheet() {
+  const s = document.getElementById('navSheet');
+  if (!s) return;
+  s.hidden = false;
+  document.body.style.overflow = 'hidden';
+  document.getElementById('bnavMore').setAttribute('aria-expanded', 'true');
+  const cur = s.querySelector('button.on') || s.querySelector('button[data-tab]');
+  if (cur) cur.focus({ preventScroll: true });
+}
+function closeNavSheet(refocus) {
+  const s = document.getElementById('navSheet');
+  if (!s || s.hidden) return;
+  s.hidden = true;
+  document.body.style.overflow = '';
+  const more = document.getElementById('bnavMore');
+  more.setAttribute('aria-expanded', 'false');
+  if (refocus !== false) more.focus({ preventScroll: true });
+}
+document.getElementById('bnavMore').addEventListener('click', openNavSheet);
+/* «Наверх» появляется в длинных списках и ведёт к началу раздела,
+   а не к шапке: разделы и так под рукой в меню. */
+(function () {
+  const b = document.getElementById('toTop');
+  const tick = () => { b.hidden = window.scrollY < tabbarTop() + 900; };
+  addEventListener('scroll', tick, { passive: true });
+  b.addEventListener('click', () => window.scrollTo({ top: tabbarTop(), behavior: 'smooth' }));
+  tick();
+})();
+document.getElementById('navSheet').addEventListener('click', e => {
+  if (e.target.closest('[data-close]')) closeNavSheet();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeNavSheet(); });
 
 /* Координата, на которой панель вкладок встаёт под шапку. */
 function tabbarTop() {
@@ -2993,11 +3431,13 @@ function tabbarTop() {
 
 function setView(view, push) {
   const partners = view === 'partners';
+  /* Прокрутку сбрасываем только при смене вида: внутри главной
+     переход между вкладками решает goTab, иначе экран дёргался. */
+  const changed = document.body.classList.contains('view-partners') !== partners;
   document.body.classList.toggle('view-partners', partners);
-  document.getElementById('navMain').classList.toggle('on', !partners);
-  document.getElementById('navPartners').classList.toggle('on', partners);
+  markTabs(partners ? 'partners' : mainTab);
   if (push !== false) history.replaceState(null, '', partners ? '#partners' : location.pathname);
-  window.scrollTo({ top: 0, behavior: 'auto' });
+  if (changed) window.scrollTo({ top: 0, behavior: 'auto' });
   if (partners) { watchReveal(); if (pView === 'map') showMapView(); }
 }
 document.addEventListener('click', e => {
@@ -4151,19 +4591,37 @@ syncNotifyBtn();
    ============================================================ */
 let links = [], linkEditId = null, linksLive = false;
 function renderLinks(live) {
+  if (live === undefined) live = linksLive; else linksLive = live;
   const box = document.getElementById('linksBody');
   const state = document.getElementById('linksState');
+  const cnt = document.getElementById('linksCount');
+  if (cnt) cnt.textContent = links.length ? links.length + ' ' + plural(links.length, 'группа', 'группы', 'групп') : '';
   if (!links.length) {
     box.innerHTML = '<div class="task-empty">Пока пусто. Нажмите «+ группа», чтобы добавить первую строку: название, номер и ссылку.</div>';
   } else {
-    box.innerHTML = '<table class="links-table"><thead><tr><th>Группа</th><th>ID</th><th></th></tr></thead><tbody>' +
-      links.map(l =>
-        '<tr><td class="g">' + esc(l.group) + (l.desc ? '<div style="font-size: var(--fs-xs);font-weight:400;color:var(--ink-soft)">' + esc(l.desc) + '</div>' : '') + '</td>' +
-        '<td>' + (l.url ? '<a class="idlink" href="' + esc(l.url) + '" target="_blank" rel="noopener" title="' + esc(l.url) + '">' + esc(l.num || '→') + '</a>' : esc(l.num)) + '</td>' +
-        '<td class="acts">' + (APPS_SCRIPT_URL
-          ? '<button data-link-edit="' + esc(l.id) + '" title="Изменить">✎</button> <button data-link-del="' + esc(l.id) + '" title="Удалить">✕</button>'
-          : '') + '</td></tr>'
-      ).join('') + '</tbody></table>';
+    /* Плитка целиком — ссылка: попасть в неё пальцем проще, чем в номер.
+       Правка и удаление вынесены в угол и не перехватывают переход. */
+    const q = ((document.getElementById('lkQ') || {}).value || '').trim().toLowerCase();
+    const shown = links.filter(l => !q ||
+      (l.group + ' ' + (l.num || '') + ' ' + (l.desc || '')).toLowerCase().includes(q));
+    box.innerHTML = shown.length ? '<div class="lk-grid">' + shown.map((l, i) => {
+      const tag = l.url ? 'a' : 'div';
+      const href = l.url ? ' href="' + esc(l.url) + '" target="_blank" rel="noopener"' : '';
+      return '<div class="lk-item">' +
+        '<' + tag + ' class="lk-tile"' + href + '>' +
+          '<span class="lk-ic t' + (i % 6) + '"><svg class="i"><use href="#i-users"/></svg></span>' +
+          '<span class="lk-txt"><b>' + esc(l.group) + '</b>' +
+            (l.desc ? '<small>' + esc(l.desc) + '</small>' : '') +
+            (l.num ? '<span class="lk-num">№ ' + esc(l.num) + '</span>' : '') +
+          '</span>' +
+          (l.url ? '<span class="lk-go" aria-hidden="true">↗</span>' : '') +
+        '</' + tag + '>' +
+        (APPS_SCRIPT_URL
+          ? '<span class="lk-acts"><button data-link-edit="' + esc(l.id) + '" title="Изменить" aria-label="Изменить «' + esc(l.group) + '»">✎</button>' +
+            '<button data-link-del="' + esc(l.id) + '" title="Удалить" aria-label="Удалить «' + esc(l.group) + '»">✕</button></span>'
+          : '') +
+      '</div>';
+    }).join('') + '</div>' : '<div class="task-empty">По запросу «' + esc(q) + '» групп нет.</div>';
   }
   if (!live) {
     state.className = 'task-state show warn';
@@ -5271,6 +5729,7 @@ async function loadLinks() {
   return live;
 }
 const linkDlg = document.getElementById('linkDlg');
+document.getElementById('lkQ').addEventListener('input', () => renderLinks());
 document.getElementById('linkAdd').addEventListener('click', () => {
   if (!APPS_SCRIPT_URL) { toast('Добавление включится после подключения общего сервиса — пока добавьте строку в лист «Быстрый доступ»', 'err'); return; }
   linkEditId = null;
@@ -5470,6 +5929,7 @@ function parseMdRows(rows) {
     if (!/^G-\d{6,9}$/.test(id)) return;          /* строки-мусор пропускаем */
 
     out.push({
+      i: out.length,                                 /* порядок строки в листе */
       id,
       stRaw: cl(r[iSt]), st: mdState(r[iSt]),
       dir: cl(r[iDir]),
@@ -5588,103 +6048,244 @@ async function loadMd() {
   renderSup();
 }
 
+/* ---------- сортировка ----------
+   «Как в листе» — порядок, к которому привыкли по самой таблице.
+   Пустые значения всегда в конце, в какую сторону ни сортируй. */
+const REG_SORTS = [["sheet","Как в листе «МД»"],["dir","Направление А–Я"],["sup","Поставщик А–Я"],["sch","День и время занятий"],["st","Статус"],["co","Координатор"],["addr","Адрес"],["t","Преподаватель"],["id","Код группы"]];
+/* то же коротко — для кнопки на телефоне */
+const REG_SORT_SHORT = { sheet: "как в листе", dir: "направление", sup: "поставщик", sch: "день и время",
+  st: "статус", co: "координатор", addr: "адрес", t: "преподаватель", id: "код группы" };
+let regSort = load("presnya-reg-sort", { k: "sheet", d: 1 });
+if (!regSort || !REG_SORTS.some(s => s[0] === regSort.k)) regSort = { k: "sheet", d: 1 };
+function regKey(g, k) {
+  switch (k) {
+    case "dir": return g.dir || "";
+    case "sup": return supShort(g.sup) || "";
+    case "co": return g.co || "";
+    case "addr": return g.addr || "";
+    case "t": return g.t[0] || "";
+    case "st": { const i = MD_ORDER.indexOf(g.st); return i < 0 ? 9 : i; }
+    case "id": return +String(g.id).replace(/\D/g, "") || 0;
+    /* самое раннее занятие недели: понедельник 09:00 раньше вторника 08:00 */
+    case "sch": return g.slots.length
+      ? Math.min(...g.slots.map(s => MD_DAYS.indexOf(s.d) * 10000 + +s.time.slice(0, 5).replace(":", "")))
+      : 999999;
+    default: return g.i;
+  }
+}
+function regSorted(list) {
+  const k = regSort.k, d = regSort.d;
+  if (k === "sheet") return d > 0 ? list : list.slice().reverse();
+  return list.slice().sort((a, b) => {
+    const x = regKey(a, k), y = regKey(b, k);
+    if (typeof x === "string") {
+      if (!x !== !y) return x ? -1 : 1;
+      return d * x.localeCompare(y, "ru") || a.i - b.i;
+    }
+    return d * (x - y) || a.i - b.i;
+  });
+}
+
 function regList() {
   const v = id => ((document.getElementById(id) || {}).value || "");
   const q = v("regQ").trim().toLowerCase();
   const sup = v("regSup"), co = v("regCo"), day = v("regDay"), dir = v("regDir");
-  return mdGroups.filter(g =>
+  return regSorted(mdGroups.filter(g =>
     (!regFilter || g.st === regFilter) &&
     (!sup || g.sup === sup) && (!co || g.co === co) &&
     (!dir || g.dir === dir) &&
     (!day || g.days.indexOf(day) > -1) &&
     (!q || (g.id + " " + g.dir + " " + g.t.join(" ") + " " + g.addr + " " + g.sup + " " +
-            g.pt + " " + g.sch + " " + g.co + " " + g.cm).toLowerCase().includes(q)));
+            g.pt + " " + g.sch + " " + g.co + " " + g.cm).toLowerCase().includes(q))));
 }
 
+/* Чипы статусов — и фильтр, и подсказка, сколько групп в каком состоянии. */
 function renderRegChips() {
   const box = document.getElementById("regChips");
   if (!box) return;
-  const col = { work: "var(--green)", open: "var(--teal)", pause: "var(--pink)",
-    closed: "var(--brand-dark)", done: "var(--bar-muted)" };
-  const name = { work: "Работают", open: "Идёт набор", pause: "Приостановлены",
+  const name = { work: "Занимаются", open: "Идёт набор", pause: "На паузе",
     closed: "Прекращены", done: "Завершены" };
   const n = k => mdGroups.filter(g => g.st === k).length;
-  const items = [["", "Все", mdGroups.length, null]]
-    .concat(MD_ORDER.map(k => [k, name[k], n(k), k]).filter(x => x[2] > 0));
-  box.innerHTML = items.map(([k, label, cnt, st]) =>
-    '<button type="button" class="reg-chip' + (regFilter === k ? " on" : "") + '" data-st="' + k + '">' +
-      (st ? '<i style="background:' + col[st] + '"></i>' : "") +
+  const items = [["", "Все", mdGroups.length]]
+    .concat(MD_ORDER.map(k => [k, name[k], n(k)]).filter(x => x[2] > 0));
+  box.innerHTML = items.map(([k, label, cnt]) =>
+    '<button type="button" class="reg-chip' + (regFilter === k ? " on" : "") + '" data-st="' + k + '" aria-pressed="' +
+      (regFilter === k ? "true" : "false") + '">' +
+      (k ? '<i style="background:var(--st-' + k + ')"></i>' : "") +
       label + ' <b>' + cnt + '</b></button>').join("");
 }
 
-/* Расписание для таблицы: «Пн Ср 10:00–11:00» одной строкой на каждое время. */
+/* Расписание: дни плашками, время рядом — глаз ловит «Ср» быстрее,
+   чем разбирает строку «Пн. Ср. 10:00-11:00». */
 function regWhen(g) {
-  if (!g.slots || !g.slots.length) return esc(g.sch || "—");
+  if (!g.slots || !g.slots.length) return g.sch ? '<span class="raw">' + esc(g.sch) + "</span>" : '<span class="no">—</span>';
   const times = [...new Set(g.slots.map(s => s.time))];
-  return times.map(tm => "<b>" + g.slots.filter(s => s.time === tm).map(s => s.d).join(" ") +
-    " " + tm + "</b>").join("");
+  return times.map(tm => '<span class="ln">' + g.slots.filter(s => s.time === tm)
+    .map(s => '<span class="wd">' + s.d + "</span>").join("") +
+    '<b class="tm">' + tm + "</b></span>").join("");
+}
+/* Координатор с инициалами в кружке: в длинном списке человека узнаёшь по цвету. */
+const REG_AV = ["t0", "t1", "t2", "t3", "t4"];
+function regCo(name) {
+  if (!name) return '<span class="no">—</span>';
+  const ini = name.replace(/[^А-ЯЁA-Z]/g, "").slice(0, 2) || name.slice(0, 1);
+  let h = 0; for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 997;
+  return '<span class="co"><span class="av ' + REG_AV[h % REG_AV.length] + '" aria-hidden="true">' + esc(ini) +
+    "</span><span>" + esc(name) + "</span></span>";
+}
+function regGid(g, cls) {
+  const href = mdHref(g.id);
+  return href
+    ? '<a class="' + cls + '" href="' + href + '" target="_blank" rel="noopener" title="Карточка группы в КИС МД">' + esc(g.id) + "</a>"
+    : '<span class="' + cls + ' no">' + esc(g.id) + "</span>";
+}
+function regChat(g, cls) {
+  return /^https?:/.test(g.chat)
+    ? '<a class="' + cls + '" href="' + esc(g.chat) + '" target="_blank" rel="noopener" title="Информационный чат группы" aria-label="Чат группы ' + esc(g.id) + '">' +
+      '<svg class="i sm"><use href="#i-chat"/></svg></a>'
+    : "";
 }
 
+function regRow(g, tint) {
+  const teach = g.t.length
+    ? g.t.slice(0, 3).map(x => '<span class="who">' + esc(x) + "</span>").join("") +
+      (g.t.length > 3 ? '<span class="who rest" title="' + esc(g.t.join(", ")) + '">и ещё ' +
+        (g.t.length - 3) + "</span>" : "")
+    : '<span class="no">—</span>';
+  return '<tr class="s-' + g.st + '">' +
+    '<td class="c-id"><span class="idcell">' + regGid(g, "gid") + regChat(g, "chat") + "</span></td>" +
+    '<td><span class="reg-badge s-' + g.st + '">' + esc(g.stRaw || MD_LBL[g.st]) + "</span></td>" +
+    '<td class="c-dir">' + (esc(g.dir) || '<span class="no">—</span>') + "</td>" +
+    "<td>" + teach + "</td>" +
+    '<td><span class="sup" title="' + esc(g.sup) + '"><i style="background:' + (tint[g.sup] || "var(--bar-muted)") + '"></i>' +
+      "<span>" + (esc(supShort(g.sup)) || "—") + "</span></span></td>" +
+    "<td>" + (esc(g.addr) || '<span class="no">—</span>') +
+      (g.pt ? '<span class="sub">' + esc(g.pt) + "</span>" : "") + "</td>" +
+    '<td class="sch">' + regWhen(g) + "</td>" +
+    "<td>" + regCo(g.co) + "</td>" +
+    "<td>" + (g.cm ? '<span class="cm" title="' + esc(g.cm) + '">' + esc(g.cm) + "</span>" : "") + "</td>" +
+  "</tr>";
+}
+
+/* Карточка группы для телефона и планшета: направление крупно, всё
+   остальное — строками с иконками, без подписей-столбцов. */
+function regCard(g, tint) {
+  const ico = id => '<svg class="i"><use href="#' + id + '"/></svg>';
+  const info = [];
+  if (g.addr) info.push([ico("i-pin"), esc(g.addr) + (g.pt ? "<small>" + esc(g.pt) + "</small>" : "")]);
+  if (g.t.length) info.push([ico("i-user"), g.t.map(esc).join(", ")]);
+  if (g.co) info.push([ico("i-users"), "Координатор: <b>" + esc(g.co) + "</b>"]);
+  if (/^https?:/.test(g.chat)) info.push([ico("i-chat"), '<a class="gc-link" href="' + esc(g.chat) +
+    '" target="_blank" rel="noopener">Чат группы ↗</a>']);
+  return '<article class="gc s-' + g.st + '">' +
+    '<div class="gc-top"><span class="reg-badge s-' + g.st + '">' + esc(g.stRaw || MD_LBL[g.st]) + "</span>" +
+      regGid(g, "gc-id") + "</div>" +
+    '<h4 class="gc-dir">' + (esc(g.dir) || "Направление не указано") + "</h4>" +
+    (g.sup ? '<div class="gc-sup"><i style="background:' + (tint[g.sup] || "var(--bar-muted)") + '"></i><span>' +
+      esc(supShort(g.sup)) + "</span></div>" : "") +
+    '<div class="gc-when">' + regWhen(g) + "</div>" +
+    (info.length ? '<div class="gc-info">' + info.map(([i, v]) => "<div>" + i + "<span>" + v + "</span></div>").join("") + "</div>" : "") +
+    (g.cm ? '<p class="gc-cm">' + esc(g.cm) + "</p>" : "") +
+  "</article>";
+}
+
+/* Активные фильтры плашками: видно, почему групп меньше, и любую
+   можно снять одним нажатием. */
+const REG_F = [["regSup", "Поставщик"], ["regCo", "Координатор"], ["regDir", "Направление"], ["regDay", "День"]];
+function regActiveFilters() {
+  return REG_F.map(([id, name]) => {
+    const el = document.getElementById(id);
+    if (!el || !el.value) return null;
+    return [id, name, el.options[el.selectedIndex].text.replace(/ · \d+$/, "")];
+  }).filter(Boolean);
+}
+function renderRegTools(found) {
+  const act = regActiveFilters();
+  const q = (document.getElementById("regQ") || {}).value || "";
+  REG_F.forEach(([id]) => { const el = document.getElementById(id); if (el) el.classList.toggle("set", !!el.value); });
+  const box = document.getElementById("regActive");
+  if (box) box.innerHTML = act.map(([id, name, val]) =>
+      '<button type="button" class="rg-pill" data-clear="' + id + '" aria-label="Снять фильтр: ' + esc(name) + '">' +
+      esc(name) + ": <b>" + esc(val) + '</b><span class="x" aria-hidden="true">✕</span></button>').join("") +
+    (act.length + (q ? 1 : 0) + (regFilter ? 1 : 0) > 1 || act.length
+      ? '<button type="button" class="rg-pill all" data-clear="*">Сбросить всё</button>' : "");
+  const nb = document.getElementById("regFiltN");
+  if (nb) { nb.hidden = !act.length; nb.textContent = act.length; }
+  const sl = document.getElementById("regSortLbl");
+  if (sl) sl.textContent = (REG_SORT_SHORT[regSort.k] || "") + (regSort.d < 0 ? ", обратно" : "");
+  const fl = document.getElementById("regFiltLbl");
+  if (fl) fl.textContent = act.length
+    ? "включены"           /* сколько именно — в кружке рядом */
+    : "не выбраны";
+  const sel = document.getElementById("regSort");
+  if (sel) sel.value = regSort.k;
+  document.querySelectorAll(".mdt thead th[data-k]").forEach(th => {
+    if (th.dataset.k === regSort.k) th.setAttribute("aria-sort", regSort.d > 0 ? "ascending" : "descending");
+    else th.removeAttribute("aria-sort");
+  });
+  const ap = document.getElementById("regApply");
+  if (ap) ap.textContent = "Показать " + found + " " + plural(found, "группу", "группы", "групп");
+  const cl = document.getElementById("regClear");
+  if (cl) cl.hidden = !q;
+}
+
+/* Ширина, на которой таблица уступает место карточкам. */
+const regNarrow = matchMedia("(max-width: 1000px)");
 function renderReg() {
   const box = document.getElementById("regRows");
+  const cards = document.getElementById("regCards");
   if (!box) return;
   const link = document.getElementById("regLink");
   if (link) link.href = "https://docs.google.com/spreadsheets/d/" + GARDEN_SHEET_ID +
     "/edit?gid=" + MD_GID + "#gid=" + MD_GID;
   const empty = msg => '<tr><td colspan="9"><div class="task-empty">' + msg + "</div></td></tr>";
-  if (!mdLoaded) { box.innerHTML = empty("Загружаю реестр…"); return; }
-  if (!mdGroups.length) { box.innerHTML = empty("Лист «МД» недоступен или пуст."); return; }
+  const emptyC = msg => '<div class="task-empty">' + msg + "</div>";
+  if (!mdLoaded || !mdGroups.length) {
+    const msg = !mdLoaded ? "Загружаю реестр…" : "Лист «МД» недоступен или пуст.";
+    box.innerHTML = empty(msg); if (cards) cards.innerHTML = emptyC(msg);
+    return;
+  }
   renderRegChips();
   const list = regList();
   const tint = {};
   mdSup.forEach(s => tint[s.n] = s.tint);
-  box.innerHTML = list.slice(0, regShown).map(g => {
-    const href = mdHref(g.id);
-    const gid = href
-      ? '<a class="gid" href="' + href + '" target="_blank" rel="noopener" title="Карточка группы в КИС МД">' + esc(g.id) + "</a>"
-      : '<span class="gid no">' + esc(g.id) + "</span>";
-    const teach = g.t.length
-      ? g.t.slice(0, 3).map(x => '<span class="who">' + esc(x) + "</span>").join("") +
-        (g.t.length > 3 ? '<span class="who rest" title="' + esc(g.t.join(", ")) + '">и ещё ' +
-          (g.t.length - 3) + "</span>" : "")
-      : '<span class="no">—</span>';
-    const chat = /^https?:/.test(g.chat)
-      ? '<a class="chat" href="' + esc(g.chat) + '" target="_blank" rel="noopener" title="Информационный чат группы">' +
-        '<svg class="i sm"><use href="#i-chat"/></svg></a>'
-      : "";
-    return '<tr class="s-' + g.st + '">' +
-      '<td class="c-id" data-l="ID"><span class="idcell">' + gid + chat + "</span></td>" +
-      '<td data-l="Статус"><span class="reg-badge s-' + g.st + '">' + esc(g.stRaw || MD_LBL[g.st]) + "</span></td>" +
-      '<td class="c-dir" data-l="Направление">' + (esc(g.dir) || '<span class="no">—</span>') + "</td>" +
-      '<td data-l="Преподаватель">' + teach + "</td>" +
-      '<td data-l="Поставщик"><span class="sup"><i style="background:' + (tint[g.sup] || "var(--bar-muted)") + '"></i>' +
-        "<span>" + (esc(g.sup) || "—") + "</span></span></td>" +
-      '<td data-l="Адрес">' + (esc(g.addr) || '<span class="no">—</span>') +
-        (g.pt ? '<span class="sub">' + esc(g.pt) + "</span>" : "") + "</td>" +
-      '<td class="sch" data-l="Расписание">' + regWhen(g) + "</td>" +
-      '<td data-l="Координатор">' + (esc(g.co) || '<span class="no">—</span>') + "</td>" +
-      '<td data-l="Комментарий">' + (g.cm ? '<span class="cm" title="' + esc(g.cm) + '">' + esc(g.cm) + "</span>" : "") + "</td>" +
-    "</tr>";
-  }).join("") || empty("Под этот выбор групп нет.");
+  const page = list.slice(0, regShown);
+  const none = "Под этот выбор групп нет. Измените поиск или снимите фильтры.";
+  /* рисуем только то, что видно: таблицу или карточки */
+  regMode = regNarrow.matches;
+  if (regMode) {
+    box.innerHTML = "";
+    if (cards) cards.innerHTML = page.map(g => regCard(g, tint)).join("") || emptyC(none);
+  } else {
+    if (cards) cards.innerHTML = "";
+    box.innerHTML = page.map(g => regRow(g, tint)).join("") || empty(none);
+  }
+  renderRegTools(list.length);
 
   const more = document.getElementById("regMore");
   if (more) {
     more.hidden = list.length <= regShown;
-    more.textContent = "Показать ещё " + Math.min(30, list.length - regShown);
+    more.textContent = "Показать ещё " + Math.min(30, list.length - regShown) + " из оставшихся " + (list.length - regShown);
   }
   const cnt = document.getElementById("regCount");
-  if (cnt) cnt.textContent = "показано " + Math.min(regShown, list.length) + " из " + list.length +
+  if (cnt) cnt.textContent = "Показано " + Math.min(regShown, list.length) + " из " + list.length +
     (list.length === mdGroups.length ? "" : " (всего в листе " + mdGroups.length + ")");
   const meta = document.getElementById("regMeta");
-  if (meta) meta.textContent = "те же колонки, что в листе «МД»" +
-    (mdStamp ? " · прочитан в " + mdStamp : "");
-  const note = document.getElementById("regNote");
-  if (note) {
-    note.hidden = false;
-    note.innerHTML = '<svg class="i sm"><use href="#i-info"/></svg><span>Статусы и все значения — те, что стоят в листе «МД». ' +
-      "Код группы открывает её карточку в КИС МД, значок чата — информационный чат группы.</span>";
-  }
+  if (meta) meta.textContent = mdGroups.length + " " + plural(mdGroups.length, "группа", "группы", "групп") +
+    " · все колонки листа «МД»" + (mdStamp ? " · прочитан в " + mdStamp : "");
 }
+/* Событие медиазапроса приходит не во всех браузерах при смене размера
+   окна — дублируем проверкой на resize и перерисовываем только при
+   смене режима «таблица ↔ карточки». */
+let regMode = null;
+function regModeCheck() {
+  if (regNarrow.matches === regMode) return;
+  regMode = regNarrow.matches;
+  if (mdLoaded) renderReg();
+}
+regNarrow.addEventListener("change", regModeCheck);
+addEventListener("resize", regModeCheck);
+
 /* Короткое имя поставщика: в таблице попадаются полные юридические
    названия на 170 знаков — в карточке от них нет пользы. */
 function supShort(n) {
@@ -5869,6 +6470,14 @@ function renderSup() {
   renderSupCo();
   renderSupDays();
   renderSupTop();
+  const coN = new Set(mdGroups.map(g => g.co).filter(Boolean)).size;
+  const sh = document.getElementById("sxStatsHint");
+  if (sh) sh.textContent = mdGroups.filter(g => g.st === "work").length + " из " + mdGroups.length +
+    " групп занимаются · " + coN + " " + plural(coN, "координатор", "координатора", "координаторов") +
+    " · дни недели · крупнейшие поставщики";
+  const ss = document.getElementById("sxSupHint");
+  if (ss) ss.textContent = mdSup.length + " " + plural(mdSup.length, "организация", "организации", "организаций") +
+    " — у каждой группы, площадки, преподаватели";
 
   const list = supFiltered();
   const clock = '<svg class="i sm"><use href="#i-clock"/></svg>';
@@ -5985,22 +6594,76 @@ function initMdFilters() {
 }
 
 (function () {
-  const chips = document.getElementById("regChips");
-  if (chips) chips.addEventListener("click", e => {
+  const $ = id => document.getElementById(id);
+  const redo = () => { regShown = 30; renderReg(); };
+  $("regChips").addEventListener("click", e => {
     const b = e.target.closest("button[data-st]"); if (!b) return;
-    regFilter = b.dataset.st; regShown = 30; renderReg();
+    regFilter = b.dataset.st; redo();
   });
   ["regQ", "regSup", "regCo", "regDay", "regDir"].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.addEventListener("input", () => { regShown = 30; renderReg(); });
-      el.addEventListener("change", () => { regShown = 30; renderReg(); });
-    }
+    const el = $(id);
+    if (el) { el.addEventListener("input", redo); el.addEventListener("change", redo); }
   });
-  const more = document.getElementById("regMore");
-  if (more) more.addEventListener("click", () => { regShown += 30; renderReg(); });
-  const rf = document.getElementById("regRefresh");
+  const setSort = (k, d) => { regSort = { k: k, d: d }; store("presnya-reg-sort", regSort); redo(); };
+  $("regSort").addEventListener("change", e => setSort(e.target.value, 1));
+  /* Щелчок по заголовку: первый — по возрастанию, повторный — обратно. */
+  document.querySelector(".mdt thead").addEventListener("click", e => {
+    const b = e.target.closest("button[data-sort]"); if (!b) return;
+    const k = b.dataset.sort;
+    setSort(k, regSort.k === k ? -regSort.d : 1);
+  });
+  $("regMore").addEventListener("click", () => { regShown += 30; renderReg(); });
+  const rf = $("regRefresh");
   if (rf) rf.addEventListener("click", () => { mdLoaded = false; renderReg(); renderSup(); loadMd(); });
+  $("regClear").addEventListener("click", () => { $("regQ").value = ""; redo(); $("regQ").focus(); });
+  const resetAll = () => {
+    REG_F.forEach(([id]) => { $(id).value = ""; });
+    $("regQ").value = ""; regFilter = ""; redo();
+  };
+  $("regActive").addEventListener("click", e => {
+    const b = e.target.closest("button[data-clear]"); if (!b) return;
+    if (b.dataset.clear === "*") resetAll(); else { $(b.dataset.clear).value = ""; redo(); }
+  });
+  $("regReset").addEventListener("click", resetAll);
+
+  /* Лист снизу на телефоне. На компьютере панель всегда открыта строкой. */
+  const panel = $("regPanel");
+  const sheet = matchMedia("(max-width: 760px)");
+  let opener = null;
+  /* Внутри блока реестра лист оказывался под карточками и нижним меню:
+     у блока свой слой наложения. Открываясь, он переезжает в body. */
+  let home = null;
+  const open = (btn, focusId) => {
+    opener = btn;
+    if (panel.parentNode !== document.body) {
+      home = [panel.parentNode, panel.nextSibling];
+      document.body.appendChild(panel);
+    }
+    panel.classList.add("open");
+    panel.querySelector(".rg-panel-card").setAttribute("role", "dialog");
+    document.body.style.overflow = "hidden";
+    setTimeout(() => $(focusId).focus({ preventScroll: true }), 30);
+  };
+  const close = () => {
+    if (!panel.classList.contains("open")) return;
+    panel.classList.remove("open");
+    if (home) { home[0].insertBefore(panel, home[1]); home = null; }
+    panel.querySelector(".rg-panel-card").setAttribute("role", "group");
+    document.body.style.overflow = "";
+    if (opener) opener.focus({ preventScroll: true });
+  };
+  $("regSortBtn").addEventListener("click", e => open(e.currentTarget, "regSort"));
+  $("regFiltBtn").addEventListener("click", e => open(e.currentTarget, "regSup"));
+  panel.addEventListener("click", e => { if (e.target.closest("[data-rg-close]")) close(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
+  sheet.addEventListener("change", () => { if (!sheet.matches) close(); });
+
+  /* свёрнутые блоки помнят, открыты они или нет */
+  document.querySelectorAll("details.sx").forEach(d => {
+    const key = "presnya-" + d.id;
+    d.open = !!load(key, false);
+    d.addEventListener("toggle", () => store(key, d.open));
+  });
 })();
 
 function renderBirthdays() {
