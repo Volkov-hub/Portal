@@ -347,6 +347,7 @@
 
   /* ---------- «Сегодня»: красная карточка-дашборд ---------- */
   .today-hero { margin-bottom: 26px; }
+  .today-hero .date { margin: 0 0 8px; }   /* дата над приветствием, не впритык к нему */
   #tasksSec .cat-head h2 { font-size: var(--fs-2xl); }
   .side-head .sh-ic { width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center;
     background: var(--brand-soft-2); color: var(--brand); flex: none; }
@@ -531,6 +532,9 @@
   .dash-tools { margin-left: auto; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: var(--fs-sm); color: var(--ink-soft); }
   .dash-tools a { color: var(--green-ink); font-weight: 700; text-decoration: none; }
   .dash-tools a:hover { text-decoration: underline; }
+  .cat-head .dash-tools button, .cat-head .dash-tools .sh-link { height: 40px; min-width: 40px; }
+  .cat-head .dash-tools .sh-link { color: var(--brand); }
+  .cat-head .dash-tools .sh-link:hover { text-decoration: none; }
   .dash-tools button { border: 1px solid var(--line); background: var(--card); color: var(--ink-soft); border-radius: 10px; height: 32px; min-width: 32px; padding: 0 10px; font: 700 var(--fs-sm) var(--font); cursor: pointer; transition: all .15s; }
   .dash-tools button:hover { color: var(--brand); border-color: var(--brand); box-shadow: var(--shadow); }
   /* Добавление — основной сценарий раздела, а не служебная кнопка рядом с ⟳ */
@@ -803,7 +807,7 @@
   .lk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); gap: 12px; }
   .lk-item { position: relative; min-width: 0; }
   .lk-tile { display: flex; align-items: center; gap: 14px; min-height: 84px; height: 100%;
-    padding: 14px 44px 14px 14px; border-radius: 18px; background: var(--card); color: var(--ink);
+    padding: 14px 58px 14px 14px; border-radius: 18px; background: var(--card); color: var(--ink);
     text-decoration: none; box-shadow: var(--shadow); border: 1.5px solid transparent;
     transition: transform .15s var(--ease), border-color .15s, box-shadow .15s; }
   a.lk-tile:hover { border-color: var(--brand-line); transform: translateY(-2px); box-shadow: var(--shadow-hover); }
@@ -827,10 +831,10 @@
   .lk-go { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-size: 18px;
     font-weight: 700; color: var(--ink-mute); transition: color .15s; pointer-events: none; }
   .lk-item:hover .lk-go { color: var(--brand); }
-  .lk-acts { position: absolute; right: 8px; top: 8px; display: flex; gap: 4px; opacity: 0; transition: opacity .15s; }
+  .lk-acts { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 4px; opacity: 0; transition: opacity .15s; }
   .lk-item:hover .lk-acts, .lk-item:focus-within .lk-acts { opacity: 1; }
   .lk-item:hover .lk-go { opacity: 0; }
-  .lk-acts button { width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--line);
+  .lk-acts button { width: 40px; height: 38px; border-radius: 10px; border: 1px solid var(--line);
     background: var(--card); color: var(--ink-soft); cursor: pointer; font-size: var(--fs-sm); }
   .lk-acts button:hover { border-color: var(--brand); color: var(--brand); }
   /* на телефоне наведения нет — кнопки правки видны всегда, стрелка уходит */
@@ -877,7 +881,7 @@
   .pf-search { flex: 1; min-width: 200px; display: flex; align-items: center; gap: 8px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-control); padding: 9px 12px; color: var(--ink-soft); transition: border-color .15s; }
   .pf-search:focus-within { border-color: var(--brand); }
   .pf-search svg { flex: none; }
-  .pf-search input { flex: 1; border: none; outline: none; background: none; font: 500 var(--fs-md) var(--font); color: var(--ink); }
+  .pf-search input { flex: 1; min-width: 0; width: 100%; border: none; outline: none; background: none; font: 500 var(--fs-md) var(--font); color: var(--ink); }
   .pf-view { display: flex; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; flex: none; background: var(--card); }
   .pf-view-btn { border: none; border-radius: 0; padding: 9px 16px; }
   .pf-view-btn + .pf-view-btn { border-left: 1px solid var(--line); }
@@ -1184,7 +1188,7 @@
   .wd-note { margin-top: 12px; font-size: var(--fs-xs); line-height: 1.5; color: var(--ink-soft);
     background: var(--bg); border-radius: var(--r-control); padding: 9px 11px; }
   .wd-note b { color: var(--ink); }
-  @media (max-width: 560px) { .wd-row { grid-template-columns: 74px 1fr 88px; gap: 8px; } }
+  @media (max-width: 560px) { .wd-row { grid-template-columns: 98px minmax(0, 1fr) 84px; gap: 8px; } }
 
   /* ---------- Реестр групп ----------
      Лист «МД» книги ВАЖНОЕ: 170 строк, семь полей на каждую. На широком
@@ -1275,9 +1279,9 @@
     border-bottom: 1px solid var(--line); overflow-wrap: break-word; hyphens: auto; }
   .mdt thead th { position: sticky; top: calc(var(--topbar-h) + var(--tabbar-h)); z-index: 2;
     background: var(--bg-2); color: var(--ink);
-    font-size: var(--fs-2xs); font-weight: 800; letter-spacing: .03em; text-transform: uppercase;
-    line-height: 1.25; border-bottom: 2px solid var(--brand-line);
-    overflow-wrap: normal; word-break: keep-all; hyphens: none; }
+    font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0; text-transform: none;
+    line-height: 1.3; border-bottom: 2px solid var(--brand-line);
+    overflow-wrap: break-word; hyphens: none; }
   .mdt thead th:first-child { border-top-left-radius: var(--radius); }
   .mdt thead th:last-child { border-top-right-radius: var(--radius); }
   /* Полоса должна читаться: разница в полпроцента яркости строки
@@ -1289,28 +1293,30 @@
   .mdt tbody tr:last-child td:last-child { border-bottom-right-radius: var(--radius); }
   .mdt td { font-size: var(--fs-xs); line-height: 1.5; color: var(--ink); }
   /* Направление — то, по чему группу ищут глазами: даём ему вес и размер. */
-  .mdt td.c-dir { font-size: var(--fs-md); font-weight: 700; line-height: 1.3; color: var(--ink); }
+  .mdt .c-dir { display: block; font-size: var(--fs-md); font-weight: 700; line-height: 1.3; color: var(--ink); }
+  .mdt td > * { max-width: 100%; }
   /* Цветная кромка слева повторяет статус: строку видно до чтения. */
-  .mdt td.c-id { border-left: 3px solid var(--line); }
-  .mdt tr.s-work td.c-id { border-left-color: var(--st-work); }
-  .mdt tr.s-open td.c-id { border-left-color: var(--st-open); }
-  .mdt tr.s-pause td.c-id { border-left-color: var(--st-pause); }
-  .mdt tr.s-closed td.c-id { border-left-color: var(--st-closed); }
-  .mdt tr.s-done td.c-id { border-left-color: var(--st-done); }
+  .mdt td.c-grp { border-left: 3px solid var(--line); }
+  .mdt tr.s-work td.c-grp { border-left-color: var(--st-work); }
+  .mdt tr.s-open td.c-grp { border-left-color: var(--st-open); }
+  .mdt tr.s-pause td.c-grp { border-left-color: var(--st-pause); }
+  .mdt tr.s-closed td.c-grp { border-left-color: var(--st-closed); }
+  .mdt tr.s-done td.c-grp { border-left-color: var(--st-done); }
   .mdt a.gid { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink);
     text-decoration: none; }
   .mdt a.gid:hover { color: var(--brand); text-decoration: underline; }
-  .mdt .idcell { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .mdt .idcell { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
   .mdt .who { display: block; overflow-wrap: break-word; }
   .mdt .who + .who { margin-top: 2px; color: var(--ink-soft); }
   .mdt .who.rest { margin-top: 3px; font-weight: 700; color: var(--ink-mute);
     border-bottom: 1px dotted var(--bar-muted); display: inline-block; cursor: help; }
-  .mdt .sup { display: flex; align-items: flex-start; gap: 6px; }
+  .mdt .sup { display: flex; align-items: flex-start; gap: 6px; margin-top: 8px; color: var(--ink-soft); font-weight: 600; min-width: 0; }
+  .mdt .sup > span { min-width: 0; overflow-wrap: anywhere; }
   .mdt .sup i { width: 8px; height: 8px; border-radius: 2px; flex: none; margin-top: 5px; }
   .mdt .sub { display: block; margin-top: 4px; color: var(--ink-soft); font-weight: 600; }
-  .mdt .sch b { display: block; font-weight: 700; white-space: nowrap; }
-  .mdt .cm { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;
-    overflow: hidden; color: var(--ink-soft); }
+  .mdt .sch b { display: block; font-weight: 700; }
+  .mdt .cm { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; margin-top: 8px;
+    overflow: hidden; color: var(--ink-soft); font-size: var(--fs-2xs); }
   .mdt .chat { display: inline-flex; align-items: center; justify-content: center;
     width: 22px; height: 22px; border-radius: var(--radius-xs); color: var(--ink-mute);
     border: 1px solid var(--line); }
@@ -1324,13 +1330,10 @@
     font-size: var(--fs-2xs); color: var(--ink-mute); font-weight: 600; }
 
   /* ---------- Реестр групп: главное в разделе ---------- */
-  .rg-box { position: relative; isolation: isolate; overflow: hidden; margin-bottom: 18px;
-    padding: 22px 24px 20px; border-radius: 24px; box-shadow: var(--shadow);
-    background: linear-gradient(120deg, var(--brand-soft) 0%, var(--card) 46%, var(--card) 68%, var(--green-soft) 135%); }
+  .rg-box { position: relative; margin-bottom: 18px;
+    padding: 20px 22px; border-radius: 24px; box-shadow: var(--shadow); background: var(--card); }
   /* годовые кольца брендбука в углу — та же фактура, что по краям страницы */
-  .rg-box::before { content: ""; position: absolute; right: -96px; top: -120px; width: 340px; height: 340px; z-index: -1;
-    background: url(assets/ring-green.png) center / contain no-repeat; opacity: .16; transform: rotate(18deg);
-    pointer-events: none; }
+
   .rg-top { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
   .rg-ic { flex: none; width: 50px; height: 50px; border-radius: 16px; display: grid; place-items: center;
     background: var(--brand); color: var(--on-brand); box-shadow: 0 8px 18px rgba(168,29,55,.25); }
@@ -1400,7 +1403,8 @@
   .mdt .sch .ln, .gc-when .ln { display: flex; flex-wrap: wrap; align-items: center; }
   .mdt .sch .ln + .ln { margin-top: 4px; }
   .mdt .sch .tm, .gc-when .tm { display: block; width: 100%; font-weight: 800; font-variant-numeric: tabular-nums; }
-  .co { display: inline-flex; align-items: center; gap: 7px; min-width: 0; font-weight: 600; }
+  .co { display: inline-flex; align-items: center; gap: 7px; min-width: 0; max-width: 100%; font-weight: 600; }
+  .co > span:last-child { min-width: 0; overflow-wrap: anywhere; }
   .co .av { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
     font-size: 10.5px; font-weight: 800; letter-spacing: .02em; }
   .co .av.t0 { background: var(--brand-soft-2); color: var(--brand-dark); }
@@ -1413,7 +1417,7 @@
 
   /* ---------- карточки групп: планшет и телефон ---------- */
   .rg-cards { display: none; }
-  @media (max-width: 1000px) {
+  @media (max-width: 1240px) {
     .mdt-wrap { display: none; }
     .rg-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: start; }
   }
@@ -1489,18 +1493,17 @@
   @media (max-width: 760px) {
     .rg-cards { grid-template-columns: minmax(0, 1fr); gap: 10px; }
     .rg-box { padding: 16px 14px 14px; border-radius: 20px; }
-    .rg-box::before { width: 240px; height: 240px; right: -80px; top: -90px; }
     .rg-top { margin-bottom: 12px; gap: 12px; }
     .rg-ic { width: 42px; height: 42px; border-radius: 13px; }
     .rg-ic .i { width: 21px; height: 21px; }
     .rg-top h3 { font-size: var(--fs-lg); }
     .rg-search { height: 54px; padding-left: 14px; border-radius: 15px; }
-    .rg-search input { font-size: 17px; }
-    /* статусы — одной лентой с прокруткой, а не в три рваных строки */
-    .rg-box .reg-chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x proximity;
-      margin-left: -14px; margin-right: -14px; padding: 0 14px 2px; }
-    .rg-box .reg-chips::-webkit-scrollbar { display: none; }
-    .rg-box .reg-chip { flex: none; scroll-snap-align: start; }
+    .rg-search input { font-size: 16px; }
+    /* значки «обновить» и «лист» — справа от плашки «33 организации», а не отдельной строкой */
+    #registrySec .dash-tools { flex-basis: auto; margin-left: auto; }
+    /* статусы переносятся строками: лента с прокруткой обрезала плашку у края */
+    .rg-box .reg-chips { gap: 6px; }
+    .rg-box .reg-chip { height: 36px; padding: 0 12px; font-size: var(--fs-xs); }
     .rg-bar { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; margin-top: 12px; }
     .rg-btn { display: flex; align-items: center; justify-content: center; gap: 8px; min-width: 0; min-height: 50px;
       padding: 0 10px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--card);
@@ -1554,7 +1557,7 @@
   .sup-sum .b:nth-child(3) { background: #d7f0e9; color: #0c5247; }
   .sup-sum .b:nth-child(4) { background: #e4f3e8; color: #17522f; }
   .sup-sum .b:nth-child(5) { background: #f5e9ec; color: #902446; }
-  .sup-sum .b .l { color: inherit; opacity: .82; }
+  .sup-sum .b .l { color: inherit; opacity: .82; text-transform: none; letter-spacing: 0; font-weight: 600; overflow-wrap: anywhere; }
   :root[data-theme="dark"] .sup-sum .b:nth-child(1) { background: #3a1d24; color: #f3a8b6; }
   :root[data-theme="dark"] .sup-sum .b:nth-child(2) { background: #163024; color: #7ed6a3; }
   :root[data-theme="dark"] .sup-sum .b:nth-child(3) { background: #112e29; color: #72cfbb; }
@@ -1595,8 +1598,8 @@
   .co-row .who { display: flex; align-items: center; gap: 7px; font-size: var(--fs-sm); font-weight: 700; min-width: 0; }
   .co-row .who span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
   .co-row .cnt { font-size: var(--fs-xl); font-weight: 400; letter-spacing: -.03em; text-align: right; font-variant-numeric: tabular-nums; }
-  .co-row .cnt small { display: block; margin-top: 4px; font-size: var(--fs-2xs); font-weight: 800;
-    letter-spacing: .05em; text-transform: uppercase; color: var(--ink-soft); }
+  .co-row .cnt small { display: block; margin-top: 4px; font-size: var(--fs-2xs); font-weight: 600;
+    color: var(--ink-soft); }
   .co-row .extra { font-size: var(--fs-xs); color: var(--ink-soft); font-weight: 600; text-align: right; line-height: 1.45; }
   .co-bar { display: flex; height: 14px; border-radius: 999px; overflow: hidden; background: var(--bg-2); }
   .co-bar i { display: block; height: 100%; }
@@ -1729,7 +1732,7 @@
   .sup-day.peak .n { color: var(--brand); }
 
   @media (max-width: 760px) {
-    .co-row { grid-template-columns: minmax(0,1fr) 52px; gap: 6px 12px; }
+    .co-row { grid-template-columns: minmax(0,1fr) auto; gap: 6px 12px; }
     .co-row .cbar { grid-column: 1 / -1; }
     .co-row .extra { grid-column: 1 / -1; text-align: left; }
     .sup-days { grid-template-columns: repeat(4, 1fr); }
@@ -2641,22 +2644,17 @@
       <h2>Поставщики</h2>
       <span class="count" id="supCount"></span>
       <span class="dash-tools">
-        <span id="supMeta"></span>
-        <button id="regRefresh" title="Обновить данные"><svg class="i sm"><use href="#i-refresh"/></svg></button>
-        <a id="regLink" href="#" target="_blank" rel="noopener">лист «МД» ↗</a>
+        <button id="regRefresh" title="Обновить данные" aria-label="Обновить данные"><svg class="i sm"><use href="#i-refresh"/></svg></button>
+        <a id="regLink" class="sh-link" href="#" target="_blank" rel="noopener" title="Открыть лист «МД»" aria-label="Открыть лист «МД» в таблице"><svg class="i"><use href="#i-link"/></svg></a>
       </span>
     </div>
-    <p class="cat-lead">Все группы поставщиков из листа «МД». Найдите группу по направлению, преподавателю, адресу или коду.</p>
+    <p class="cat-lead" id="regMeta">Все группы поставщиков из листа «МД».</p>
 
     <!-- Реестр — главное в разделе. Статистика ниже, свёрнута. -->
     <div class="rg-box">
-      <div class="rg-top">
-        <span class="rg-ic"><svg class="i"><use href="#i-folder"/></svg></span>
-        <div><h3>Реестр групп</h3><small id="regMeta"></small></div>
-      </div>
       <div class="rg-search">
         <svg class="i"><use href="#i-search"/></svg>
-        <input id="regQ" type="search" enterkeyhint="search" placeholder="Направление, преподаватель, адрес, код группы…" autocomplete="off" aria-label="Поиск по реестру групп">
+        <input id="regQ" type="search" enterkeyhint="search" placeholder="Направление, педагог, адрес" autocomplete="off" aria-label="Поиск по реестру групп">
         <button type="button" class="rg-clear" id="regClear" hidden aria-label="Очистить поиск"><svg class="i"><use href="#i-close"/></svg></button>
       </div>
       <div class="reg-chips" id="regChips" role="group" aria-label="Статус группы"></div>
@@ -2688,14 +2686,12 @@
     <div class="mdt-wrap">
       <table class="mdt">
         <colgroup>
-          <col style="width:8.5%"><col style="width:9%"><col style="width:13%"><col style="width:13%">
-          <col style="width:12.5%"><col style="width:12.5%"><col style="width:10.5%"><col style="width:11%">
-          <col style="width:10%">
+          <col style="width:27%"><col style="width:24%"><col style="width:20%"><col style="width:15%"><col style="width:14%">
         </colgroup>
         <thead>
-          <tr><th data-k="id"><button type="button" class="th-s" data-sort="id" title="Сортировать по колонке «ID»">ID<i aria-hidden="true"></i></button></th><th data-k="st"><button type="button" class="th-s" data-sort="st" title="Сортировать по колонке «Статус»">Статус<i aria-hidden="true"></i></button></th><th data-k="dir"><button type="button" class="th-s" data-sort="dir" title="Сортировать по колонке «Направление»">Направление<i aria-hidden="true"></i></button></th><th data-k="t"><button type="button" class="th-s" data-sort="t" title="Сортировать по колонке «ФИО преподавателя»">ФИО преподавателя<i aria-hidden="true"></i></button></th><th data-k="sup"><button type="button" class="th-s" data-sort="sup" title="Сортировать по колонке «Поставщик»">Поставщик<i aria-hidden="true"></i></button></th><th data-k="addr"><button type="button" class="th-s" data-sort="addr" title="Сортировать по колонке «Адрес площадки»">Адрес площадки<i aria-hidden="true"></i></button></th><th data-k="sch"><button type="button" class="th-s" data-sort="sch" title="Сортировать по колонке «Расписание»">Расписание<i aria-hidden="true"></i></button></th><th data-k="co"><button type="button" class="th-s" data-sort="co" title="Сортировать по колонке «Координатор»">Координатор<i aria-hidden="true"></i></button></th><th><span class="th-s no">Комментарий</span></th></tr>
+          <tr><th data-k="dir"><button type="button" class="th-s" data-sort="dir" title="Сортировать: группа">Группа<i aria-hidden="true"></i></button></th><th data-k="t"><button type="button" class="th-s" data-sort="t" title="Сортировать: преподаватель и поставщик">Преподаватель и поставщик<i aria-hidden="true"></i></button></th><th data-k="addr"><button type="button" class="th-s" data-sort="addr" title="Сортировать: площадка">Площадка<i aria-hidden="true"></i></button></th><th data-k="sch"><button type="button" class="th-s" data-sort="sch" title="Сортировать: расписание">Расписание<i aria-hidden="true"></i></button></th><th data-k="co"><button type="button" class="th-s" data-sort="co" title="Сортировать: координатор">Координатор<i aria-hidden="true"></i></button></th></tr>
         </thead>
-        <tbody id="regRows"><tr><td colspan="9"><div class="task-empty">Загружаю реестр…</div></td></tr></tbody>
+        <tbody id="regRows"><tr><td colspan="5"><div class="task-empty">Загружаю реестр…</div></td></tr></tbody>
       </table>
     </div>
     <div class="rg-cards" id="regCards"></div>
@@ -6481,18 +6477,19 @@ function regRow(g, tint) {
       (g.t.length > 3 ? '<span class="who rest" title="' + esc(g.t.join(", ")) + '">и ещё ' +
         (g.t.length - 3) + "</span>" : "")
     : '<span class="no">—</span>';
+  /* пять столбцов: в каждой ячейке главное сверху, уточнение строкой ниже */
   return '<tr class="s-' + g.st + '">' +
-    '<td class="c-id"><span class="idcell">' + regGid(g, "gid") + regChat(g, "chat") + "</span></td>" +
-    '<td><span class="reg-badge s-' + g.st + '">' + esc(g.stRaw || MD_LBL[g.st]) + "</span></td>" +
-    '<td class="c-dir">' + (esc(g.dir) || '<span class="no">—</span>') + "</td>" +
-    "<td>" + teach + "</td>" +
-    '<td><span class="sup" title="' + esc(g.sup) + '"><i style="background:' + (tint[g.sup] || "var(--bar-muted)") + '"></i>' +
+    '<td class="c-grp"><span class="c-dir">' + (esc(g.dir) || '<span class="no">—</span>') + "</span>" +
+      '<span class="idcell"><span class="reg-badge s-' + g.st + '">' + esc(g.stRaw || MD_LBL[g.st]) + "</span>" +
+      regGid(g, "gid") + regChat(g, "chat") + "</span></td>" +
+    "<td>" + teach +
+      '<span class="sup" title="' + esc(g.sup) + '"><i style="background:' + (tint[g.sup] || "var(--bar-muted)") + '"></i>' +
       "<span>" + (esc(supShort(g.sup)) || "—") + "</span></span></td>" +
     "<td>" + (esc(g.addr) || '<span class="no">—</span>') +
       (g.pt ? '<span class="sub">' + esc(g.pt) + "</span>" : "") + "</td>" +
     '<td class="sch">' + regWhen(g) + "</td>" +
-    "<td>" + regCo(g.co) + "</td>" +
-    "<td>" + (g.cm ? '<span class="cm" title="' + esc(g.cm) + '">' + esc(g.cm) + "</span>" : "") + "</td>" +
+    "<td>" + regCo(g.co) +
+      (g.cm ? '<span class="cm" title="' + esc(g.cm) + '">' + esc(g.cm) + "</span>" : "") + "</td>" +
   "</tr>";
 }
 
@@ -6559,7 +6556,7 @@ function renderRegTools(found) {
 }
 
 /* Ширина, на которой таблица уступает место карточкам. */
-const regNarrow = matchMedia("(max-width: 1000px)");
+const regNarrow = matchMedia("(max-width: 1240px)");
 function renderReg() {
   const box = document.getElementById("regRows");
   const cards = document.getElementById("regCards");
@@ -6567,7 +6564,7 @@ function renderReg() {
   const link = document.getElementById("regLink");
   if (link) link.href = "https://docs.google.com/spreadsheets/d/" + GARDEN_SHEET_ID +
     "/edit?gid=" + MD_GID + "#gid=" + MD_GID;
-  const empty = msg => '<tr><td colspan="9"><div class="task-empty">' + msg + "</div></td></tr>";
+  const empty = msg => '<tr><td colspan="5"><div class="task-empty">' + msg + "</div></td></tr>";
   const emptyC = msg => '<div class="task-empty">' + msg + "</div>";
   if (!mdLoaded || !mdGroups.length) {
     const msg = !mdLoaded ? "Загружаю реестр…" : "Лист «МД» недоступен или пуст.";
@@ -6601,7 +6598,7 @@ function renderReg() {
     (list.length === mdGroups.length ? "" : " (всего в листе " + mdGroups.length + ")");
   const meta = document.getElementById("regMeta");
   if (meta) meta.textContent = mdGroups.length + " " + plural(mdGroups.length, "группа", "группы", "групп") +
-    " · все колонки листа «МД»" + (mdStamp ? " · прочитан в " + mdStamp : "");
+    " в листе «МД»" + (mdStamp ? " · обновлено в " + mdStamp : "");
 }
 /* Событие медиазапроса приходит не во всех браузерах при смене размера
    окна — дублируем проверкой на resize и перерисовываем только при
